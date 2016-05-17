@@ -1,0 +1,371 @@
+unit uFrmEnviarEmail;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, Buttons,  IdComponent, IdTCPConnection, IdTCPClient,
+  IdMessageClient, IdSMTP, IdBaseComponent, IdMessage, Animate, ComCtrls,
+  IdIOHandler, IdIOHandlerSocket, IdSSLOpenSSL;
+
+  // JvComponentBase, JvValidators, JvErrorIndicator,
+
+type
+  TfrmEnviarEmail = class(TForm)
+    pnlSuperior: TPanel;
+    Panel2: TPanel;
+    pnlMensagem: TPanel;
+    pnlBotoes: TPanel;
+    btEnviar: TBitBtn;
+    btFechar: TBitBtn;
+    Label1: TLabel;
+    edtPara: TEdit;
+    Label2: TLabel;
+    edtAssunto: TEdit;
+    mmMensagem: TMemo;
+    IdSMTP: TIdSMTP;
+    odAnexos: TOpenDialog;
+    Animate1: TAnimate;
+    Label3: TLabel;
+    lblMens: TLabel;
+    IdMessage: TIdMessage;
+    IdSSLIOHandlerSocket1: TIdSSLIOHandlerSocket;
+    procedure btFecharClick(Sender: TObject);
+    procedure JvCustomValidator1Validate(Sender: TObject;
+      ValueToValidate: Variant; var Valid: Boolean);
+    procedure FormShow(Sender: TObject);
+    procedure btEnviarClick(Sender: TObject);
+    procedure edtParaExit(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edtParaChange(Sender: TObject);
+  private
+    { Private declarations }
+    function func_VerifEmail(email: string): boolean;
+  public
+    { Public declarations }
+  end;
+
+const
+    ScreenWidth: LongInt = 800; {I designed my form in 800x600 mode.}
+    ScreenHeight: LongInt = 600;
+    //
+const
+  msg1 = 'Caractere(s) inválido(s) no início do e-mail.';
+  msg2 = 'Símbolo @ não foi encontrado.';
+  msg3 = 'Excesso do símbolo @.';
+  msg4 = 'Caractere(s) inválido(s) antes do símbolo @.';
+  msg5 = 'Caractere(s) inválido(s) depois do símbolo @.';
+  msg6 = 'Agrupamento de caractere(s) inválido(s) a esqueda do @.';
+  msg7 = 'Não existe ponto(s) digitado(s).';
+  msg8 = 'Ponto encontrado no final do e-mail.';
+  msg9 = 'Ausência de caractere(s) após o último ponto.';
+  msg10 = 'Excesso de ponto(s) a direita do @.';
+  msg11 = 'Ponto(s) disposto(s) de forma errada após o @.';
+  msg12 = 'Caractere(s) inválido(s) antes do ponto.';
+  msg13 = 'Caractere(s) inválido(s) depois do ponto.';
+
+    //
+
+var
+  frmEnviarEmail: TfrmEnviarEmail;
+  M_CAMINH : String;
+  vet_valido: array [0..35] of string =
+  ('0','1','2','3','4','5','6','7', '8','9',
+  'a','b','c','d','e','f', 'g','h','i','j',
+  'k','l','m','n', 'o','p','q','r','s','t',
+  'u','v', 'w','x','y','z');
+  
+implementation
+
+Uses uFuncoes, Udm;
+
+{$R *.dfm}
+
+procedure TfrmEnviarEmail.btFecharClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmEnviarEmail.JvCustomValidator1Validate(Sender: TObject;
+  ValueToValidate: Variant; var Valid: Boolean);
+begin
+      Valid := (Pos('.', ValuetoValidate) > 0) and
+        (Pos('@',ValuetoValidate) > 0 );
+end;
+
+procedure TfrmEnviarEmail.FormShow(Sender: TObject);
+begin
+     M_CAMINH := ExtractFilePath( Application.ExeName )+'\EMAIL.TXT';
+     If (fileexists(M_CAMINH)) then
+       mmMensagem.Lines.LoadFromFile(M_CAMINH);
+     //
+     lblMens.Caption := '';  
+end;
+
+procedure TfrmEnviarEmail.btEnviarClick(Sender: TObject);
+Var
+    Senha, Arquivo : String;
+begin
+     If uFuncoes.Empty(edtPara.Text) Then
+      begin
+           edtPara.SetFocus;
+           Exit;
+      End;
+     //
+     if Trim(edtPara.Text)<>'' then
+       if not (func_VerifEmail(Trim(edtPara.Text))) then
+          edtPara.SetFocus;
+     //
+     If uFuncoes.Empty(edtAssunto.Text) Then
+      begin
+           edtAssunto.SetFocus;
+           Exit;
+      End;
+    //
+    Senha := uFuncoes.PasswordInputBox('Senha','Digite sua senha do email :');
+    If uFuncoes.Empty(Senha) Then
+    begin
+         Application.MessageBox('Senha inválida!', 'Erro',
+              MB_ICONINFORMATION +   MB_OK);
+         Exit;
+    End;
+    //
+    DM.parametros;
+    //
+    Arquivo := ExtractFilePath( Application.ExeName )+'c_c.avi';
+    //
+    {If FileExists(ExtractFilePath( Application.ExeName )+'VENDA.DOC') Then
+         TIdAttachment.Create(idmessage.MessageParts, TFileName(ExtractFilePath( Application.ExeName )+'VENDA.DOC'));}
+    //
+   IdMessage.From.Address := Dm.CdsConfigCFG_EMAIL.AsString;
+   IdMessage.From.Name    := Dm.CdsConfigCFG_EMAIL.AsString;
+   IdMessage.Recipients.EMailAddresses := edtPara.Text;
+   IdMessage.Subject := edtAssunto.Text;
+   IdMessage.Body := mmMensagem.Lines;
+   //
+  // IdSMTP.IOHandler := IdSSLIOHandlerSocket1;
+   IdSMTP.Host            := Dm.CdsConfigCFG_SMTP_EMAIL.AsString;
+   Idsmtp.AuthenticationType := atLogin;
+   IdSMTP.Username        := dm.CdsConfigCFG_EMAIL.AsString;
+   IdSMTP.Password        := Senha;
+   //
+   IdSMTP.Connect;
+   //IdSMTP.Authenticate();
+  try
+    If fileexists(Arquivo) then
+    begin
+         Animate1.FileName := Arquivo;
+         Animate1.Active   := True;
+         Animate1.Visible  := True;
+    End;
+    //
+    try
+        IdSMTP.Send(IdMessage);
+        //
+        Application.MessageBox('Email enviado com sucesso!', 'Confirmação',
+            MB_ICONINFORMATION +   MB_OK);
+    Except
+        on Exc:Exception do
+        begin
+           Application.MessageBox(PChar('Erro no envio do email!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONSTOP+MB_APPLMODAL);
+        End;
+    End;
+  finally
+    IdSMTP.Disconnect;
+    //
+    If fileexists(Arquivo) then
+    begin
+        Animate1.Active  := False;
+        Animate1.Visible := False;
+    End;
+  end;
+  Application.ProcessMessages;
+  //
+  Close;
+end;
+
+procedure TfrmEnviarEmail.edtParaExit(Sender: TObject);
+begin
+   { JvErrorIndicator1.BeginUpdate;
+    Try
+        JvErrorIndicator1.ClearErrors;
+        if not JvValidators1.Validate Then
+    Finally
+        JvErrorIndicator1.EndUpdate;
+  End;}
+end;
+
+procedure TfrmEnviarEmail.FormCreate(Sender: TObject);
+begin
+      scaled := true;
+      if (screen.width <> ScreenWidth) then
+      begin
+            height := longint(height) * longint(screen.height) DIV ScreenHeight;
+            width := longint(width) * longint(screen.width) DIV ScreenWidth;
+            scaleBy(screen.width, ScreenWidth);
+      end;
+end;
+
+function TfrmEnviarEmail.func_VerifEmail(email: string): boolean;
+var
+  i, j, tam_email, simb_arroba, simb_arroba2, qtd_arroba, qtd_pontos,
+  qtd_pontos_esq, qtd_pontos_dir, posicao, posicao2, ponto, ponto2: integer;
+  vet_email: array [0..49] of string; //50 posições, capacidade do Edit
+  msg: string;
+begin
+
+  { Nesta função (func_VerifEmail) é utilizada a função Copy, exemplo:
+  Copy(s,i,t) significa trecho de s que começa em i com tamanho t }
+
+  qtd_pontos:= 0; qtd_pontos_esq:= 0; qtd_pontos_dir:= 0; qtd_arroba:= 0;
+  posicao:=0; posicao2:=0; simb_arroba:=0; simb_arroba2:=0; ponto:= 0;
+  ponto2:= 0; msg:='';
+  Result:= True;
+
+  //Verificando parte inicial do E-mail
+  tam_email:= Length(email);
+  for i:= 0 to tam_email-1 do
+  begin
+  vet_email[i]:= Copy(email,i+1,1);
+  if vet_email[i] = '@' then
+  begin
+  Inc(qtd_arroba);
+  posicao:= i;
+  end;
+  end;
+ 
+  if ((vet_email[0] = '@') or (vet_email[0] = '.') or (vet_email[0] = '-')) then
+  begin
+  Result:= False;
+  msg:= msg1;
+  end;
+ 
+  //Verificando se tem o símbolo @ e quantos tem
+  if qtd_arroba < 1 then
+  begin
+  Result:= False;
+  msg:= msg2;
+  end
+  else if qtd_arroba > 1 then
+  begin
+  Result:= False;
+  msg:= msg3 + ' Encontrado(s): '+IntToStr(qtd_arroba)+'.';
+  end
+  else
+  //Verificando o que vem antes e depois do símbolo @
+  begin
+  for i:=0 to 35 do
+  begin
+  if vet_email[posicao-1] <> vet_valido[i] then Inc(simb_arroba)
+  else Dec(simb_arroba);
+  if vet_email[posicao+1] <> vet_valido[i] then Inc(simb_arroba2)
+  else Dec(simb_arroba2);
+  end;
+  if simb_arroba = 36 then
+  begin
+  //Antes do arroba há um símbolo desconhecido do vetor válido
+  Result:= False;
+  msg:= msg4;
+  end
+  else if simb_arroba2 = 36 then
+  begin
+  //Depois do arroba há um símbolo desconhecido do vetor válido
+  Result:= False;
+  msg:= msg5;
+  end
+  end;
+ 
+  //Verificando se há pontos e quantos, e Verificando parte final do e-mail
+  for j:=0 to tam_email-1 do
+  if vet_email[j] = '-' then
+  if ((vet_email[j-1] = '.') or (vet_email[j-1] = '-')) then
+  begin
+  Result:= False;
+  msg:= msg6;
+  end;
+  for i:=0 to tam_email-1 do
+  if vet_email[i] = '.' then
+  begin
+  Inc(qtd_pontos);
+  posicao2:= i+1;
+  if i > posicao then Inc(qtd_pontos_dir)
+  else Inc(qtd_pontos_esq);
+  if ((vet_email[i-1] = '.') or (vet_email[i-1] = '-')) then
+  begin
+  Result:= False;
+  msg:= msg6;
+  end;
+  end;
+  if qtd_pontos < 1 then
+  begin
+  Result:= False;
+  msg:= msg7;
+  end
+  else if vet_email[tam_email-1] = '.' then
+  begin
+  Result:= False;
+  msg:= msg8;
+  end
+  else if vet_email[tam_email-2] = '.' then
+  begin
+  Result:= False;
+  msg:= msg9;
+  end
+  else if qtd_pontos_dir > 2 then
+  begin
+  Result:= False;
+  msg:= msg10 + ' Encontrado(s): '+
+  IntToStr(qtd_pontos)+#10+'Encontrado(s) a direita do @: '+
+  IntToStr(qtd_pontos_dir)+'.';
+  end
+  else if (not ((((tam_email - posicao2) = 3) and (qtd_pontos_dir = 1)) or
+  (((tam_email - posicao2) = 2) and (qtd_pontos_dir = 2)) or
+  (((tam_email - posicao2) = 2) and (qtd_pontos_dir = 1)))) then
+  begin
+  Result:= False;
+  msg:= msg11 +#10+ 'Encontrado(s) a esquerda do @: '+
+  IntToStr(qtd_pontos_esq) +#10+ 'Encontrado(s) a direita do @: '+
+  IntToStr(qtd_pontos_dir)+'.';
+  end
+  else
+  //Verificando o que vem antes e depois do ponto
+  begin
+  for i:=0 to 35 do
+  begin
+  if vet_email[posicao2-2] <> vet_valido[i] then Inc(ponto)
+  else Dec(ponto);
+  if vet_email[posicao2] <> vet_valido[i] then Inc(ponto2)
+  else Dec(ponto2);
+  end;
+  if ponto = 36 then
+  begin
+  //Antes do ponto há um símbolo desconhecido do vetor válido
+  Result:= False;
+  msg:= msg12;
+  end
+  else if ponto2 = 36 then
+  begin
+  //Depois do ponto há um símbolo desconhecido do vetor válido
+  Result:= False;
+  msg:= msg13;
+  end
+  end;
+
+  //Verificação final
+  if not Result then
+  begin
+  msg:= msg +#10+ 'Formato de E-mail não aceitável!!';
+  //MessageDlg(msg,mtWarning,[mbOK],0);
+  raise Exception.Create(msg);
+  end;
+end;
+
+procedure TfrmEnviarEmail.edtParaChange(Sender: TObject);
+begin
+     if Empty(edtPara.Text) Then
+        lblMens.Caption := '';
+end;
+
+end.

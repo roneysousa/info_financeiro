@@ -1,0 +1,708 @@
+unit ufrmAberturaCaixa;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, Buttons, DBCtrls, Mask, FMTBcd, DB, SqlExpr,
+  Provider, DBClient, DBXpress, ppProd, ppClass, ppReport, ppComm,
+  ppRelatv, ppDB, ppDBPipe, ppCtrls, ppPrnabl, ppBands, ppCache, ToolEdit,
+  CurrEdit, VDODmPrinter;
+
+type
+  TfrmAberturaCaixa = class(TForm)
+    pnlCliente: TPanel;
+    pnlInferior: TPanel;
+    pnlSuperior: TPanel;
+    pnlBotoes: TPanel;
+    BtCancelar: TBitBtn;
+    BtGravar: TBitBtn;
+    Label1: TLabel;
+    Label2: TLabel;
+    DBText1: TDBText;
+    Label4: TLabel;
+    edtSENHA: TLabeledEdit;
+    cmbLoja: TDBLookupComboBox;
+    qryProcurar: TSQLQuery;
+    dstCaixa: TSQLDataSet;
+    dspCaixa: TDataSetProvider;
+    cdsCaixa: TClientDataSet;
+    cdsCaixaCAI_LOJA: TIntegerField;
+    cdsCaixaCAI_DTABERTURA: TDateField;
+    dstCaixaCAI_LOJA: TIntegerField;
+    dstCaixaCAI_DTABERTURA: TDateField;
+    lbl_NMUSUA: TLabel;
+    ppDBPLoja: TppDBPipeline;
+    ppRepAbertura: TppReport;
+    ppDBPCaixa: TppDBPipeline;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBText1: TppDBText;
+    ppLabel1: TppLabel;
+    ppDBText2: TppDBText;
+    ppLabel2: TppLabel;
+    ppLabel3: TppLabel;
+    ppDBText3: TppDBText;
+    ppLabel4: TppLabel;
+    ppLabel5: TppLabel;
+    ppDBText5: TppDBText;
+    ppLabel6: TppLabel;
+    ppDBText6: TppDBText;
+    ppLabel7: TppLabel;
+    ppDBText7: TppDBText;
+    ppLine1: TppLine;
+    ppLine2: TppLine;
+    txtNMCAIX: TppLabel;
+    dbeCAIXA: TEdit;
+    sbLocCaixa: TSpeedButton;
+    edtVLINIC: TCurrencyEdit;
+    Label3: TLabel;
+    lbl_VLINIC: TppLabel;
+    qryCaixa: TSQLQuery;
+    qryLojas2: TSQLQuery;
+    qryLojas2EMP_CODIGO: TIntegerField;
+    qryLojas2EMP_FANTASIA: TStringField;
+    qryLojas2EMP_RAZAO: TStringField;
+    qryLoja: TSQLQuery;
+    cdsLojas2: TClientDataSet;
+    dspPadrao: TDataSetProvider;
+    dstPadrao: TSQLDataSet;
+    cdsLoja: TClientDataSet;
+    cdsProcurar: TClientDataSet;
+    cdsCaixa2: TClientDataSet;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dbeCAIXAExit(Sender: TObject);
+    procedure edtSENHAKeyPress(Sender: TObject; var Key: Char);
+    procedure BtGravarClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure BtCancelarClick(Sender: TObject);
+    procedure dbeCAIXAChange(Sender: TObject);
+    procedure dbeCAIXAKeyPress(Sender: TObject; var Key: Char);
+    procedure cmbLojaKeyPress(Sender: TObject; var Key: Char);
+    procedure sbLocCaixaClick(Sender: TObject);
+    procedure edtVLINICKeyPress(Sender: TObject; var Key: Char);
+    procedure edtSENHAChange(Sender: TObject);
+    procedure dbeCAIXAEnter(Sender: TObject);
+    procedure edtVLINICEnter(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure cmbLojaExit(Sender: TObject);
+  private
+    procedure VALIDAR_CAIXA;
+    procedure SITUACAO_CAIXA;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAberturaCaixa: TfrmAberturaCaixa;
+  Transacao: TTransactionDesc;
+  M_NRSEQU, M_QTTENT, M_NRCAIX, W_CDLOJA : Integer;
+  M_FLENTR : String;
+
+implementation
+
+uses Udm, uFuncoes, udmConsulta, UFrmAdmin, uFrmBuscaCaixa, uDm2, udmDados;
+
+{$R *.dfm}
+
+procedure TfrmAberturaCaixa.FormCreate(Sender: TObject);
+begin
+     dm.parametros;
+     //
+     M_NRCAIX := dm.CdsConfigCFG_CAIXA.Value + 1;
+     //
+     dm.cdsCaixa.Close;
+     With dm.dstCaixa do
+     Begin
+          Active := False;
+          CommandText := 'Select * from CAIXA Where (CAI_NUMERO = :pNUMERO)';
+          Params.ParamByName('pNUMERO').AsInteger := M_NRSEQU;
+          Active := True;
+     End;
+     dm.cdsCaixa.Open;
+     //
+     M_QTTENT := 2;
+     M_FLENTR := 'N';
+     dm.cdsCaixa.Append;
+     dm.cdsCaixa.FieldByName('CAI_NUMERO').AsInteger := M_NRCAIX;
+     //
+end;
+
+procedure TfrmAberturaCaixa.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+     dm.cdsCaixa.Close;
+     dm.cdsLoja.Close;
+     //
+     Action := caFree;
+end;
+
+procedure TfrmAberturaCaixa.VALIDAR_CAIXA;
+begin
+     With cdsProcurar do
+     begin
+          Active := False;
+          CommandText := 'Select SEN_CODIGO, SEN_NOME, SEN_SNATUA, SEN_FLCAIXA from USUARIOS ';
+          CommandText := CommandText + ' Where (SEN_CODIGO = :pCODIGO)';
+          Params.ParamByName('pCODIGO').AsInteger := StrtoInt(dbeCAIXA.Text);
+          //
+          Active := True;
+     End;
+     //
+     If (cdsProcurar.IsEmpty) Then
+     Begin
+          Application.MessageBox('Registro de caixa não cadastrado!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          lbl_NMUSUA.Caption := '';
+          dbeCAIXA.SetFocus;
+          dbeCAIXA.Clear;
+          Exit;
+     End
+     Else
+     begin
+          If (cdsProcurar.FieldByName('SEN_FLCAIXA').AsString = 'N')
+          OR uFuncoes.Empty(cdsProcurar.FieldByName('SEN_FLCAIXA').AsString) Then
+          Begin
+               Application.MessageBox('Usuário não é caixa!!!','ATENÇÃO',
+                   MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+               cdsProcurar.Close;
+               lbl_NMUSUA.Caption := '';
+               dbeCAIXA.SetFocus;
+               dbeCAIXA.Clear;
+               Exit;
+          End;
+          //
+          With cdsCaixa2 do
+          Begin
+               Active := False;
+               Params.ParamByName('pCAIXA').AsInteger   := StrtoInt(dbeCAIXA.Text);
+               Params.ParamByName('pSITUACAO').AsString := 'A';
+               Active := True;
+          End;
+          //
+          If not (cdsCaixa2.IsEmpty) Then
+          begin
+               MessageBox (Application.Handle, pChar('Caixa já está aberto para '+#13+'este operador!!!'),
+                           'ATENÇÃO',MB_ICONINFORMATION+ MB_OK);
+               cdsCaixa2.Close;
+               dbeCAIXA.Clear;
+               dbeCAIXA.SetFocus;
+               Exit;
+          End
+          Else
+          begin
+              //
+              lbl_NMUSUA.Caption := cdsProcurar.FieldByName('SEN_NOME').AsString;
+              edtVLINIC.SetFocus;
+          End;
+     End;
+end;
+
+procedure TfrmAberturaCaixa.dbeCAIXAExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(dbeCAIXA.Text) Then
+          VALIDAR_CAIXA;
+end;
+
+procedure TfrmAberturaCaixa.edtSENHAKeyPress(Sender: TObject;
+  var Key: Char);
+Var
+    W_SNATUA : String;
+begin
+     If (Key = #13) and not uFuncoes.Empty(edtSENHA.Text) Then
+     Begin
+          Key := #0;
+          //
+          If (M_QTTENT >= 0) Then
+          Begin
+               {edtSENHA.Text := edtSENHA.Text+uFuncoes.Replicate('_',6-uFuncoes.ContaCaracs(edtSENHA.text));
+               edtSENHA.Text := uFuncoes.Codifica(edtSENHA.Text);}
+               W_SNATUA := edtSENHA.Text;
+               W_SNATUA := W_SNATUA+uFuncoes.Replicate('_',6-uFuncoes.ContaCaracs(W_SNATUA));
+               W_SNATUA := uFuncoes.Codifica(W_SNATUA);
+               //
+               If (W_SNATUA = cdsProcurar.FieldByName('SEN_SNATUA').AsString) Then
+               Begin
+                   M_FLENTR := 'S';
+                   BtCancelar.Enabled := True;
+                   BtGravar.Enabled   := True;
+                   //
+                   If (BtGravar.CanFocus) Then
+                   begin
+                       edtSENHA.Text := edtSENHA.Text+uFuncoes.Replicate('_',6-uFuncoes.ContaCaracs(edtSENHA.text));
+                       edtSENHA.Text := uFuncoes.Codifica(edtSENHA.Text);
+                       BtGravar.SetFocus;
+                   End;
+               End
+               Else
+               Begin
+                   //BtCancelar.Enabled := False;
+                   BtGravar.Enabled   := False;
+                   //
+                   Application.MessageBox('Senha anterior não confere!!!','ATENÇÃO',
+                     MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                   M_QTTENT := M_QTTENT - 1;
+                   edtSENHA.SetFocus;
+                   edtSENHA.Clear;
+                   Exit;
+               End;
+          End
+          Else
+              Close;
+     End;
+end;
+
+procedure TfrmAberturaCaixa.BtGravarClick(Sender: TObject);
+Var
+   M_DTABER : TDate;
+   M_QTABER, M_NRORCA, M_NRVEND, M_NTINIC, W_CDCAIX : Integer;
+   M_HOABER : String;
+   M_VLANTE, M_VLMOVI, M_VLATUA : Double;
+   M_CDMODA, W_CDNATU : integer;
+   // Variável da classe TVDODmPrinter que fará o relatório
+   VDOImpressora : TVDODmPrinter;
+   Linha : string;
+   LinCab1, LinCab2, M_ESPACO : String;
+   M_NUMMES, M_QTCARA, M_POSINI : Integer;
+begin
+     If uFuncoes.Empty(cmbLoja.Text) Then
+     Begin
+          Application.MessageBox(PChar('Selecione a loja!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbLoja.SetFocus;
+          Exit;
+     End;
+     //
+     {If uFuncoes.Empty(dbeVLINIC.Text) Then
+     Begin
+          Application.MessageBox(PChar('Digite o valor inicial!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          dbeVLINIC.SetFocus;
+          Exit;
+     End;}
+     //
+     If uFuncoes.Empty(dbeCAIXA.Text) Then
+     Begin
+          Application.MessageBox(PChar('Digite o código do caixa!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          dbeCAIXA.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(edtSENHA.Text) Then
+     Begin
+          Application.MessageBox(PChar('Digite a senha do caixa!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtSENHA.SetFocus;
+          Exit;
+     End;
+     //
+     If not dm.Verificar_Usuario_Caixa(StrtoInt(dbeCAIXA.Text)) Then
+      begin
+           dbeCAIXA.SetFocus;
+           raise Exception.Create('Usuário não é caixa.');
+      End;
+     //
+   BtGravar.Enabled := False;
+   try
+     Transacao.TransactionID := StrtoInt(UFrmAdmin.M_CDUSUA);
+     Transacao.IsolationLevel := xilREPEATABLEREAD;
+     dm.SqlAdmin.StartTransaction(Transacao);
+     //Dm.Start;
+     //
+     Try
+        //
+        If (M_FLENTR = 'S') Then
+        Begin
+            M_DTABER := Date();
+            M_HOABER := TimetoStr(Time);
+            M_QTABER := 0;
+            //
+            cdsCaixa.Close;
+            With dstCaixa do
+            begin
+                Active := False;
+                {CommandText := 'Select * from CAIXA '+    //
+                               ' Where (CAI_LOJA = :pCODIGO) and (CAI_DTABERTURA = :pDTABERTURA)';}
+                Params.ParamByName('pCODIGO').AsInteger  := dm.cdsCaixa.FieldByName('CAI_LOJA').AsInteger;
+                Params.ParamByName('pDTABERTURA').AsDate := M_DTABER;
+                //
+                Active := True;
+            End;
+            cdsCaixa.Open;
+            //
+            If not (cdsCaixa.IsEmpty) Then
+            Begin
+                 With cdsCaixa do
+                 Begin
+                     First;
+                     While not (cdsCaixa.Eof) do
+                     Begin
+                          M_QTABER := M_QTABER + 1;
+                          Next;
+                     End;
+                 End;
+            End;
+            //
+            {If (M_QTABER < dm.cdsLojaEMP_LIMCAIXA.Value) then
+            Begin}
+                 If Application.MessageBox(PChar('Confirma abertura do caixa?'),
+                   'ATENÇÃO', MB_YESNO+MB_ICONQUESTION+MB_APPLMODAL) = idYes then
+                 Begin
+                      dm.parametros;
+                      //
+                      dm.CdsConfig.Edit;
+                      dm.CdsConfigCFG_SEQUENCIA.Value := dm.CdsConfigCFG_SEQUENCIA.Value + 1;
+                      dm.CdsConfigCFG_CAIXA.Value     := dm.CdsConfigCFG_CAIXA.Value + 1;
+                      dm.CdsConfig.Post;
+                      dm.CdsConfig.ApplyUpdates(0);
+                      //
+                      M_NRSEQU := dm.CdsConfigCFG_SEQUENCIA.Value;
+                      M_NRCAIX := dm.CdsConfigCFG_CAIXA.Value;
+                      //
+                      M_NRORCA := 1;
+                      //
+                      cdsCaixa.Last;
+                      While not (cdsCaixa.Bof) do
+                      Begin
+                           If (dm.cdsCaixa.FieldByName('CAI_LOJA').AsInteger = cdsCaixa.FieldByName('CAI_LOJA').AsInteger) then
+                           begin
+                                M_NRORCA := cdsCaixa.FieldByName('CAI_ORFINAL').AsInteger + 1;
+                                Break;
+                           End;
+                           cdsCaixa.Prior;
+                      End;
+                      //
+                      W_CDCAIX := StrtoInt(dbeCAIXA.Text);
+                      //
+                      dm.CdsEmpresas.Close;
+                      With dm.SdsEmpresas do
+                      Begin
+                           Active := False;
+                           CommandText := 'SELECT * FROM EMPRESAS WHERE EMP_CODIGO = :pCODIGO';
+                           Params.ParamByName('pCODIGO').AsInteger := dm.cdsCaixa.FieldByName('CAI_LOJA').AsInteger;
+                           Active := True;
+                      End;
+                      dm.CdsEmpresas.Open;
+                      //
+                      If not (dm.CdsEmpresas.IsEmpty) Then
+                      Begin
+                           dm.CdsEmpresas.Edit;
+                           M_NTINIC := DM.CdsEmpresasEMP_NRNOTA.Value + 1;
+                           dm.CdsEmpresas.FieldByName('EMP_SEQUENCIA').AsInteger := M_NRSEQU;
+                           dm.CdsEmpresas.FieldByName('EMP_DTCAIXA').AsDateTime  := M_DTABER;
+                           dm.CdsEmpresas.FieldByName('EMP_FLCAIXA').AsString    := '*';
+                           dm.CdsEmpresas.FieldByName('EMP_CAIXA').AsInteger     := dm.cdsCaixa.FieldByName('CAI_CAIXA').AsInteger;
+                           dm.CdsEmpresas.Post;
+                           dm.CdsEmpresas.ApplyUpdates(0);
+                      End;
+                      //
+                      If (dm.cdsCaixa.State = dsInsert) then
+                      Begin
+                           dm.cdsCaixa.FieldByName('CAI_LOJA').AsInteger      := W_CDLOJA;
+                           dm.cdsCaixa.FieldByName('CAI_NUMERO').AsInteger    := M_NRCAIX;
+                           dm.cdsCaixa.FieldByName('CAI_DTABERTURA').AsDateTime := M_DTABER;
+                           dm.cdsCaixa.FieldByName('CAI_HOABERTURA').AsString := M_HOABER;
+                           dm.cdsCaixa.FieldByName('CAI_RGINICIAL').AsInteger := M_NRSEQU;
+                           dm.cdsCaixa.FieldByName('CAI_CAIXA').AsInteger     := W_CDCAIX;
+                           dm.cdsCaixa.FieldByName('CAI_SITUACAO').AsString   := 'A';
+                           UFrmAdmin.M_LJUSUA := W_CDLOJA;
+                           //
+                           dm.cdsCaixa.Post;
+                           dm.cdsCaixa.ApplyUpdates(0);
+                      End;
+                      // Movimento do caixa
+                      dm.cdsMovimentoCaixa.Close;
+                      With dm.dstMovimentoCaixa do
+                      Begin
+                           Active := False;
+                           CommandText := 'Select * from MOVIMENTO_CAIXA Where (MCA_SEQUENCIA = :pSEQUENCIA)';
+                           Params.ParamByName('pSEQUENCIA').AsInteger := M_NRSEQU;
+                           Active := True;
+                      End;
+                      dm.cdsMovimentoCaixa.Open;
+                      //
+                      dm.cdsMovimentoCaixa.Append;
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_SEQUENCIA').AsInteger := M_NRSEQU;
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_LOJA').AsInteger      := dm.cdsCaixa.FieldByName('CAI_LOJA').AsInteger;
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_TIPOMOV').AsString    := 'A';
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_DTMOVIMENTO').AsDateTime := M_DTABER;
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_HRMOVIMENTO').AsString   := M_HOABER;
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_MODALIDADE').AsString    := '1';
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_VLMODALIDADE').AsCurrency := edtVLINIC.Value;
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_OBSEVACAO').AsString  := 'ABERTURA DE CAIXA';
+                      dm.cdsMovimentoCaixa.FieldByName('MCA_CAIXA').AsInteger     := W_CDCAIX;
+                      //dm.cdsCaixa.FieldByName('CAI_CAIXA').AsInteger;
+                      //
+                      dm.cdsMovimentoCaixa.Post;
+                      dm.cdsMovimentoCaixa.ApplyUpdates(0);
+                      // Nova alteração   incluir registro o Caixa Geral
+                      If not (dmConsultas.GetNatureza2('ABERTURA DE CAIXA')) Then
+                          Dm.Incluir_Natureza('ABERTURA DE CAIXA', '1');
+                      //
+                      Dm.RefreshCDS(Dm.CdsConfig);
+                      M_CDMODA := Dm.CdsConfigCFG_CONTA_CAIXA.AsInteger;
+                      M_VLANTE := dmDados.GetValorAtual(M_CDMODA);
+                      M_VLMOVI := edtVLINIC.Value;
+                      W_CDNATU := dmConsultas.GetNaturezaCogigo('ABERTURA DE CAIXA');
+                      //
+                      dmDados.SetSaldoConta(M_CDMODA,M_VLMOVI,'S');
+                      //
+                      M_VLATUA := dmDados.GetValorAtual(M_CDMODA);
+                      //
+                      dmDados.Incluir_Movimento_Contas(W_CDLOJA, StrtoInt(uFrmAdmin.M_CDUSUA),
+                         M_CDMODA, W_CDNATU, 0, 0,
+                         M_VLANTE, M_VLMOVI, M_VLATUA,
+                         Dm.cdsCaixa.FieldByName('CAI_NUMERO').AsString,
+                         'S', Copy(M_HOABER,1,5), 'ABERTURA DE CAIXA', '', '', M_DTABER);
+                      //
+                      Application.MessageBox(PChar('Registro de caixa aberto...'),
+                             'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                      //
+                      If (Dm.cdsconfigCFG_FLMATRICIAL.AsString = 'S') Then
+                      Begin
+                           dm.CdsEmpresas.Close;
+                           With dm.SdsEmpresas do
+                           Begin
+                                Active := False;
+                                CommandText := 'SELECT * FROM EMPRESAS Where (EMP_CODIGO = :pCODIGO)';
+                                Params.ParamByName('pCODIGO').AsInteger := 1;
+                                Active := true;
+                           End;
+                           dm.CdsEmpresas.Open;
+                           //
+                           try
+                               VDOImpressora := TVDODmPrinter.Create(nil);
+                               VDOImpressora.Title := 'Visualizar Impressão';
+                               VDOImpressora.ShowPreview       := True;
+                               VDOImpressora.ShowProgress      := True;
+                               VDOImpressora.ShowDialog        := False;
+                               //
+                               VDOImpressora.Font.Size         := fsCondensed;
+                               M_QTCARA := 48;
+                               //
+                               With VDOImpressora do
+                               Begin
+                                    BeginDoc;
+                                    //
+                                    Font.Size  := fsCondensed;
+                                    Font.Style := [];
+                                    { salta duas linhas}
+                                    NewLine(2);
+                                    M_POSINI := 0;
+                                    { Imprime e alinhado à esquerda dentro de uma área de 52 caracteres}
+                                    Print(M_POSINI, Format('%-48s', [Replicate('*',M_QTCARA )]), True);
+                                    { Imprime a string "Cupom ", alinhado à esquerda"-" dentro de uma área de trita caracteres}
+                                    Print(M_POSINI, Format('%-48s', [uFuncoes.PadC('ABERTURA DE CAIXA',M_QTCARA)]), True);
+                                    { Imprime e alinhado à esquerda dentro de uma área de 48 caracteres}
+                                    Print(M_POSINI, Format('%-48s', [Replicate('*',M_QTCARA )]), True);
+                                    { Imprime o nome da Loja}
+                                    Print(M_POSINI, Format('%-48s', [uFuncoes.PadC('LOJA: '+dm.CdsEmpresas.FieldByName('EMP_FANTASIA').AsString,M_QTCARA)]), True);
+                                    Print(M_POSINI, Format('%-48s', [uFuncoes.PadC(dm.CdsEmpresas.FieldByName('EMP_ENDERECO').AsString,M_QTCARA)]), True);
+                                    { ---- Impressão dos Cabeçalho-----}
+                                    { Imprime e alinhado à esquerda dentro de uma área de 48 caracteres}
+                                    Print(M_POSINI, Format('%-48s', [Replicate('*',M_QTCARA)]),TRUE);
+                                    Print(M_POSINI, Format('%-48s', ['REGISTRO INICIAL.: ' + uFuncoes.StrZero(Dm.cdsCaixaCAI_RGINICIAL.AsString,10)]),TRUE);
+                                    Print(M_POSINI, Format('%-48s', ['VALOR............: ' + FormatFloat('###,###,##0.#0',edtVLINIC.Value) ]),TRUE);
+                                    Print(M_POSINI, Format('%-48s', ['DATA ABERTURA....: ' + Dm.cdsCaixaCAI_DTABERTURA.AsString]),TRUE);
+                                    Print(M_POSINI, Format('%-48s', ['HORA ABERTURA....: ' + Dm.cdsCaixaCAI_HOABERTURA.AsString]),TRUE);
+                                    Print(M_POSINI, Format('%-48s', ['CAIXA............: ' + uFuncoes.StrZero(Dm.cdsCaixaCAI_CAIXA.asString,3) + ' - '+lbl_NMUSUA.Caption]),TRUE);
+                                    //
+                                    { Imprime separador}
+                                    Print(M_POSINI,Format('%-48s', [Replicate('*',M_QTCARA)]),true);
+                                    Print(M_POSINI,Format('%-48s', [uFuncoes.PadC(Dm.CdsConfigCFG_MENS_RODAPE.AsString,M_QTCARA)]),true);
+                                    Print(M_POSINI,Format('%-48s', [Replicate('*',M_QTCARA)]),true);
+                                    Print(M_POSINI,Format('%-48s', ['DESENVOLVIDO POR:INFOG2 TECNOLOGIA-(86)3226-4510']),true);
+                                    NewLine(2);
+                                    //
+                                    EndDoc;
+                               End;
+                           Finally
+                                FreeAndNil(VDOImpressora);
+                           End;
+                      End
+                      Else
+                      begin
+                           With ppRepAbertura do
+                           Begin
+                                txtNMCAIX.Caption := ' - '+lbl_NMUSUA.Caption;
+                                lbl_VLINIC.Caption := FormatFloat('###,###,##0.#0',edtVLINIC.Value);
+                                ppRepAbertura.PrintReport;
+                           End;
+                      End;
+                 End;
+         End; // Fim-do-se fluxo de entrada
+         //
+         dm.SqlAdmin.Commit(Transacao);
+         //Dm.Comit(Dm.Transc);
+         //
+         Close;
+         //
+      Except
+        on Exc:Exception do
+        begin
+           Application.MessageBox(PChar('Error ao tentar gravar registro.'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+           dm.SqlAdmin.Rollback(Transacao);
+           //Dm.Rollback;
+           Close;
+        End;
+     End;
+  Finally
+       BtGravar.Enabled := True;
+  End;
+end;
+
+procedure TfrmAberturaCaixa.FormActivate(Sender: TObject);
+begin
+     lbl_NMUSUA.Caption := '';
+     //BtCancelar.Enabled := False;
+     cmbLoja.SetFocus;
+end;
+
+procedure TfrmAberturaCaixa.BtCancelarClick(Sender: TObject);
+begin
+     If (dm.cdsCaixa.State = dsInsert) then
+        dm.cdsCaixa.Cancel;
+     //
+     dm.cdsCaixa.Close;
+     //
+     Close;
+end;
+
+procedure TfrmAberturaCaixa.dbeCAIXAChange(Sender: TObject);
+begin
+      If uFuncoes.Empty(dbeCAIXA.Text) Then
+      Begin
+          lbl_NMUSUA.Caption := '';
+          edtSENHA.Clear;
+      End;
+end;
+
+procedure TfrmAberturaCaixa.SITUACAO_CAIXA;
+begin
+     With cdsProcurar do
+     Begin
+          Active := False;
+          CommandText := 'Select * from EMPRESAS Where (EMP_CODIGO = :pCODIGO)';
+          Params.ParamByName('pCODIGO').AsInteger := dm.cdsCaixa.FieldByName('CAI_LOJA').AsInteger;
+          Active := True;
+     End;
+     //
+end;
+
+procedure TfrmAberturaCaixa.dbeCAIXAKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13]) then
+        key:=#0;
+     //
+     If (key = #13) and uFuncoes.Empty(dbeCAIXA.Text) Then
+     Begin
+          Key := #0;
+          sbLocCaixaClick(Sender);
+     End;
+     //
+     If (key = #13) and not uFuncoes.Empty(dbeCAIXA.Text) Then
+     Begin
+          Key := #0;
+          edtVLINIC.SetFocus;
+     End;
+end;
+
+procedure TfrmAberturaCaixa.cmbLojaKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If (key = #13) and not uFuncoes.Empty(cmbLoja.Text) Then
+     Begin
+          Key := #0;
+          dbeCAIXA.SetFocus;
+     End;
+end;
+
+procedure TfrmAberturaCaixa.sbLocCaixaClick(Sender: TObject);
+begin
+  with TfrmBuscaCaixa.create(self) do
+  try
+    uFrmBuscaCaixa.W_NRFORM := 1;
+    showmodal;
+  finally
+    If not uFuncoes.Empty(uFrmBuscaCaixa.M_CDCAIX) Then
+         dbeCAIXA.Text := uFuncoes.StrZero(uFrmBuscaCaixa.M_CDCAIX,3);
+    free;
+    //dbeCAIXA.SetFocus;
+    edtSENHA.SetFocus;
+  end;
+end;
+
+procedure TfrmAberturaCaixa.edtVLINICKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If (key = #13) and not uFuncoes.Empty(edtVLINIC.Text) Then
+     Begin
+          Key := #0;
+          edtSENHA.SetFocus;
+     End;
+end;
+
+procedure TfrmAberturaCaixa.edtSENHAChange(Sender: TObject);
+begin
+      If uFuncoes.Empty(edtSENHA.Text) Then
+      Begin
+           BtGravar.Enabled   := False;
+      End;
+end;
+
+procedure TfrmAberturaCaixa.dbeCAIXAEnter(Sender: TObject);
+begin
+     dbeCAIXA.Clear; 
+end;
+
+procedure TfrmAberturaCaixa.edtVLINICEnter(Sender: TObject);
+begin
+    dbeCAIXA.Text := uFuncoes.StrZero(dbeCAIXA.Text,3);
+end;
+
+procedure TfrmAberturaCaixa.FormShow(Sender: TObject);
+begin
+      lbl_NMUSUA.Caption := '';
+end;
+
+procedure TfrmAberturaCaixa.cmbLojaExit(Sender: TObject);
+begin
+      If not uFuncoes.Empty(cmbLoja.Text) Then
+      Begin
+           //
+           With cdsLojas2 do
+           Begin
+                active := False;
+                CommandText := 'Select EMP_CODIGO, EMP_FANTASIA, EMP_RAZAO from EMPRESAS ';
+                CommandText := CommandText + 'Where (EMP_FANTASIA = :pFANTASIA)';
+                Params.ParamByName('pFANTASIA').AsString := cmbLoja.Text;
+                active := True;
+           End;
+           //
+           W_CDLOJA := cdsLojas2.FieldByName('EMP_CODIGO').AsInteger;
+           //
+           With cdsLoja do
+           begin
+                Active := False;
+                Params.ParamByName('pCODIGO').AsInteger := W_CDLOJA;
+                //
+                Active := True;
+           End;
+           //
+           if cdsLoja.IsEmpty then
+           begin
+                MessageDlg('Registro de loja não encontrado!' + #13 + 'Refaça a pesquisa', mtInformation, [mbOk], 0);
+                cmbLoja.SetFocus;
+                Exit
+           end;
+      End;
+end;
+
+End.

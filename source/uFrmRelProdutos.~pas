@@ -1,0 +1,534 @@
+unit uFrmRelProdutos;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls, FMTBcd, DBClient, Provider, DB,
+  SqlExpr, ppDB, ppDBPipe, ppComm, ppRelatv, ppProd, ppClass, ppReport,
+  ppCtrls, ppPrnabl, ppBands, ppCache, ppVar, DBXpress, ppModule, raCodMod;
+
+type
+  TfrmRelProdutos = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    BtImprimir: TBitBtn;
+    BtSair: TBitBtn;
+    cmbNMLOJA: TComboBox;
+    Label1: TLabel;
+    cmbMostrarEstoque: TComboBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    cmbSomEstoque: TComboBox;
+    cmbValor: TComboBox;
+    Label4: TLabel;
+    dstProdutos: TSQLDataSet;
+    dspProdutos: TDataSetProvider;
+    cdsProdutos: TClientDataSet;
+    dstProdutosPRO_CODIGO: TStringField;
+    dstProdutosPRO_DESCRICAO: TStringField;
+    dstProdutosPRO_VLCOMPRA: TFMTBCDField;
+    dstProdutosPRO_VLVENDA: TFMTBCDField;
+    dstProdutosUNI_CODIGO: TStringField;
+    dstProdutosTRI_CODIGO: TIntegerField;
+    dstProdutosPRO_NMTRIBUTACAO: TStringField;
+    cdsDados: TClientDataSet;
+    cdsDadosPRO_NRITEM: TIntegerField;
+    cdsDadosPRO_NMPROD: TStringField;
+    cdsDadosPRO_NMABRE: TStringField;
+    cdsDadosPRO_NMTRIB: TStringField;
+    cdsDadosPRO_CDPROD: TStringField;
+    cdsDadosPRO_CDUNID: TStringField;
+    cdsDadosPRO_QTESTO: TFloatField;
+    cdsDadosPRO_VALOR: TCurrencyField;
+    dstProdutosEST_QUANTIDADE: TFMTBCDField;
+    cdsProdutosPRO_CODIGO: TStringField;
+    cdsProdutosPRO_DESCRICAO: TStringField;
+    cdsProdutosPRO_VLCOMPRA: TFMTBCDField;
+    cdsProdutosPRO_VLVENDA: TFMTBCDField;
+    cdsProdutosUNI_CODIGO: TStringField;
+    cdsProdutosTRI_CODIGO: TIntegerField;
+    cdsProdutosEST_QUANTIDADE: TFMTBCDField;
+    cdsProdutosPRO_NMTRIBUTACAO: TStringField;
+    dsProdutos: TDataSource;
+    ppRelProdutos: TppReport;
+    ppDBProdutos: TppDBPipeline;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBImage1: TppDBImage;
+    ppLine3: TppLine;
+    ppLabel8: TppLabel;
+    ppLabel3: TppLabel;
+    ppLabel9: TppLabel;
+    ppLabel10: TppLabel;
+    ppLabel1: TppLabel;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppLabel2: TppLabel;
+    ppDBCalc1: TppDBCalc;
+    ppLabel4: TppLabel;
+    ppDBText3: TppDBText;
+    ppLabel5: TppLabel;
+    ppLabel6: TppLabel;
+    ppDBText4: TppDBText;
+    ppDBText5: TppDBText;
+    ppLabel7: TppLabel;
+    ppDBEstoque: TppDBText;
+    pplbl_Estoque: TppLabel;
+    ppDBValor: TppDBText;
+    txtValor: TppLabel;
+    ppLabel13: TppLabel;
+    txtRazao: TppLabel;
+    txtEndereco: TppLabel;
+    txtCNPJ: TppLabel;
+    txtMunicipio: TppLabel;
+    txtInscEstadual: TppLabel;
+    ppLine5: TppLine;
+    ppLabel14: TppLabel;
+    ppSystemVariable1: TppSystemVariable;
+    ppLabel15: TppLabel;
+    ppSystemVariable2: TppSystemVariable;
+    ppLine1: TppLine;
+    ppSummaryBand1: TppSummaryBand;
+    ppLabel16: TppLabel;
+    pplbl_TOTESTOQUE: TppLabel;
+    ppDBCalc2: TppDBCalc;
+    ppDBCalcEstoque: TppDBCalc;
+    ppLine2: TppLine;
+    pplblSubTotal: TppLabel;
+    raCodeModule1: TraCodeModule;
+    cdsProdutosPRO_SUBTOTVENDA: TCurrencyField;
+    cdsProdutosPRO_SUBTOTCOMPRA: TCurrencyField;
+    ppDBSubTotal: TppDBText;
+    btArquivo: TBitBtn;
+    procedure BtSairClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure BtImprimirClick(Sender: TObject);
+    procedure cdsProdutosCalcFields(DataSet: TDataSet);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure btArquivoClick(Sender: TObject);
+  private
+      procedure LOJAS;
+      procedure DADOS_LOJA;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmRelProdutos: TfrmRelProdutos;
+  M_NMRAZA, M_ENDERE, M_NMMUNI, M_NRCNPJ, M_INSEST : String;
+
+implementation
+
+uses udmConsulta, Udm, uFuncoes, UFrmAdmin;
+
+{$R *.dfm}
+
+procedure TfrmRelProdutos.BtSairClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmRelProdutos.LOJAS;
+begin
+     With dmConsultas.qryLoja do
+     Begin
+          SQL.Clear;
+          Close;
+          SQL.Add('Select EMP_CODIGO, EMP_FANTASIA from EMPRESAS');
+          SQL.Add('order by EMP_FANTASIA');
+          Open;
+          First;
+     End;
+     //
+     cmbNMLOJA.Clear;
+     While not (dmConsultas.qryLoja.Eof) do
+     Begin
+          cmbNMLOJA.Items.Add(dmConsultas.qryLoja.FieldByName('EMP_FANTASIA').AsString);
+          //
+          dmConsultas.qryLoja.Next;
+     End;
+end;
+
+procedure TfrmRelProdutos.FormShow(Sender: TObject);
+begin
+      LOJAS;
+end;
+
+procedure TfrmRelProdutos.BtImprimirClick(Sender: TObject);
+Var
+  TD : TTransactionDesc;
+begin
+     If uFuncoes.Empty(cmbNMLOJA.Text) Then
+     Begin
+          Application.MessageBox('Selecione a loja!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbNMLOJA.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(cmbMostrarEstoque.Text) Then
+     Begin
+          Application.MessageBox('Selecione mostrar estoque!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbMostrarEstoque.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(cmbSomEstoque.Text) Then
+     Begin
+          Application.MessageBox('Selecione mostrar estoque!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbSomEstoque.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(cmbValor.Text) Then
+     Begin
+          Application.MessageBox('Selecione qual campo deseja imprimir!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbValor.SetFocus;
+          Exit;
+     End;
+     //
+     Try
+          BtImprimir.Enabled := False;
+          // Inicia um transação no BD
+           TD.TransactionID  := StrtoInt(UFrmAdmin.M_CDUSUA);
+           TD.IsolationLevel := xilREADCOMMITTED;
+           Dm.SqlAdmin.StartTransaction(TD);
+           //
+           cdsProdutos.Close;
+           With dstProdutos do
+           Begin
+                Active := False;
+                If (cmbSomEstoque.Text = 'SIM') Then
+                Begin
+                   Commandtext := 'Select P.PRO_CODIGO, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, '+
+                               'P.PRO_VLVENDA, P.UNI_CODIGO, P.TRI_CODIGO, '+
+                               'E.EST_QUANTIDADE, E.EST_CODIGOLOJA, '+
+                               '(Select T.TRI_DESCRICAO  from TRIBUTACAO T Where (T.TRI_CODIGO = P.PRO_CODIGO)) AS PRO_NMTRIBUTACAO '+
+                               'from PRODUTOS P '+
+                               'INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                               'Where (E.EST_CODIGOLOJA = :pLOJA) AND (E.EST_QUANTIDADE > 0)';
+                End
+                Else
+                Begin
+                   Commandtext := 'Select P.PRO_CODIGO, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, '+
+                               'P.PRO_VLVENDA, P.UNI_CODIGO, P.TRI_CODIGO, '+
+                               'E.EST_QUANTIDADE, E.EST_CODIGOLOJA, '+
+                               '(Select T.TRI_DESCRICAO  from TRIBUTACAO T Where (T.TRI_CODIGO = P.PRO_CODIGO)) AS PRO_NMTRIBUTACAO '+
+                               'from PRODUTOS P '+
+                               'INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                               'Where (E.EST_CODIGOLOJA = :pLOJA)';
+                End;
+                //
+                Params.ParamByName('pLOJA').AsInteger  := uFuncoes.CDLOJA(cmbNMLOJA.Text);
+                Active := True;
+           End;
+           cdsProdutos.Open;
+           //
+           With ppRelProdutos do
+           Begin
+                DADOS_LOJA;
+                txtRazao.caption     := M_NMRAZA;
+                txtEndereco.Caption  := M_ENDERE;
+                txtMunicipio.caption := M_NMMUNI;
+                txtCNPJ.caption      := uFuncoes.FormataCNPJ(M_NRCNPJ);
+                txtInscEstadual.caption  := '';
+                //
+                If (cmbMostrarEstoque.Text = 'SIM') Then
+                Begin
+                     pplbl_Estoque.Caption := 'ESTOQUE';
+                     ppDBEstoque.DataField := 'EST_QUANTIDADE';
+                     //
+                     pplbl_TOTESTOQUE.Visible := True;
+                     ppDBCalcEstoque.Visible  := True;
+                     //
+                     txtValor.Left       := 6.4375;
+                     pplblSubTotal.Left  := 7.1667;
+                     //
+                     ppDBValor.Left      := 6.9271;
+                     ppDBSubTotal.Left   := 7.1562;
+                End
+                Else
+                Begin
+                     pplbl_Estoque.Caption := '';
+                     ppDBEstoque.DataField := '';
+                     //
+                     pplbl_TOTESTOQUE.Visible := False;
+                     ppDBCalcEstoque.Visible  := False;
+                     //
+                     txtValor.Left       := 5.9271;
+                     pplblSubTotal.Left  := 6.6979;
+                     //
+                     ppDBValor.Left      := 6.4167;
+                     ppDBSubTotal.Left   := 6.6771;
+                End;
+                //
+                If (cmbValor.Text = 'VENDA') Then
+                Begin
+                    txtValor.Caption    := 'VL.VENDA';
+                    ppDBValor.DataField := 'PRO_VLVENDA';
+                    ppDBSubTotal.DataField := 'PRO_SUBTOTVENDA';
+                End
+                Else
+                begin
+                    txtValor.Caption := 'VL.COMPRA';
+                    ppDBValor.DataField := 'PRO_VLCOMPRA';
+                    ppDBSubTotal.DataField := 'PRO_SUBTOTCOMPRA';
+                End;
+                //
+                PrintReport;
+                //
+           End;
+           // Grava
+           Dm.SqlAdmin.Commit(TD);  // on success, commit the changes
+           BtImprimir.Enabled := True;
+     Except
+        on Exc:Exception do
+        begin
+              Application.MessageBox(PChar('Error ao tentar gerar relatorio!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                //  Cancelar transação no BD.
+                Dm.SqlAdmin.Rollback(TD);
+                BtImprimir.Enabled := True;
+        End;
+     End;
+end;
+
+procedure TfrmRelProdutos.DADOS_LOJA;
+begin
+     dm.CdsEmpresas.Close;
+     With dm.SdsEmpresas do
+     Begin
+          Active := False;
+          CommandText := 'SELECT * FROM EMPRESAS Where (EMP_CODIGO = :pCODIGO)';
+          Params.ParamByName('pCODIGO').AsInteger := uFuncoes.CDLOJA(cmbNMLOJA.Text);
+          Active := True;
+     End;
+     dm.CdsEmpresas.Open;
+     //
+     M_NMRAZA := dm.CdsEmpresas.FieldByName('EMP_RAZAO').AsString;
+     M_ENDERE := dm.CdsEmpresas.FieldByName('EMP_ENDERECO').AsString + ' -  Nº. '+dm.CdsEmpresas.FieldByName('EMP_NUMERO').AsString;
+     M_NMMUNI := dm.CdsEmpresas.FieldByName('EMP_NMCIDADE').AsString;
+     M_NRCNPJ := dm.CdsEmpresas.FieldByName('EMP_CNPJ').AsString;
+     //M_INSEST := dm.CdsEmpresas.FieldByName('').AsString;
+end;
+
+procedure TfrmRelProdutos.cdsProdutosCalcFields(DataSet: TDataSet);
+begin
+      cdsProdutos.FieldByName('PRO_SUBTOTVENDA').AsCurrency  :=
+         cdsProdutos.FieldByName('EST_QUANTIDADE').AsFloat *
+         cdsProdutos.FieldByName('PRO_VLVENDA').AsCurrency;
+      cdsProdutos.FieldByName('PRO_SUBTOTCOMPRA').AsCurrency :=
+         cdsProdutos.FieldByName('EST_QUANTIDADE').AsFloat *
+         cdsProdutos.FieldByName('PRO_VLCOMPRA').AsCurrency;
+end;
+
+procedure TfrmRelProdutos.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key =#13 then
+  begin
+    key :=#0;
+    Perform(Wm_NextDlgCtl,0,0);
+  end;
+end;
+
+procedure TfrmRelProdutos.btArquivoClick(Sender: TObject);
+Var
+    M_NMARQU : textfile;
+    W_NMARQU : String;
+    M_NRITEM, M_NMDESC, M_DESCAB, M_CDUNID, M_CDPROD, M_CDTRIB : String;
+    M_ESTOQU, M_VALOR, M_SUBTOT, M_SOMAQT : double;
+begin
+     If uFuncoes.Empty(cmbNMLOJA.Text) Then
+     Begin
+          Application.MessageBox('Selecione a loja!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbNMLOJA.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(cmbMostrarEstoque.Text) Then
+     Begin
+          Application.MessageBox('Selecione mostrar estoque!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbMostrarEstoque.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(cmbSomEstoque.Text) Then
+     Begin
+          Application.MessageBox('Selecione mostrar estoque!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbSomEstoque.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(cmbValor.Text) Then
+     Begin
+          Application.MessageBox('Selecione qual campo deseja imprimir!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          cmbValor.SetFocus;
+          Exit;
+     End;
+     //
+     If dm.SaveDialog1.Execute then
+         W_NMARQU := dm.SaveDialog1.FileName
+     Else
+         Exit;
+     //
+     If uFuncoes.Empty(W_NMARQU) Then
+     Begin
+          Application.MessageBox('Nome de arquivo em branco!!!',
+                   'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          btArquivo.SetFocus;
+          Exit;
+     End;
+     //
+     Try
+          btArquivo.Enabled := False;
+          // Inicia um transação no BD
+           TD.TransactionID  := StrtoInt(UFrmAdmin.M_CDUSUA);
+           TD.IsolationLevel := xilREADCOMMITTED;
+           Dm.SqlAdmin.StartTransaction(TD);
+           //
+           M_SOMAQT := 0;
+           //
+           cdsProdutos.Close;
+           With dstProdutos do
+           Begin
+                Active := False;
+                If (cmbSomEstoque.Text = 'SIM') Then
+                Begin
+                   Commandtext := 'Select P.PRO_CODIGO, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, '+
+                               'P.PRO_VLVENDA, P.UNI_CODIGO, P.TRI_CODIGO, '+
+                               'E.EST_QUANTIDADE, E.EST_CODIGOLOJA, '+
+                               '(Select T.TRI_DESCRICAO  from TRIBUTACAO T Where (T.TRI_CODIGO = P.PRO_CODIGO)) AS PRO_NMTRIBUTACAO '+
+                               'from PRODUTOS P '+
+                               'INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                               'Where (E.EST_CODIGOLOJA = :pLOJA) AND (E.EST_QUANTIDADE > 0)';
+                End
+                Else
+                Begin
+                   Commandtext := 'Select P.PRO_CODIGO, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, '+
+                               'P.PRO_VLVENDA, P.UNI_CODIGO, P.TRI_CODIGO, '+
+                               'E.EST_QUANTIDADE, E.EST_CODIGOLOJA, '+
+                               '(Select T.TRI_DESCRICAO  from TRIBUTACAO T Where (T.TRI_CODIGO = P.PRO_CODIGO)) AS PRO_NMTRIBUTACAO '+
+                               'from PRODUTOS P '+
+                               'INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                               'Where (E.EST_CODIGOLOJA = :pLOJA)';
+                End;
+                //
+                Params.ParamByName('pLOJA').AsInteger  := uFuncoes.CDLOJA(cmbNMLOJA.Text);
+                Active := True;
+           End;
+           cdsProdutos.Open;
+           cdsProdutos.First;
+           //
+                DADOS_LOJA;
+               // Criar o arquivo de texto
+               W_NMARQU := dm.SaveDialog1.FileName+'.TXT';
+               AssignFile(M_NMARQU, W_NMARQU);
+               Rewrite(M_NMARQU, W_NMARQU);
+               //
+               Append(M_NMARQU);
+               Write(M_NMARQU);
+               // Cabeçalho
+               Writeln(M_NMARQU, Format('%-1s',  ['RAZÃO SOCIAL :'+M_NMRAZA]));
+               Writeln(M_NMARQU, Format('%-2s',  ['ENDEREÇO     :'+M_ENDERE]));
+               Writeln(M_NMARQU, Format('%-8s',  ['MUNICIPIO    :'+M_NMMUNI]));
+               Writeln(M_NMARQU, Format('%-1s',  ['CNPJ         :'+uFuncoes.FormataCNPJ(M_NRCNPJ)]));
+         //
+         Writeln(M_NMARQU, Format('%-1s',[uFuncoes.Replicate('=',141)]));
+         //
+         Write(M_NMARQU, Format('%-6s', ['ITEM  '+' ']));
+         Write(M_NMARQU, Format('%-40s',['DESCRIÇÃO'+' ']));
+         Write(M_NMARQU, Format('%-20s',['DESCRIÇÃO ABREVIADA '+' ']));
+         Write(M_NMARQU, Format('%2s',  ['UN'+' ']));
+         Write(M_NMARQU, Format('%-13s',['CODIGO        ']));
+         Write(M_NMARQU, Format('%-20s',['TRIBUTAÇÃO           ']));
+         If (cmbMostrarEstoque.Text = 'SIM') Then
+             Write(M_NMARQU, Format('%-12s', ['    ESTOQUE']));
+         If (cmbValor.Text = 'VENDA') Then
+             Write(M_NMARQU, Format('%-12s', ['VALOR VENDA']))
+         Else
+             Write(M_NMARQU, Format('%-12s', ['VALOR COMPRA']));
+         Writeln(M_NMARQU, Format('%-12s',   ['  SUB-TOTAL']));
+         Writeln(M_NMARQU, Format('%-1s',[uFuncoes.Replicate('-',141)]));
+         //
+         While not (cdsProdutos.Eof) do
+         Begin
+             M_NRITEM := InttoStr(cdsProdutos.RecNo);
+             M_NMDESC := cdsProdutos.FieldByName('PRO_DESCRICAO').AsString;
+             M_DESCAB := copy(cdsProdutos.FieldByName('PRO_DESCRICAO').AsString,1,20);
+             M_CDUNID := cdsProdutos.FieldByName('UNI_CODIGO').AsString;
+             M_CDPROD := cdsProdutos.FieldByName('PRO_CODIGO').AsString;
+             M_CDTRIB := cdsProdutos.FieldByName('PRO_NMTRIBUTACAO').AsString;
+             M_ESTOQU := cdsProdutos.FieldByName('EST_QUANTIDADE').AsFloat;
+             //
+             If (cmbValor.Text = 'VENDA') Then
+             begin
+                M_VALOR  := cdsProdutos.FieldByName('PRO_VLVENDA').AsCurrency;
+                M_SUBTOT := cdsProdutos.FieldByName('PRO_SUBTOTVENDA').AsCurrency
+             End
+             Else
+             begin
+                M_VALOR  := cdsProdutos.FieldByName('PRO_VLCOMPRA').AsCurrency;
+                M_SUBTOT := cdsProdutos.FieldByName('PRO_SUBTOTCOMPRA').AsCurrency;
+             End;
+             //
+             //If (cmbMostrarEstoque.Text = 'SIM') Then
+                 Write(M_NMARQU, Format('%-6s', [uFuncoes.StrZero(M_NRITEM,6)+' ']));
+                 Write(M_NMARQU, Format('%-40s',[M_NMDESC+' ']));
+                 Write(M_NMARQU, Format('%-20s',[M_DESCAB+uFuncoes.Replicate(' ',20-length(M_DESCAB))+' ']));
+                 If not uFuncoes.Empty(M_CDUNID) Then
+                    Write(M_NMARQU, Format('%2s', [M_CDUNID+' ']))
+                 Else
+                    Write(M_NMARQU, Format('%2s', [uFuncoes.Replicate(' ',2)+' ']));
+                 //
+                 Write(M_NMARQU, Format('%-13s',[M_CDPROD+' ']));
+                 If not uFuncoes.Empty(M_CDTRIB) Then
+                     Write(M_NMARQU, Format('%-20s',[M_CDTRIB+' ']))
+                 Else
+                     Write(M_NMARQU, Format('%-20s',[uFuncoes.Replicate(' ',20)+' ']));
+                 If (cmbMostrarEstoque.Text = 'SIM') Then
+                     Write(M_NMARQU, Format('%12s',[FormatFloat('#,##0.#00',M_ESTOQU)+' ']));
+                 Write(M_NMARQU, Format('%12s',[FormatFloat('###,###,##0.#0',M_VALOR)+' ']));
+                 Writeln(M_NMARQU, Format('%12s',[FormatFloat('###,###,##0.#0',M_SUBTOT)+' ']));
+             //
+             M_SOMAQT := M_SOMAQT + M_ESTOQU;
+             //
+             cdsProdutos.Next;
+         End;
+         // rodape
+         Writeln(M_NMARQU, Format('%-1s',[uFuncoes.Replicate('-',141)]));
+         Writeln(M_NMARQU, Format('%-20s',[uFuncoes.Replicate(' ',95)+'TOTAL ITENS....:'+InttoStr(cdsProdutos.RecordCount)]));
+         If (cmbMostrarEstoque.Text = 'SIM') Then
+             Writeln(M_NMARQU, Format('%-20s',[uFuncoes.Replicate(' ',95)+'TOTAL ESTOQUE..:'+FormatFloat('###,##0.#00', M_SOMAQT)]));
+         //
+         CloseFile(M_NMARQU);
+         //
+         Application.MessageBox(PChar('Arquivo gerado com sucesso!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+           // Grava
+           Dm.SqlAdmin.Commit(TD);  // on success, commit the changes
+           btArquivo.Enabled := True;
+     Except
+        on Exc:Exception do
+        begin
+              Application.MessageBox(PChar('Error ao tentar gerar relatorio!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                //  Cancelar transação no BD.
+                Dm.SqlAdmin.Rollback(TD);
+                btArquivo.Enabled := True;
+        End;
+     End;
+end;
+
+End.

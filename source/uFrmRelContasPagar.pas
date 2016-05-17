@@ -1,0 +1,476 @@
+unit uFrmRelContasPagar;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls, Mask, ToolEdit, FMTBcd,
+  DB, SqlExpr, Provider, DBClient, ppDB, ppDBPipe, ppComm, ppRelatv,
+  ppProd, ppClass, ppReport, ppCtrls, ppPrnabl, ppBands, ppCache, ppVar;
+
+type
+  TfrmRelContasPagar = class(TForm)
+    PageControl1: TPageControl;
+    Panel2: TPanel;
+    BtSair: TBitBtn;
+    btImprimir: TBitBtn;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    rgTipos: TRadioGroup;
+    Label1: TLabel;
+    edtDTINIC: TDateEdit;
+    edtDTFINA: TDateEdit;
+    Label3: TLabel;
+    edtCDFORN: TEdit;
+    spLocFornecedor: TSpeedButton;
+    rbTipo2: TRadioGroup;
+    Label2: TLabel;
+    edtDTINIC2: TDateEdit;
+    edtDTFINA2: TDateEdit;
+    Label4: TLabel;
+    edtCDCLIE2: TEdit;
+    SpeedButton1: TSpeedButton;
+    lbl_NMFORN2: TLabel;
+    dstContas: TSQLDataSet;
+    dspContas: TDataSetProvider;
+    cdsContas: TClientDataSet;
+    dsAbertas: TDataSource;
+    Label5: TLabel;
+    cmbNMLOJA: TComboBox;
+    cdsContasPAG_LOJA: TIntegerField;
+    cdsContasEMP_FANTASIA: TStringField;
+    cdsContasPAG_NRENTRADA: TIntegerField;
+    cdsContasPAG_PARCELA: TStringField;
+    cdsContasPAG_DATACOMPRA: TDateField;
+    cdsContasPAG_DATAVENCIMENTO: TDateField;
+    cdsContasPAG_FORNECEDOR: TIntegerField;
+    cdsContasPAG_NRNOTA: TStringField;
+    cdsContasPAG_VALORPARCELA: TFMTBCDField;
+    cdsContasPAG_SITUACAO: TStringField;
+    cdsContasPAG_DATAPAGAMENTO: TDateField;
+    cdsContasPAG_VALORPAGO: TFMTBCDField;
+    cdsContasPAG_VALORDESCONTO: TFMTBCDField;
+    cdsContasPAG_VALORJUROS: TFMTBCDField;
+    cdsContasPAG_USUARIO: TIntegerField;
+    cdsContasFORNECEDOR: TStringField;
+    cdsContasDIAS: TFloatField;
+    ppReport1: TppReport;
+    ppDBPipeline1: TppDBPipeline;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBImage2: TppDBImage;
+    ppLabel5: TppLabel;
+    txtPeriodo: TppLabel;
+    lblSituacao: TppLabel;
+    ppLine1: TppLine;
+    ppLine2: TppLine;
+    ppLabel1: TppLabel;
+    ppLine6: TppLine;
+    ppLabel14: TppLabel;
+    ppSystemVariable3: TppSystemVariable;
+    ppLabel15: TppLabel;
+    ppSystemVariable4: TppSystemVariable;
+    ppSummaryBand1: TppSummaryBand;
+    ppLine3: TppLine;
+    ppLabel2: TppLabel;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppDBText4: TppDBText;
+    ppDBText5: TppDBText;
+    ppDBText6: TppDBText;
+    ppDBText7: TppDBText;
+    ppDBText8: TppDBText;
+    ppDBText9: TppDBText;
+    ppDBText10: TppDBText;
+    ppDBText11: TppDBText;
+    ppLabel3: TppLabel;
+    ppLabel4: TppLabel;
+    ppLabel6: TppLabel;
+    ppLabel7: TppLabel;
+    cdsContasPAG_DESCRICAO: TMemoField;
+    rbSituacao: TRadioGroup;
+    ppLabel8: TppLabel;
+    ppLabel9: TppLabel;
+    ppLabel10: TppLabel;
+    ppLabel11: TppLabel;
+    ppLabel12: TppLabel;
+    ppDBCalc1: TppDBCalc;
+    ppLabel13: TppLabel;
+    ppDBCalc2: TppDBCalc;
+    txtLoja: TppLabel;
+    lblData: TppLabel;
+    lblFornecedor: TppLabel;
+    Label6: TLabel;
+    lbl_NMFORN: TEdit;
+    ppDBCalc3: TppDBCalc;
+    ppDBCalc4: TppDBCalc;
+    ppDBCalc5: TppDBCalc;
+    procedure BtSairClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure edtDTINICExit(Sender: TObject);
+    procedure edtDTFINAExit(Sender: TObject);
+    procedure edtCDFORNKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCDCLIE2KeyPress(Sender: TObject; var Key: Char);
+    procedure edtDTINIC2Exit(Sender: TObject);
+    procedure edtDTFINA2Exit(Sender: TObject);
+    procedure btImprimirClick(Sender: TObject);
+    procedure cdsContasCalcFields(DataSet: TDataSet);
+    procedure edtCDFORNExit(Sender: TObject);
+    procedure edtCDFORNChange(Sender: TObject);
+    procedure spLocFornecedorClick(Sender: TObject);
+    procedure edtCDFORNEnter(Sender: TObject);
+  private
+    { Private declarations }
+     procedure LOJAS;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmRelContasPagar: TfrmRelContasPagar;
+
+implementation
+
+uses uFuncoes, Udm, udmConsulta, uFrmLocFornec, uFrmBuscaDados;
+
+{$R *.dfm}
+
+procedure TfrmRelContasPagar.BtSairClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmRelContasPagar.FormShow(Sender: TObject);
+begin
+     lbl_NMFORN.Clear;
+     //
+     LOJAS;
+     PageControl1.ActivePageIndex := 0;
+end;
+
+procedure TfrmRelContasPagar.edtDTINICExit(Sender: TObject);
+begin
+     If (edtDTINIC.Text <> '  /  /    ') Then
+     Begin
+          try
+              StrToDate(edtDTINIC.Text);
+              edtDTINIC.Text := DatetoStr(edtDTINIC.Date);
+              //
+           except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     edtDTINIC.Clear;
+                     edtDTINIC.SetFocus;
+                End;
+           end;
+     End;
+end;
+
+procedure TfrmRelContasPagar.edtDTFINAExit(Sender: TObject);
+begin
+     If (edtDTFINA.Text <> '  /  /    ') Then
+     Begin
+          try
+              StrToDate(edtDTFINA.Text);
+              edtDTFINA.Text := DatetoStr(edtDTFINA.Date);
+              //
+              If (edtDTFINA.Date < edtDTINIC.Date) Then
+              Begin
+                   Application.MessageBox(PChar('Perido final deve ser maior ou igual ao inicial!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                   edtDTFINA.Date := Date;
+                   edtDTFINA.SetFocus;
+                   Exit;
+              End;
+          except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     edtDTFINA.Clear;
+                     edtDTFINA.SetFocus;
+                End;
+           end;
+     End;
+end;
+
+procedure TfrmRelContasPagar.edtCDFORNKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+     If (key = #13) and not uFuncoes.Empty(edtCDFORN.Text) Then
+     Begin
+          Key := #0;
+     End;
+     //
+     If (key = #13) and uFuncoes.Empty(edtCDFORN.Text) Then
+     Begin
+          Key := #0;
+          spLocFornecedorClick(Sender);
+     End;
+end;
+
+procedure TfrmRelContasPagar.edtCDCLIE2KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+     If (key = #13) and not uFuncoes.Empty(edtCDCLIE2.Text) Then
+     Begin
+          Key := #0;
+     End;
+     //
+     If (key = #13) and uFuncoes.Empty(edtCDCLIE2.Text) Then
+     Begin
+          Key := #0;
+          //spLocClientesClick(Sender);
+     End;
+end;
+
+procedure TfrmRelContasPagar.edtDTINIC2Exit(Sender: TObject);
+begin
+     If (edtDTINIC2.Text <> '  /  /    ') Then
+     Begin
+          try
+              StrToDate(edtDTINIC2.Text);
+              edtDTINIC2.Text := DatetoStr(edtDTINIC2.Date);
+              //
+           except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     edtDTINIC2.Clear;
+                     edtDTINIC2.SetFocus;
+                End;
+           end;
+     End;
+end;
+
+procedure TfrmRelContasPagar.edtDTFINA2Exit(Sender: TObject);
+begin
+     If (edtDTFINA2.Text <> '  /  /    ') Then
+     Begin
+          try
+              StrToDate(edtDTFINA2.Text);
+              edtDTFINA2.Text := DatetoStr(edtDTFINA2.Date);
+              //
+              If (edtDTFINA2.Date < edtDTINIC2.Date) Then
+              Begin
+                   Application.MessageBox(PChar('Perido final deve ser maior ou igual ao inicial!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                   edtDTFINA2.Date := Date;
+                   edtDTFINA2.SetFocus;
+                   Exit;
+              End;
+          except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     edtDTFINA2.Clear;
+                     edtDTFINA2.SetFocus;
+                End;
+           end;
+     End;
+end;
+
+procedure TfrmRelContasPagar.LOJAS;
+begin
+     With dmConsultas.qryLoja do
+     Begin
+          SQL.Clear;
+          Close;
+          SQL.Add('Select EMP_CODIGO, EMP_FANTASIA from EMPRESAS');
+          SQL.Add('order by EMP_FANTASIA');
+          Open;
+          First;
+     End;
+     //
+     cmbNMLOJA.Clear;
+     While not (dmConsultas.qryLoja.Eof) do
+     Begin
+          cmbNMLOJA.Items.Add(dmConsultas.qryLoja.FieldByName('EMP_FANTASIA').AsString);
+          //
+          dmConsultas.qryLoja.Next;
+     End;
+end;
+
+procedure TfrmRelContasPagar.btImprimirClick(Sender: TObject);
+Var
+   M_TIPO, M_TEXTO : String;
+begin
+      //
+      If Empty(cmbNMLOJA.Text) Then
+       begin
+            cmbNMLOJA.SetFocus;
+            raise Exception.Create('Selecione o condominio.');
+       End;
+      //
+      If (btImprimir.CanFocus) Then
+         btImprimir.SetFocus;
+      try
+          btImprimir.Enabled := False;
+          //
+          If (rgTipos.ItemIndex = 0) Then
+            M_TIPO := 'E';
+          If (rgTipos.ItemIndex = 1) Then
+            M_TIPO := 'V';
+          If (rgTipos.ItemIndex = 2) Then
+            M_TIPO := 'P';
+          //
+          with cdsContas do
+            begin
+                 Active := False;
+                 M_TEXTO := 'Select CP.PAG_LOJA, EP.EMP_FANTASIA, CP.PAG_NRENTRADA, CP.PAG_PARCELA, CP.PAG_DATACOMPRA, CP.PAG_DATAVENCIMENTO , CP.PAG_FORNECEDOR, ';
+                 M_TEXTO := M_TEXTO + 'CP.PAG_NRNOTA, CP.PAG_DESCRICAO, CP.PAG_VALORPARCELA, CP.PAG_SITUACAO, CP.PAG_DATAPAGAMENTO, CP.PAG_VALORPAGO, CP.PAG_VALORDESCONTO, ';
+                 M_TEXTO := M_TEXTO + 'CP.PAG_VALORJUROS, CP.PAG_USUARIO, (Select F.FOR_FANTASIA FROM FORNECEDORES F WHERE (CP.PAG_FORNECEDOR = F.FOR_CODIGO)) AS fornecedor ';
+                 M_TEXTO := M_TEXTO + 'FROM CONTASPAGAR CP INNER join EMPRESAS EP ON CP.PAG_LOJA = EP.EMP_CODIGO ';
+                 M_TEXTO := M_TEXTO + 'WHERE (CP.PAG_LOJA = :pLOJA) ';
+                 //
+                 if (rbSituacao.ItemIndex = 0) Then
+                     M_TEXTO := M_TEXTO + 'AND (CP.PAG_SITUACAO = '+QuotedStr('A')+')';
+                 if (rbSituacao.ItemIndex = 1) Then
+                     M_TEXTO := M_TEXTO + 'AND (CP.PAG_SITUACAO = '+QuotedStr('P')+')';
+                 if (rbSituacao.ItemIndex = 2) Then
+                     M_TEXTO := M_TEXTO + 'AND ((CP.PAG_SITUACAO = '+QuotedStr('A')+') or (CP.PAG_SITUACAO = '+QuotedStr('P')+'))';
+                 // Data inicial
+                 If (edtDTINIC.Text <> '  /  /    ') Then
+                   if (rgTipos.ItemIndex = 0) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_DATACOMPRA >= :pDTINIC)';
+                   if (rgTipos.ItemIndex = 1) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_DATAVENCIMENTO >= :pDTINIC)';
+                   if (rgTipos.ItemIndex = 2) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_DATAPAGAMENTO >= :pDTINIC)';
+                 // Data Final
+                 If (edtDTFINA.Text <> '  /  /    ') Then
+                   if (rgTipos.ItemIndex = 0) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_DATACOMPRA <= :pDTFINA)';
+                   if (rgTipos.ItemIndex = 1) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_DATAVENCIMENTO <= :pDTFINA)';
+                   if (rgTipos.ItemIndex = 2) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_DATAPAGAMENTO <= :pDTFINA)';
+                 //
+                 If Not Empty(edtCDFORN.Text) Then
+                     M_TEXTO := M_TEXTO + ' and (CP.PAG_FORNECEDOR = '+QuotedStr(edtCDFORN.Text)+')'; 
+                 //
+                 M_TEXTO := M_TEXTO + ' order by CP.PAG_DATACOMPRA';
+                 CommandText := M_TEXTO;
+                 FetchParams;
+                 //
+                 Params.ParamByName('pLOJA').AsInteger := uFuncoes.CDLOJA(cmbNMLOJA.Text); 
+                 //
+                 If (edtDTINIC.Text <> '  /  /    ') Then
+                     Params.ParamByName('pDTINIC').AsDate := edtDTINIC.Date;
+                 If (edtDTFINA.Text <> '  /  /    ') Then
+                     Params.ParamByName('pDTFINA').AsDate := edtDTFINA.Date;
+                 // WHERE (CP.PAG_SITUACAO = :pSITUACAO)
+                 //Params.ParamByName('pSITUACAO').AsString := 'A';
+                 Active := true;
+                 //
+                 If not (IsEmpty) Then
+                  begin
+                       With ppReport1 do
+                        begin
+                             txtLoja.Caption    := 'CONDOMINIO : '+cmbNMLOJA.Text;   
+                             txtPeriodo.Caption := 'PERÍODO : '+ edtDTINIC.Text + ' À '+edtDTFINA.Text;
+                             if (rbSituacao.ItemIndex = 0) Then
+                                lblSituacao.Caption := 'SITUAÇÃO : ABERTAS';
+                             if (rbSituacao.ItemIndex = 1) Then
+                                lblSituacao.Caption := 'SITUAÇÃO : PAGAS';
+                             if (rbSituacao.ItemIndex = 2) Then
+                                lblSituacao.Caption := 'SITUAÇÃO : TODOS';
+                             //
+                             If (rgTipos.ItemIndex = 0) Then
+                               lblData.Caption := 'DATA : EMISSÃO';
+                             If (rgTipos.ItemIndex = 1) Then
+                               lblData.Caption := 'DATA : VENCIMENTO';
+                             If (rgTipos.ItemIndex = 2) Then
+                               lblData.Caption := 'DATA : PAGAMENTO';
+                             //
+                             if NOT Empty(edtCDFORN.Text) Then
+                               lblFornecedor.Caption := 'FORNECEDOR : '+lbl_NMFORN.Text
+                             Else
+                               lblFornecedor.Caption := '';
+                             //
+                             PrintReport;
+                        End;
+                  End
+                  Else
+                       Application.MessageBox(PChar('Não há movimento no período.'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+            End;
+      Finally
+          btImprimir.Enabled := True;
+      End;
+      Application.ProcessMessages;
+end;
+
+procedure TfrmRelContasPagar.cdsContasCalcFields(DataSet: TDataSet);
+begin
+     If (cdsContasPAG_SITUACAO.AsString = 'A') Then
+         cdsContasDIAS.AsFloat :=
+         Date() - cdsContasPAG_DATAVENCIMENTO.AsDateTime;
+     If (cdsContasPAG_SITUACAO.AsString = 'P') Then
+         cdsContasDIAS.AsFloat :=
+          cdsContasPAG_DATAPAGAMENTO.AsDateTime
+          - cdsContasPAG_DATAVENCIMENTO.AsDateTime;
+end;
+
+procedure TfrmRelContasPagar.edtCDFORNExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(edtCDFORN.Text) Then
+     Begin
+          If not (dmConsultas.GetFornecedor(StrtoInt(edtCDFORN.Text)))  Then
+          Begin
+              Application.MessageBox(PChar('Fornecedor não cadastrado!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+              lbl_NMFORN.Clear;
+              edtCDFORN.Clear;
+              edtCDFORN.SetFocus;
+              Exit;
+          End
+          else
+          Begin
+              edtCDFORN.Text  := uFuncoes.StrZero(edtCDFORN.Text,5);
+              lbl_NMFORN.Text := dmConsultas.qryConsulta.fieldByName('FOR_FANTASIA').asString;
+          End;
+    End;
+end;
+
+procedure TfrmRelContasPagar.edtCDFORNChange(Sender: TObject);
+begin
+     if Empty(edtCDFORN.Text) Then
+        lbl_NMFORN.Clear; 
+end;
+
+procedure TfrmRelContasPagar.spLocFornecedorClick(Sender: TObject);
+begin
+  edtCDFORN.SetFocus;
+  with TfrmBuscaFornec.create(self) do
+  try
+     showmodal;
+  finally
+        If not (cdsBusca.IsEmpty) Then
+        begin
+             edtCDFORN.Text     := StrZero(cdsBuscaFOR_CODIGO.AsString,6);
+             lblFornecedor.Caption := cdsBuscaFOR_FANTASIA.AsString;
+        End;
+      //
+      free;
+      //
+  end;
+  Perform(WM_NEXTDLGCTL, 0, 0);
+end;
+
+procedure TfrmRelContasPagar.edtCDFORNEnter(Sender: TObject);
+begin
+    lbl_NMFORN.Clear;
+end;
+
+end.

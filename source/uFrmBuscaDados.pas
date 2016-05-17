@@ -1,0 +1,83 @@
+unit uFrmBuscaDados;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, FMTBcd, DB, DBClient, Provider, SqlExpr, Grids, DBGrids,
+  StdCtrls, Buttons, ExtCtrls;
+
+type
+  TfrmBuscaDados = class(TForm)
+    Panel1: TPanel;
+    lblConsultar: TLabel;
+    edtConsultar: TEdit;
+    btnConsultar: TBitBtn;
+    grdConsultar: TDBGrid;
+    dstBusca: TSQLDataSet;
+    dspBusca: TDataSetProvider;
+    cdsBusca: TClientDataSet;
+    dsBusca: TDataSource;
+    procedure edtConsultarChange(Sender: TObject);
+    procedure edtConsultarKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtConsultarKeyPress(Sender: TObject; var Key: Char);
+    procedure grdConsultarDblClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+      W_NRFORM : Integer;
+  end;
+
+var
+  frmBuscaDados: TfrmBuscaDados;
+
+implementation
+
+uses uFuncoes, Udm;
+
+{$R *.dfm}
+
+procedure TfrmBuscaDados.edtConsultarChange(Sender: TObject);
+begin
+     If uFuncoes.Empty(edtConsultar.Text) Then
+     Begin
+          btnConsultar.Enabled := False;
+          cdsBusca.Close;
+     End
+     Else
+          btnConsultar.Enabled := True;
+end;
+
+procedure TfrmBuscaDados.edtConsultarKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+   If (cdsBusca.Active = True) Then
+   Begin
+     If (KEY = VK_LEFT) Then
+        cdsBusca.Prior;
+     If (KEY = VK_RIGHT) Then
+        cdsBusca.Next;
+   End;     
+end;
+
+procedure TfrmBuscaDados.edtConsultarKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If (Key = #37) Then
+       Key := #0;
+end;
+
+procedure TfrmBuscaDados.grdConsultarDblClick(Sender: TObject);
+begin
+   Close;
+end;
+
+procedure TfrmBuscaDados.FormShow(Sender: TObject);
+begin
+     cdsBusca.Close; 
+end;
+
+end.

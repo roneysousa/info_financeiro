@@ -1,0 +1,215 @@
+object frmStatusServico: TfrmStatusServico
+  Left = 192
+  Top = 122
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Status de Servi'#231'os'
+  ClientHeight = 339
+  ClientWidth = 492
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  ScreenSnap = True
+  ShowHint = True
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 492
+    Height = 298
+    Align = alClient
+    TabOrder = 0
+    object DBGServicos: TDBGrid
+      Left = 1
+      Top = 1
+      Width = 490
+      Height = 296
+      Align = alClient
+      DataSource = dsServicos
+      Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgCancelOnExit]
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'STS_NRMESA'
+          Title.Alignment = taCenter
+          Title.Caption = 'N'#186'.MESA'
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'Verdana'
+          Title.Font.Style = [fsBold]
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'STS_IDPRODUTO'
+          Title.Caption = 'C'#211'DIGO'
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'Verdana'
+          Title.Font.Style = [fsBold]
+          Width = 83
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PRO_DESCRICAO'
+          Title.Caption = 'DESCRI'#199#195'O'
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'Verdana'
+          Title.Font.Style = [fsBold]
+          Width = 247
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'STS_STDESC'
+          Title.Alignment = taCenter
+          Title.Caption = 'STATUS'
+          Title.Font.Charset = ANSI_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'Verdana'
+          Title.Font.Style = [fsBold]
+          Width = 53
+          Visible = True
+        end>
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 298
+    Width = 492
+    Height = 41
+    Align = alBottom
+    Color = 4194304
+    TabOrder = 1
+    object lblRegistro: TLabel
+      Left = 16
+      Top = 16
+      Width = 70
+      Height = 13
+      Caption = 'Registro(s) :'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object btnFechar: TBitBtn
+      Left = 396
+      Top = 8
+      Width = 75
+      Height = 25
+      Hint = 'Fechar esta janela'
+      Caption = '&Fechar'
+      TabOrder = 0
+      OnClick = btnFecharClick
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FF824B4B4E1E1FFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF824B4B824B4BA64B4BA9
+        4D4D4E1E1FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+        824B4B824B4BB64F50C24F50C54D4EB24D4E4E1E1F824B4B824B4B824B4B824B
+        4B824B4B824B4BFF00FFFF00FFFF00FF824B4BD45859CB5556C95455C95253B7
+        4F524E1E1FFE8B8CFB9A9CF8AAABF7B5B6F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BD75C5DD05A5BCF595ACF5758BD53564E1E1F23B54A13C14816BD480CBC
+        41F7B5B6824B4BFF00FFFF00FFFF00FF824B4BDD6364D75F60D55E5FD55C5DC2
+        575A4E1E1F2AB44D1CBF4C1EBC4C13BC45F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BE36869DD6566DA6364DE6667C6595B4E1E1F26B14916BC481BBB4910BB
+        43F7B5B6824B4BFF00FFFF00FFFF00FF824B4BEB6D6EE26768E67E7FFAD3D4CC
+        6E704E1E1FA5D89750D16F42C9662DC758F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BF27374E96C6DEB8182FCD1D3CF6E704E1E1FFFF2CCFFFFD7FFFFD4E6FC
+        C7F7B5B6824B4BFF00FFFF00FFFF00FF824B4BF87879F07576EE7273F07374D1
+        65664E1E1FFCEFC7FFFFD5FFFFD3FFFFD7F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BFE7F80F77A7BF6797AF77779D76B6B4E1E1FFCEFC7FFFFD5FFFFD3FFFF
+        D5F7B5B6824B4BFF00FFFF00FFFF00FF824B4BFF8384FC7F80FB7E7FFE7F80DA
+        6E6F4E1E1FFCEFC7FFFFD5FFFFD3FFFFD5F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BFF8889FF8283FF8182FF8283E073744E1E1FFCEFC7FFFFD5FFFFD3FFFF
+        D5F7B5B6824B4BFF00FFFF00FFFF00FF824B4B824B4BE27576FE8182FF8687E5
+        76774E1E1FFAEBC5FCFBD1FCFBCFFCFBD1F7B5B6824B4BFF00FFFF00FFFF00FF
+        FF00FFFF00FF824B4B9C5657CB6C6DCF6E6E4E1E1F824B4B824B4B824B4B824B
+        4B824B4B824B4BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF824B4B82
+        4B4B4E1E1FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+    end
+    object btnPronto: TBitBtn
+      Left = 214
+      Top = 8
+      Width = 75
+      Height = 25
+      Hint = 'Alterar status de servi'#231'o para pronto.'
+      Caption = '&Pronto'
+      TabOrder = 1
+      OnClick = btnProntoClick
+      Glyph.Data = {
+        76010000424D7601000000000000760000002800000020000000100000000100
+        0400000000000001000000000000000000001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333883333333
+        333333FF33333333333333008833333333333F88F33333333333302208866888
+        8888F8FF8F3FFFFFFFFF022A2088644444488FF8F8F78888888FA2A7A2088FF8
+        FF4888878F8F3773778F3A787A208888884838F338F8F333338F36FF8FA208F8
+        FF4838F7378F8F73778F3488887AA688884838F333788333338F34FF8FFF7FF8
+        FF4838F737773773778F348888888888884838F333333333338F34FF8FFF8FF8
+        FF4838FFFFFFFFFFFF8F3444444444444448388888888888888F347787778778
+        774838FF7FFF7FF7FF8F34444444444444433888888888888883333333333333
+        3333333333333333333333333333333333333333333333333333}
+      NumGlyphs = 2
+    end
+    object btnEntrege: TBitBtn
+      Left = 294
+      Top = 8
+      Width = 75
+      Height = 25
+      Hint = 'Alterar status de servi'#231'o para entrege.'
+      Caption = '&Entregue'
+      TabOrder = 2
+      OnClick = btnEntregeClick
+      Glyph.Data = {
+        06020000424D0602000000000000760000002800000028000000140000000100
+        0400000000009001000000000000000000001000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+        33333333333333333333333333333333333333333333333333FFFFFFFFFFFFFF
+        FFFF370000000000000000733777777777777777777F30911F11111111111103
+        37F7737777777777777F3099F0F999999999910337F337FF33333333377F309F
+        000F99999999910337F3777FF3333333377F30F00F00F9999999910337F77377
+        FF333333377F309FF9F00F999999910337F333377FF33333377F30999F9F00F9
+        9999910337FFF3F3773FFFFFF77F3011F0F1FF1111111103377737F733777777
+        777F309F000F99999999910337F3777FF3FFFFFFF77F30F00F00F11111111103
+        37F77377F7777777777F309FF9F00F999999910337FFFFF77FF3FFFFF77F3011
+        111F00F1111111033777777377377777777F30999999FF999999990337FFFFFF
+        FFFFFFFFFF7F3700000000000000007337777777777777777773333330033333
+        300333333333377FFFFFF77F3333333337000000007333333333377777777773
+        3333333333333333333333333333333333333333333333333333333333333333
+        33333333333333333333}
+      NumGlyphs = 2
+    end
+  end
+  object dsServicos: TDataSource
+    DataSet = dmDados.cdsListaServicos
+    OnDataChange = dsServicosDataChange
+    Left = 56
+    Top = 80
+  end
+end

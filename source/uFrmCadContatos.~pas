@@ -1,0 +1,483 @@
+unit uFrmCadContatos;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, uFrmCadastroAdm, FMTBcd, DBClient, Provider, DB, SqlExpr, Grids,
+  DBGrids, Buttons, StdCtrls, ExtCtrls, ComCtrls, DBCtrls, Mask, ToolEdit,
+  RXDBCtrl;
+
+type
+  TfrmCadContatos = class(TfrmCadastro)
+    cdsConsultarCON_CODIGO: TIntegerField;
+    cdsConsultarCON_NOME: TStringField;
+    Label2: TLabel;
+    dbeCDCLIE: TDBEdit;
+    Label3: TLabel;
+    dbeNMCONT: TDBEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    DBEdit5: TDBEdit;
+    Label6: TLabel;
+    DBEdit6: TDBEdit;
+    Label8: TLabel;
+    DBLookupComboBox1: TDBLookupComboBox;
+    DBText1: TDBText;
+    Label1: TLabel;
+    spLocCliente: TSpeedButton;
+    qryCliente: TSQLQuery;
+    lbl_NMCLIE: TLabel;
+    Label7: TLabel;
+    DBMemo1: TDBMemo;
+    dbeDTNASC: TDBDateEdit;
+    procedure BtAdicionarClick(Sender: TObject);
+    procedure BtEditarClick(Sender: TObject);
+    procedure BtExcluirClick(Sender: TObject);
+    procedure BtCancelarClick(Sender: TObject);
+    procedure BtGravarClick(Sender: TObject);
+    procedure btnConsultarClick(Sender: TObject);
+    procedure btnAlterarClick(Sender: TObject);
+    procedure spLocClienteClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dbeCDCLIEExit(Sender: TObject);
+    procedure DBMemo1KeyPress(Sender: TObject; var Key: Char);
+    procedure dbeCDCLIEKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeCDCLIEChange(Sender: TObject);
+    procedure edtConsultarKeyPress(Sender: TObject; var Key: Char);
+    procedure edtConsultarChange(Sender: TObject);
+    procedure dbeDTNASCExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+     novo, alterar, apagar : String;
+     procedure tratabotoes;
+     procedure buscar;
+     procedure Validar_Cliente;
+     procedure Localizar_Cliente(M_CDCONT : Integer);
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmCadContatos: TfrmCadContatos;
+
+implementation
+
+uses Udm, uFuncoes, uLocCliente, UFrmAdmin;
+
+{$R *.dfm}
+
+{ TfrmCadContatos }
+
+procedure TfrmCadContatos.buscar;
+begin
+  dm.CdsContatos.Close;
+  With dm.SdsContatos do
+  Begin
+       Active := False;
+       CommandText := 'Select * from CONTATOS '+
+                      'Where (CON_CODIGO = :pCODIGO)';
+       ParamByName('pCODIGO').AsString := cdsConsultar.FieldByName('CON_CODIGO').AsString;
+       Active := True;
+  End;
+  dm.CdsContatos.FetchParams; 
+  dm.CdsContatos.Open;
+      {With dm.CdsContatos do
+      begin
+           Active := False;
+           Params[0].AsInteger := cdsConsultarCON_CODIGO.AsInteger;
+           Active := True;
+           //
+           If (IsEmpty) Then
+             ShowMessage('Não encontrado.')
+      End;}
+//  Dm.Contatos_Cliente();
+end;
+
+procedure TfrmCadContatos.tratabotoes;
+begin
+   BtAdicionar.Enabled := not BtAdicionar.Enabled;
+   BtEditar.Enabled := not BtEditar.Enabled;
+   BtExcluir.Enabled := not BtExcluir.Enabled;
+   BtPesquisar.Enabled := not BtPesquisar.Enabled;
+   BtCancelar.Enabled := not BtCancelar.Enabled;
+   BtGravar.Enabled := not BtGravar.Enabled;
+   BtSair.Enabled := not BtSair.Enabled;
+   //
+   spLocCliente.Enabled := not spLocCliente.Enabled;
+end;
+
+procedure TfrmCadContatos.BtAdicionarClick(Sender: TObject);
+begin
+  inherited;
+  tratabotoes;
+  dm.parametros;
+  dm.CdsContatos.Append;
+  dm.CdsContatosCON_CODIGO.Value := dm.CdsConfigCFG_CONTATO.Value+1;
+  lbl_NMCLIE.Caption := '';
+  //
+  //spLocCliente.Enabled := True;
+  dbeCDCLIE.Enabled := True;
+  //
+  dbeCDCLIE.SetFocus;
+end;
+
+procedure TfrmCadContatos.BtEditarClick(Sender: TObject);
+begin
+  inherited;
+  tratabotoes;
+  dm.CdsContatos.Edit;
+  Localizar_Cliente(dm.CdsContatosCON_CODIGO.AsInteger);
+  //
+  //spLocCliente.Enabled := False;
+  dbeCDCLIE.Enabled := False;
+  //
+  dbeNMCONT.SetFocus;
+end;
+
+procedure TfrmCadContatos.BtExcluirClick(Sender: TObject);
+Var
+   iUsuario : Integer;
+   aCodigo : String;
+begin
+  inherited;
+  if dm.CdsContatos.RecordCount > 0 then
+     If Application.MessageBox('Deseja excluir contato?', 'Exclusão de registro',
+                    MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2+MB_APPLMODAL) = ID_YES Then
+     Begin
+           aCodigo  := uFuncoes.StrZero(dm.cdsFuncionariosFUN_CODIGO.AsString,5);
+           iUsuario := StrtoInt(UFrmAdmin.M_CDUSUA);
+           //
+           dm.CdsContatos.Delete;
+           dm.CdsContatos.ApplyUpdates(0);
+           //
+           If not (dm.IncluirTarefaUsuario(iUsuario,
+             'Excluiu Contato : '+aCodigo+' *F*')) Then
+              ShowMessage('Erro ao adicionar tarefa do usuário.');
+     end
+  else
+      Application.MessageBox('Não ha registro a ser excluido','ATENÇÃO',
+        MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+end;
+
+procedure TfrmCadContatos.BtCancelarClick(Sender: TObject);
+begin
+  inherited;
+  tratabotoes;
+  dm.CdsContatos.Cancel;
+  Localizar_Cliente(dm.CdsContatosCON_CODIGO.AsInteger);
+end;
+
+procedure TfrmCadContatos.BtGravarClick(Sender: TObject);
+Var
+   M_HOMOVI : String;
+   iUsuario : Integer;
+begin
+  If uFuncoes.Empty(dbeCDCLIE.Text) Then
+  Begin
+       Application.MessageBox('Digite o código do cliente!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+       dbeCDCLIE.SetFocus;
+       Exit;
+  End;
+  //
+  If uFuncoes.Empty(dbeNMCONT.Text) Then
+  Begin
+       Application.MessageBox('Digite o nome do contato!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+       dbeNMCONT.SetFocus;
+       Exit;
+  End;
+  //
+  Validar_Cliente;
+  //
+  iUsuario := StrtoInt(UFrmAdmin.M_CDUSUA);
+  //
+  Try
+    //
+    tratabotoes;
+    M_HOMOVI := Copy(TimetoStr(time),1,5);
+    //
+    if dm.CdsContatos.State in [dsinsert] then
+    begin
+      dm.parametros;
+      dm.CdsConfig.Edit;
+      dm.CdsConfigCFG_CONTATO.Value := dm.CdsConfigCFG_CONTATO.Value+1;
+      dm.CdsContatosCON_CODIGO.Value := dm.CdsConfigCFG_CONTATO.Value;
+      dm.CdsConfig.ApplyUpdates(0);
+      //
+      Dm.CdsContatosCON_DTCADA.AsDateTime := Date();
+      Dm.CdsContatosCON_HOCADA.AsString   := M_HOMOVI;
+      dm.CdsContatosCON_USUARIO_CAD.AsInteger := StrtoInt(uFrmAdmin.M_CDUSUA);
+      //
+      If not (dm.IncluirTarefaUsuario( iUsuario,
+          'Incluiu Contato : '+uFuncoes.StrZero(dm.CdsContatosCON_CODIGO.AsString,7)+' *F*')) Then
+            ShowMessage('Erro ao adicionar tarefa do usuário.');
+    end
+    Else
+    begin
+        If not (dm.IncluirTarefaUsuario( iUsuario,
+            'Alterou Contato : '+uFuncoes.StrZero(dm.CdsContatosCON_CODIGO.AsString,7)+' *F*')) Then
+               ShowMessage('Erro ao adicionar tarefa do usuário.');
+    End;
+    //
+    If (dm.CdsContatos.State in [dsEdit]) Then
+    begin
+      Dm.CdsContatosCON_DTALTE.AsDateTime := Date();
+      Dm.CdsContatosCON_HOALTE.AsString   := M_HOMOVI;
+      dm.CdsContatosCON_USUARIO_ALT.AsInteger := StrtoInt(uFrmAdmin.M_CDUSUA);
+    End;
+    //
+    dm.CdsContatos.Post;
+    dm.CdsContatos.ApplyUpdates(0);
+    //
+    Localizar_Cliente(dm.CdsContatosCON_CODIGO.AsInteger);
+    //
+  Except
+        on Exc:Exception do
+        begin
+           Application.MessageBox(PChar('Error ao tentar gravar registro.'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+           dm.CdsContatos.Cancel;
+        End;
+  End;
+  //
+  inherited;
+end;
+
+procedure TfrmCadContatos.btnConsultarClick(Sender: TObject);
+begin
+  inherited;
+  with cdsConsultar do
+  begin
+    Close;
+    CommandText := 'Select * from CONTATOS';
+    case rgConsultar.ItemIndex of
+      0: CommandText := CommandText + ' where CON_CODIGO = ' + edtConsultar.Text;
+      1: CommandText := CommandText + ' where UPPER(CON_NOME) like ' + QuotedStr(AnsiUpperCase(edtConsultar.Text) + '%');
+    end;
+    CommandText := CommandText + 'order by CON_NOME';
+    Open;
+    if IsEmpty then
+    begin
+      MessageDlg('Nenhum registro encontrado!' + #13 + 'Refaça a pesquisa', mtInformation, [mbOk], 0);
+      edtConsultar.Clear;
+      if edtConsultar.CanFocus then
+        edtConsultar.SetFocus;
+    end;
+  end;
+end;
+
+procedure TfrmCadContatos.btnAlterarClick(Sender: TObject);
+begin
+  inherited;
+  buscar;
+  PageControl1.ActivePageIndex := 0;
+  Localizar_Cliente(dm.CdsContatosCON_CODIGO.AsInteger);
+  dbeNMCONT.SetFocus;
+end;
+
+procedure TfrmCadContatos.Validar_Cliente;
+begin
+     with qryCliente do
+     begin
+          Close;
+          Params.ParamByName('pCODIGO').AsInteger := dm.CdsContatosCLI_CODIGO.Value;
+          Open;
+          //
+          if IsEmpty then
+          begin
+                Application.MessageBox('Código de cliente não encontrado!',
+                                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                qryCliente.Close;
+                lbl_NMCLIE.Caption := '';
+                dbeCDCLIE.Clear;
+                dbeCDCLIE.SetFocus;
+                Exit;
+         end
+         Else
+            lbl_NMCLIE.Caption := FieldByName('CLI_FANTASIA').AsString;
+  end;
+end;
+
+procedure TfrmCadContatos.spLocClienteClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmLocCliente.create(self) do
+  try
+    uLocCliente.M_NRFROM := 1;
+    showmodal
+  finally
+    free;
+    Localizar_Cliente(dm.CdsContatosCON_CODIGO.AsInteger);
+  end;
+end;
+
+procedure TfrmCadContatos.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+    dm.CdsContatos.Close;
+    Action := caFree;    
+end;
+
+procedure TfrmCadContatos.dbeCDCLIEExit(Sender: TObject);
+begin
+  inherited;
+   If (dm.CdsContatos.State in [dsInsert, dsEdit])
+   and not uFuncoes.Empty(dbeCDCLIE.Text) then
+      Validar_Cliente;
+end;
+
+procedure TfrmCadContatos.Localizar_Cliente(M_CDCONT : Integer);
+begin
+     with qryCliente do
+     begin
+          Close;
+          Params.ParamByName('pCODIGO').AsInteger := M_CDCONT;
+          //dm.CdsContatosCLI_CODIGO.Value;
+          Open;
+          //
+          if not IsEmpty then
+             lbl_NMCLIE.Caption := FieldByName('CLI_FANTASIA').AsString
+          Else
+             lbl_NMCLIE.Caption := '';
+     end;
+end;
+
+procedure TfrmCadContatos.DBMemo1KeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+      Key:= Upcase(Key);
+end;
+
+procedure TfrmCadContatos.dbeCDCLIEKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+     If (key = #13) and uFuncoes.Empty(dbeCDCLIE.Text) Then
+     Begin
+          Key := #0;
+          spLocClienteClick(Sender);
+     End;
+end;
+
+procedure TfrmCadContatos.dbeCDCLIEChange(Sender: TObject);
+begin
+  inherited;
+    If uFuncoes.Empty(dbeCDCLIE.Text) Then
+       lbl_NMCLIE.Caption := '';
+end;
+
+procedure TfrmCadContatos.edtConsultarKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key =#13 then
+  begin
+    key :=#0;
+    Perform(Wm_NextDlgCtl,0,0);
+  end;
+end;
+
+procedure TfrmCadContatos.edtConsultarChange(Sender: TObject);
+begin
+     btnConsultar.Enabled := (edtConsultar.Text <> '');
+     If not uFuncoes.Empty(edtConsultar.Text) Then
+     Begin
+          with cdsConsultar do
+          begin
+               Close;
+               CommandText := 'Select CON_CODIGO, CON_NOME from CONTATOS';
+               case rgConsultar.ItemIndex of
+                 0: CommandText := CommandText + ' where CON_CODIGO = ' + edtConsultar.Text;
+                 1: CommandText := CommandText + ' where UPPER(CON_NOME) like ' + QuotedStr(AnsiUpperCase(edtConsultar.Text) + '%');
+               end;
+               CommandText := CommandText + 'order by CON_NOME';
+               Open;
+          end;
+     End;
+     //
+     If uFuncoes.Empty(edtConsultar.Text) Then
+       cdsConsultar.Close;
+  inherited;
+end;
+
+procedure TfrmCadContatos.dbeDTNASCExit(Sender: TObject);
+begin
+  inherited;
+     If (dbeDTNASC.Text <> '  /  /    ') and (Dm.DsContatos.State in [dsInsert, dsEdit]) Then
+     Begin
+          try
+              StrToDate(dbeDTNASC.Text);
+              dbeDTNASC.Text := DatetoStr(dbeDTNASC.Date);
+              //
+           except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     dbeDTNASC.Clear;
+                     dbeDTNASC.SetFocus;
+                End;
+           end;
+     End;
+end;
+
+procedure TfrmCadContatos.FormShow(Sender: TObject);
+begin
+  inherited;
+     dm.RefreshCDS(Dm.CdsConfig);
+     //
+     If (dm.CdsConfigCFG_CONTATO.AsInteger = 0) Then
+         dm.CdsContatos.Open
+     Else
+     Begin
+         With dm.CdsContatos Do
+         begin
+             Active := False;
+             Params.ParamByName('PCODIGO').AsInteger :=
+               uFuncoes.mvcodigo('CON_CODIGO','CONTATOS');
+               //dm.CdsConfigCFG_CONTATO.AsInteger;
+             Active := True;
+         End;
+         //
+         //Dm.Contatos_Cliente(uFuncoes.mvcodigo('CON_CODIGO','CONTATOS'));
+         //
+         Localizar_Cliente(dm.CdsContatosCON_CODIGO.AsInteger);
+     End;
+end;
+
+procedure TfrmCadContatos.FormCreate(Sender: TObject);
+begin
+  inherited;
+   If not (UFrmAdmin.admin) Then
+   begin
+     novo    := UFrmAdmin.aNovo;
+     alterar := UFrmAdmin.aAlterar;
+     apagar  := UFrmAdmin.aApagar;
+     //
+     If Empty(novo) or Empty(alterar) or Empty(apagar) Then
+     begin
+           dm.Verificar_Direitoa_Acesso(
+            Strtoint(UFrmAdmin.M_CDUSUA), Dm.GetCodMenu('Agenda de contatos...'));
+           //
+           novo    := UFrmAdmin.aNovo;
+           alterar := UFrmAdmin.aAlterar;
+           apagar  := UFrmAdmin.aApagar;
+           //
+     End;
+     //
+     FrmAdmin.Limpar_Acessos;
+     //
+     BtAdicionar.Visible := (novo = 'S');
+     BtEditar.Visible    := (alterar = 'S');
+     BtExcluir.Visible   := (apagar = 'S');
+     //
+  End;
+end;
+
+End.

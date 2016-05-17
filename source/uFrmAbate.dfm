@@ -1,0 +1,602 @@
+inherited frmCadAbate: TfrmCadAbate
+  Left = 193
+  Top = 196
+  Caption = 'Abate'
+  ClientHeight = 435
+  ClientWidth = 585
+  OldCreateOrder = True
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited PageControl1: TPageControl
+    Width = 585
+    Height = 406
+    OnChange = PageControl1Change
+    inherited TabSheet1: TTabSheet
+      inherited Panel1: TPanel
+        Top = 336
+        Width = 577
+        inherited BtEditar: TBitBtn
+          Visible = False
+        end
+        inherited BtExcluir: TBitBtn
+          Visible = False
+        end
+        inherited BtPesquisar: TBitBtn
+          Visible = False
+        end
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 0
+        Width = 577
+        Height = 137
+        Align = alTop
+        TabOrder = 1
+        object Label2: TLabel
+          Left = 12
+          Top = 48
+          Width = 90
+          Height = 13
+          Caption = 'Descri'#231#227'o do Tipo:'
+        end
+        object Label5: TLabel
+          Left = 12
+          Top = 91
+          Width = 27
+          Height = 13
+          Caption = 'Peso:'
+          Transparent = True
+        end
+        object Label3: TLabel
+          Left = 137
+          Top = 91
+          Width = 59
+          Height = 13
+          Caption = 'Peso M'#233'dio:'
+          Transparent = True
+        end
+        object Label7: TLabel
+          Left = 116
+          Top = 108
+          Width = 18
+          Height = 13
+          Caption = 'KG'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
+        end
+        object Label9: TLabel
+          Left = 240
+          Top = 108
+          Width = 18
+          Height = 13
+          Caption = 'KG'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
+        end
+        object Label1: TLabel
+          Left = 12
+          Top = 9
+          Width = 23
+          Height = 13
+          Caption = 'Loja:'
+        end
+        object Image1: TImage
+          Left = 408
+          Top = 8
+          Width = 153
+          Height = 113
+          Picture.Data = {
+            0A544A504547496D616765EA0D0000FFD8FFE000104A46494600010100000100
+            010000FFDB004300080606070605080707070909080A0C140D0C0B0B0C191213
+            0F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F2739
+            3D38323C2E333432FFDB0043010909090C0B0C180D0D1832211C213232323232
+            3232323232323232323232323232323232323232323232323232323232323232
+            32323232323232323232323232FFC00011080068008C03012200021101031101
+            FFC4001B00000105010100000000000000000000000500010406070203FFC400
+            3C10000201030302040207050705000000000102030004110512210631134151
+            6122711432428191A1D1151623C1F007335282B1B2E124437292A2FFC4001901
+            00030101010000000000000000000000010203040005FFC40024110002020201
+            04020301000000000000000001021103211213314151046114227142FFDA000C
+            03010002110311003F00AA5CDEDCC32BAAC6E659D704A1C8551E7838CF14220B
+            AB5B8B89E5B94452A99121CFC6C38E07E7E58E6B65D43A6EC2F2CA5823896191
+            C9612A8E436319F71ED55AB9E817FA2A88CC324BE2618EDC6E5DE304E3CF19CF
+            AE3E748FE34919F9A2AB2EA56D716860B880B2B1567689846243E44ED27B7A73
+            DE8749A4EA1A46B896661625BE288265F7861E59F4FC456ADA7F485B5BE9E967
+            76E2E96170F0BEDD8CA7DF1DEA5EADA28D474FF043B24B11DF0B633B1C7620FE
+            B54FC66D6D9CB253D196699A7EA134C1ED59D5C9218900BE47751EF5A0D97446
+            9E1A2B9BD579EE0A219565390580E7F3A869A26A1258BCB378F697F032C9E244
+            72ACDDCB607D6F2CFE147741D5EE3505782F2D8C37310F8994E51F9C647391F2
+            3470E18C5FEC8E9C9BEC14B4B586CE010DBA6C8C7650781523F1AE40AE80AD84
+            463F7D79CD711DBA6E91B1E83CCD7A81514595D5EDDB8F09BC207018FA7B54F2
+            4F8AB298B1F3951E0BAA248EC150851F698E335EC9768C32D941EA7B54A6D19B
+            250C7B547905C52974F8A30031C01E7E95059A4697F1E15A22DCA4D3405209C4
+            4E7EDEDDD81F88A037963A95A22CE351491438DE5D4C7804E325813459E4FA29
+            211B23FC27F950EEA1B7B9BEE9FB9B45706572AD81C6307CA9A7922E37E44862
+            9465F45BAC6DE27D323960659E3ECCEC376E39E79A89AD69B1359092C504321E
+            18AF9567FD27A86A91DB43E06A52C32405A092D66198DC6490C47AF38CFB568F
+            24EAB6CB1C9216775CED51B989F602A2B2B5BB2AE316B6667716ED6D3C80CCC4
+            0C87C0C82DED4325B9B5DF872E4818E54D10D32283418AEFE9167706E9656C28
+            24091727048278E31C62AABAA5EDD3EA123C501B746E444ABC2D464D3645E34B
+            B3372238A4AA49C01CD4692FA08D8AB48323B8A35D3A91DE4CF718CAC58C023C
+            CD7A7274AC8A8DBA3D6D7429648C3CAE23CF206326A5C7D3F106CC933B0F4000
+            A2C1B35CB4B83C73599E49334AC71211D16CF6E36367D771CD446E9E8B71314B
+            B73DF2B9A33BB776AE81A0A725E42E11F403FDDE3E573FFC7FCD3AF4F71CDC67
+            E49FF34701F953F7A3D497B074E3E80ABA045E733FE02A641671DB1C44A540EE
+            09273536988CD2B937DC68C547B11250189079F4AAF6A20FC583820559258998
+            F07142B54B44F05DF1F11520D2B2A8CFEF675B7BB79246CAA464F3E7C8FD6BCA
+            EB561F1481B96F8171F3CFF2AE35AD367B88E74452485C9F6CD55AF7C7B75B68
+            F9DC07C5DF83FA52B673D1334BBE365A91DA43452F0B9032A4F3C7DF5AE69114
+            167A235C5B112DC34658BC87966C7009F2158E74E5D4173AA1B2B84464F2DA31
+            47BAB3758CF069766C52378FC599A3721B0DD8119C7AFE549692E423AAB605D4
+            BADE7D6F5B16D79A7DAC53A823742D9231E44F9D0BB9B9BAF1C84076FB0A65B5
+            B1B11F488919E539019CE49F5AF3175BF92CAA4718CD45BE4ECCF2A6ED234596
+            D99D0CCC42293938EF578E9331A68DBC7FDC909E4FA71FCAA8B3DE1842DB942A
+            7B30F2C55ABA7265FD8902A820067033FF0091AF533BA88F895B2D6CDB8803F2
+            34CCCAA3E2E0FCE869B9689370EC2BCA5D491D7FBC033D80359B916A0BDBB139
+            C8E0F6A91506D9DFC20C471EB5204809C6467E7440CF607DA9573B80AF377C0C
+            83CFA5038F6CD3E302A1A5C12C41EF8E0549DD95CD71C7329210E0738A0DA8BB
+            13E196EFCE051492E1151CB1036F7CD566F6F704DC6D262407E219E6B98D1214
+            611B53983AE10C2579F518FD4D537A8EC4F8ECA919578D7E1607BFFCD155D4A7
+            925694479DCFC0C7353EE2CBF68429104FE380189F7E326958CF6517A3ADA28E
+            F2EB51BAC2C48FF589E063FA152353BC4D4355B9BBDBF0CCD9527FC23803F0A9
+            5D436115B4F6F6F12ED44560D10FAADEE7F1A01768D96232E7B2A8A8647BE266
+            C8FF00C9E84DADDED42C8DB73C6718A0376B0A5CB88C965CF1B4D7AB5A5C4AEC
+            618995C1C6E35397488A450D22C61FED609233F8D22A44F51F25EF53B572D867
+            CFA7A8AB174BBB3E8CE58731C8CA41F903437508DF76D6888C77F5AE7A72E96D
+            E782D3254DC4936067D0211FED35E9E7DC745713A61DBDB895711C432C7C8F6A
+            0567A4DFDFEB1B9DFF00868E19F0DC01E95649F4AF1CBCAF2300A0918355DBCE
+            AED23A374E2D75334F75392E218F96C7619F4AC9FD341763234318507D87150C
+            6AA236218F00D64517F6C5AC5D5EB2DB69714B6E4F113B1661FE61FA54F1D6B2
+            6AA46EB66B593ED293915DCD0346B29A945220CBA92790334CF7A9C92C0003B5
+            660BADCE08024553F3A797A86E02FC774AA31E6451E60D17A96EAE6676168406
+            11E727B5592D72F6B0B3FD6DA0B01DB3E75905BF5C2DAAB27D26266231BBD3F5
+            ABFF0045EBA359D31FF888ED090A4A9CF7CD74656CE7D895D436E5ECA42B2EC2
+            7B002A8B797B7A48B0DDB978C9C63356EEA2BC2D14B129656C7041C62A91A3EA
+            3669248F74CCF331CE59A8B7B0AEC18B5B58ADB4F9262774ACA78F21E547749B
+            446B48DF71F16555271E4315C5969F1DE68F3CE401E229F0D4790A956D2C314A
+            A471143FED0A4D737B0F829FD756CB6FAADB945E5A363DFDC7E954D95F63EE28
+            5881DFD289752F530D675A92687E185142286F3C7BFCC9A0175A8C002030B12F
+            F67762B2CF72D19276E4468B5833398A58B3BB8E0E2A1AEA6F017458D186E272
+            69EF23DF346D023C724DF5500F2A6BED3DA39C0481B1B47638E7CE8D2F4151F3
+            469CFD452DEC4B3CD1C431CED2A5587E7427A735037DD7F6F0230D8A490A7EF2
+            7F214ED1CBD88523DAA4746E93169DD4B1CF113E3CEC54BB1CED07D3FAF3ABBF
+            90A4D243276CD07A82F45AE9B32A0CB6D358175259B4AED2B9E643C56E1D591D
+            C5E1B6B582602291CAB8039E06491EBC66B36D7B4F1A8F5380ABE1DBC71A9319
+            1C8C7007DF43232DE2C0FA374F4967A709F66E655F118E7047F5C54EF0A68664
+            2ABB9DE366DA7ED639A30D1C8D1B21721586D2071C533DB995E362C7746A541F
+            63DEA5CE3DC9F25DC1497BA6DD5B2990C91B15DDB0F97C8D0E792CA519B7B579
+            14AE77C8DDB8F21DE8F3E910BA246541541C0C53A6951A2B6D50370C1E3FAF5A
+            1D489DD4453E73FF0056890A050467000ABE7F65DA8787D4F71687E159ECC903
+            3DDD48C71F22D4264E9E81E48DC31531AED18344FA674B4D37AA34FBB8E42BB5
+            C2367CC1E0E7F1A68CE368E52565DFA949B7D3A762B86F2F7C9ACD34FB953304
+            B9F053E4B8AD2FAF19134CC1B8556665001600F27D3CEB3AD5B4A11012C8BB08
+            40E4FB119AACBB942F3FBC56B692A58DB38689976E54E42F1C555F51EB0FA243
+            7115A49278EF1C6ADF070176E1B07CBC867DCD71183169A2DA08A08CB0F8A7DB
+            B9CFA632702868D1402487DCC400CCDC96E73FCAA2F2C7D81E54BB001EEE3BAB
+            278A1B60AC809DDE7C735C4B788CAADF468DC786093E639A352E80C6E2492297
+            C30E49C0F2CD710F4F4912ED6995D3685C11EF9A1D48FB13A9F641324D30FA5A
+            18A3689B60F8719E339A78D0DEC492C97E81F1823B5143A348D6EF13CA18BBEF
+            DDB71838C540FDD690138BAE33E42B94E3EC1D4FB2CBBD87D6618A9FA24C175B
+            B2C773328FCEB3AFDBF3A704E73E64518E95D4A7BAEA9D3137F0D709FEB528C5
+            A689C5B4CD765831D4B0C40FF105B49203E8C4819FC09AA15EC6D65AB5DACB20
+            92467E5B18F2CD6813143D6D0387185B09370CF23E34E7FD6B21EAFD5639BA86
+            E4DACC59070769EC4569CAB5A2D36F88645C126BA329C6738AA426A773B8012B
+            66A58BEBA316E6B8C67CAB2B8B333B2DA26E7EB577E36D1FAD531752BCDF80EE
+            7EEAEFE95738E5E5143833BF62E0261DF22B96BC4471F180DDC73551171724FC
+            523E29944D2CEA81892CC00C9F5345418572344EB8B48EE750D1F509A56C785E
+            2843F572403FEA6A3F54E982EB42D3AEDA62B0CD1A2CB83DC0F2FBC50AEBEEA0
+            8AEB59B7D22020C5689E1642F98C0EFE9C51BEB0BCB6B6E89D374D877B48E916
+            0AA139000C93E95A5ADB34EEDFF00CB796E005564C0E00CD7AACCAC38C1F9554
+            96DE4F51F7D7BA0BC4E519AB370336CB47898C8C8A464F87CE80ADCDEA29F3FB
+            8D488EF6503E3490FAE050E2C1B0A1627CEB904FAD416BE247F712F7F4A65BA7
+            619FA34BFF00AD1A61A395E9BB051C8773E649A9167A6DBE9D7715CDAC7FC689
+            83A9663C1A54AB949D97495849EE2683AB1B538EE679E39A111C89B46D51FE1C
+            93923E5E742468F646EA775B15489DB72E652C493EBC71F9D2A55494DB19ED51
+            EC348B3C802DA3F9D75FB2ADBB0B78C0F3F86952A9DB1290EBA5DAA920C510FF
+            0020AEFF00665B30FA887D828FD3DA952A16CEA43B6976BDF68C6EF2C7E949B4
+            FB7E7E01F71C52A54D6148F4B88DAE995E49586D5DA318E476E78AF647923B13
+            68B2BAC07394CF707BFBD2A545C9FB1EC8CB6368189118DC7BFF003A73616E18
+            9F0F0C0F34A9505B02433D9C2594B44081DBDEB9FA3C010288C019F5A54A8D1D
+            48E05AC1C80A73DCF34C2DEDB037C6738F534A9501691FFFD9}
+          Stretch = True
+        end
+        object cmbTipo: TDBLookupComboBox
+          Left = 12
+          Top = 65
+          Width = 373
+          Height = 21
+          DataField = 'ABT_TPDESCRICAO'
+          DataSource = Dm.dsAbate
+          ReadOnly = True
+          TabOrder = 1
+          OnClick = cmbTipoClick
+          OnExit = cmbTipoExit
+          OnKeyPress = cmbTipoKeyPress
+        end
+        object dbePeso: TDBEdit
+          Left = 13
+          Top = 105
+          Width = 100
+          Height = 21
+          DataField = 'ABT_PESO'
+          DataSource = Dm.dsAbate
+          TabOrder = 2
+          OnChange = dbePesoChange
+          OnEnter = dbePesoEnter
+          OnExit = dbePesoExit
+          OnKeyPress = dbePesoKeyPress
+        end
+        object dbePesoMedio: TDBEdit
+          Left = 136
+          Top = 105
+          Width = 100
+          Height = 21
+          TabStop = False
+          Color = clSilver
+          DataField = 'ABT_PESOMEDIO'
+          DataSource = Dm.dsAbate
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 3
+          OnKeyPress = dbePesoMedioKeyPress
+        end
+        object cmbLoja: TComboBox
+          Left = 13
+          Top = 24
+          Width = 372
+          Height = 22
+          Style = csOwnerDrawFixed
+          Enabled = False
+          ItemHeight = 16
+          TabOrder = 0
+        end
+      end
+      object Panel6: TPanel
+        Left = 0
+        Top = 137
+        Width = 577
+        Height = 163
+        Align = alClient
+        TabOrder = 2
+        object dbGridDados: TDBGrid
+          Left = 1
+          Top = 1
+          Width = 575
+          Height = 161
+          Align = alClient
+          DataSource = dsDerivados
+          TabOrder = 0
+          TitleFont.Charset = ANSI_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = []
+          OnColEnter = dbGridDadosColEnter
+          OnEnter = dbGridDadosEnter
+          OnKeyPress = dbGridDadosKeyPress
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'DER_PRODUTO'
+              ReadOnly = True
+              Title.Caption = 'C'#211'DIGO'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DER_PRONOME'
+              ReadOnly = True
+              Title.Caption = 'DESCRI'#199#195'O'
+              Width = 229
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DER_QUANTIDADE'
+              ReadOnly = True
+              Title.Caption = 'QUANTIDADE'
+              Width = 80
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DES_PESOAPOSABATE'
+              ReadOnly = True
+              Title.Alignment = taRightJustify
+              Title.Caption = 'KG'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DER_PESO'
+              Title.Caption = 'PESO'
+              Width = 80
+              Visible = True
+            end>
+        end
+      end
+      object Panel7: TPanel
+        Left = 0
+        Top = 300
+        Width = 577
+        Height = 36
+        Align = alBottom
+        TabOrder = 3
+        Visible = False
+        object Label4: TLabel
+          Left = 7
+          Top = 11
+          Width = 47
+          Height = 13
+          Caption = 'PERDA:'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
+        end
+        object Label6: TLabel
+          Left = 174
+          Top = 11
+          Width = 18
+          Height = 13
+          Caption = 'KG'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
+        end
+        object edtPerda: TCurrencyEdit
+          Left = 60
+          Top = 7
+          Width = 111
+          Height = 21
+          TabStop = False
+          AutoSize = False
+          Color = clSilver
+          DisplayFormat = ',0.00;-,0.00'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+        end
+      end
+    end
+    inherited TabSheet2: TTabSheet
+      TabVisible = False
+      inherited Panel2: TPanel
+        Width = 577
+        inherited btnConsultar: TBitBtn
+          OnClick = btnConsultarClick
+        end
+      end
+      inherited Panel3: TPanel
+        Left = 543
+        Height = 318
+      end
+      inherited grdConsultar: TDBGrid
+        Width = 543
+        Height = 318
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'PER_SEQUENCIA'
+            Title.Caption = 'C'#211'DIGO'
+            Width = 47
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PED_DESCRICAO'
+            Title.Caption = 'DESCRI'#199#195'O'
+            Width = 453
+            Visible = True
+          end>
+      end
+    end
+  end
+  inherited Panel4: TPanel
+    Width = 585
+  end
+  inherited datasetConsultar: TSQLDataSet
+    CommandText = 'select * from PERDAS'
+    MaxBlobSize = -1
+    SQLConnection = Dm.SqlAdmin
+  end
+  inherited dspConsultar: TDataSetProvider
+    Left = 292
+  end
+  inherited cdsConsultar: TClientDataSet
+    Left = 324
+    object cdsConsultarPER_SEQUENCIA: TIntegerField
+      FieldName = 'PER_SEQUENCIA'
+      Required = True
+      DisplayFormat = '000'
+    end
+    object cdsConsultarPED_DESCRICAO: TStringField
+      FieldName = 'PED_DESCRICAO'
+      Size = 40
+    end
+  end
+  object dstDerivados: TSQLDataSet
+    CommandText = 'select * from DERIVADOS Where (DER_ID = :pID)'
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'pID'
+        ParamType = ptInput
+        Value = 0
+      end>
+    SQLConnection = Dm.SqlAdmin
+    Left = 244
+    Top = 231
+    object dstDerivadosDER_ID: TIntegerField
+      FieldName = 'DER_ID'
+    end
+    object dstDerivadosDER_DESCRICAO: TStringField
+      FieldName = 'DER_DESCRICAO'
+      Size = 40
+    end
+    object dstDerivadosDER_PRODUTO: TStringField
+      FieldName = 'DER_PRODUTO'
+      Size = 13
+    end
+    object dstDerivadosDER_QUANTIDADE: TFMTBCDField
+      FieldName = 'DER_QUANTIDADE'
+      Precision = 15
+      Size = 3
+    end
+    object dstDerivadosDER_PECENTUAL: TFMTBCDField
+      FieldName = 'DER_PECENTUAL'
+      Precision = 15
+      Size = 2
+    end
+    object dstDerivadosDER_MARGEMERRO: TFMTBCDField
+      FieldName = 'DER_MARGEMERRO'
+      Precision = 15
+      Size = 3
+    end
+    object dstDerivadosDER_PESO: TFMTBCDField
+      FieldName = 'DER_PESO'
+      Precision = 15
+      Size = 3
+    end
+  end
+  object dspDerivados: TDataSetProvider
+    DataSet = dstDerivados
+    Options = [poAllowCommandText]
+    Left = 292
+    Top = 231
+  end
+  object cdsDerivados: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspDerivados'
+    OnCalcFields = cdsDerivadosCalcFields
+    Left = 332
+    Top = 231
+    object cdsDerivadosDER_ID: TIntegerField
+      FieldName = 'DER_ID'
+      ProviderFlags = [pfInUpdate]
+    end
+    object cdsDerivadosDER_DESCRICAO: TStringField
+      FieldName = 'DER_DESCRICAO'
+      ProviderFlags = [pfInUpdate]
+      Size = 40
+    end
+    object cdsDerivadosDER_PRODUTO: TStringField
+      FieldName = 'DER_PRODUTO'
+      ProviderFlags = [pfInUpdate]
+      Size = 13
+    end
+    object cdsDerivadosDER_QUANTIDADE: TFMTBCDField
+      FieldName = 'DER_QUANTIDADE'
+      ProviderFlags = [pfInUpdate]
+      Precision = 15
+      Size = 3
+    end
+    object cdsDerivadosDER_PECENTUAL: TFMTBCDField
+      FieldName = 'DER_PECENTUAL'
+      ProviderFlags = [pfInUpdate]
+      Precision = 15
+      Size = 2
+    end
+    object cdsDerivadosDER_PRONOME: TStringField
+      FieldKind = fkLookup
+      FieldName = 'DER_PRONOME'
+      LookupDataSet = Dm.qryProdutos
+      LookupKeyFields = 'PRO_CODIGO'
+      LookupResultField = 'PRO_DESCRICAO'
+      KeyFields = 'DER_PRODUTO'
+      Size = 40
+      Lookup = True
+    end
+    object cdsDerivadosDES_PESOAPOSABATE: TFloatField
+      FieldKind = fkCalculated
+      FieldName = 'DES_PESOAPOSABATE'
+      Calculated = True
+    end
+    object cdsDerivadosDER_MARGEMERRO: TFMTBCDField
+      FieldName = 'DER_MARGEMERRO'
+      ProviderFlags = [pfInUpdate]
+      Precision = 15
+      Size = 3
+    end
+    object cdsDerivadosDER_PESO: TFMTBCDField
+      FieldName = 'DER_PESO'
+      ProviderFlags = [pfInUpdate]
+      DisplayFormat = '###,##0.#00'
+      EditFormat = '###,##0.#00'
+      Precision = 15
+      Size = 3
+    end
+  end
+  object dsDerivados: TDataSource
+    DataSet = cdsDerivados
+    Left = 164
+    Top = 231
+  end
+  object qryProcura: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'pTIPO'
+        ParamType = ptInput
+        Value = 0
+      end>
+    SQL.Strings = (
+      'Select ABT_TIPO from ABATE Where (ABT_TIPO = :pTIPO)')
+    SQLConnection = Dm.SqlAdmin
+    Left = 396
+    Top = 206
+  end
+  object qrySoma: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'pID'
+        ParamType = ptInput
+        Value = 0
+      end>
+    SQL.Strings = (
+      'Select SUM(DER_PESO) as SOMA from DERIVADOS'
+      'Where (DER_ID = :pID)')
+    SQLConnection = Dm.SqlAdmin
+    Left = 396
+    Top = 239
+    object qrySomaSOMA: TFMTBCDField
+      FieldName = 'SOMA'
+      Precision = 15
+      Size = 3
+    end
+  end
+end

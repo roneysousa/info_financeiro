@@ -1,0 +1,110 @@
+unit uFrmExcluirFatura;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, Buttons;
+
+type
+  TfrmExcluirFatura = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    btnExcluir: TBitBtn;
+    btnFechar: TBitBtn;
+    Label1: TLabel;
+    edtNRFATU: TEdit;
+    procedure btnFecharClick(Sender: TObject);
+    procedure edtNRFATUKeyPress(Sender: TObject; var Key: Char);
+    procedure edtNRFATUExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmExcluirFatura: TfrmExcluirFatura;
+
+implementation
+
+uses Udm, uFuncoes, UFrmAdmin;
+
+{$R *.dfm}
+
+procedure TfrmExcluirFatura.btnFecharClick(Sender: TObject);
+begin
+    Close;
+end;
+
+procedure TfrmExcluirFatura.edtNRFATUKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+    If not( key in['0'..'9',#8, #13] ) then
+        key:=#0;
+end;
+
+procedure TfrmExcluirFatura.edtNRFATUExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(edtNRFATU.Text) Then
+      begin
+           edtNRFATU.Text := uFuncoes.StrZero(edtNRFATU.Text,10);
+           //
+           if not (Dm.VerificaExisteFatura(edtNRFATU.Text)) Then
+            begin
+                 Application.MessageBox(PChar('Número de Fatura não Existe.'),
+                    'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                 btnExcluir.Enabled := False;
+                 edtNRFATU.Clear;
+                 edtNRFATU.SetFocus;
+                 Exit;
+            End
+            else
+            begin
+                 btnExcluir.Enabled := true;
+                 btnExcluir.SetFocus;
+            End;
+      End;
+end;
+
+procedure TfrmExcluirFatura.FormShow(Sender: TObject);
+begin
+    btnExcluir.Enabled := False;
+end;
+
+procedure TfrmExcluirFatura.btnExcluirClick(Sender: TObject);
+Var
+   iUsuario : Integer;
+begin
+    If Application.MessageBox('Confirma Exclusão de Fatura?',
+        'ATENÇÃO', MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2+MB_APPLMODAL) = idYes then
+    begin
+         iUsuario := StrtoInt(UFrmAdmin.M_CDUSUA);
+         //
+         If (Dm.ExcluirFatura(edtNRFATU.Text)) Then
+         begin
+            //
+            Application.MessageBox(PChar('Fatura excluída com sucesso.'),
+                'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+            //
+            Dm.Start;
+            Try
+              If not (dm.IncluirTarefaUsuario( iUsuario,
+                 'Excluiu Fatura : ' + edtNRFATU.Text +' *F*')) Then
+                    ShowMessage('Erro ao adicionar tarefa do usuário.');
+                 dm.Comit(Dm.Transc);
+            Except
+                 dm.Rollback;
+            End;
+            //
+            Close;
+         End
+         Else
+             raise Exception.Create('Erro ao tentar excluir fatura.');
+    End;
+
+end;
+
+end.

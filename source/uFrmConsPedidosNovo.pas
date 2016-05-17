@@ -1,0 +1,200 @@
+unit uFrmConsPedidosNovo;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, Buttons, Mask, ToolEdit, Grids, DBGrids,
+  FMTBcd, DB, DBClient, Provider, SqlExpr, ppPrnabl, ppClass, ppCtrls,
+  ppDB, ppBands, ppCache, ppDBPipe, ppComm, ppRelatv, ppProd, ppReport,
+  ppVar;
+
+type
+  TfrmConsPedidosNovo = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    btnConfirma: TBitBtn;
+    btnFechar: TBitBtn;
+    Label1: TLabel;
+    edtDTVEND: TDateEdit;
+    grdConsultar: TDBGrid;
+    btnExcluir: TBitBtn;
+    btnVisualizar: TBitBtn;
+    dstVendas: TSQLDataSet;
+    dspVendas: TDataSetProvider;
+    cdsVendas: TClientDataSet;
+    dsVendas: TDataSource;
+    cdsVendasMOV_PEDIDO: TIntegerField;
+    cdsVendasFOR_FANTASIA: TStringField;
+    cdsVendasMOV_DATAVENDA: TDateField;
+    cdsVendasMOV_CLIENTE: TIntegerField;
+    cdsVendasMOV_VALOR: TFMTBCDField;
+    cdsVendasMOV_NOMECLIENTE: TStringField;
+    cdsVendasMOV_SITUACAO: TStringField;
+    cdsVendasMOV_VENDEDOR: TIntegerField;
+    cdsVendasMOV_DESCONTO: TFMTBCDField;
+    cdsVendasMOV_HORAVENDA: TStringField;
+    cdsVendasMOV_TABELA: TIntegerField;
+    cdsVendasMOV_ACRESCIMO: TFMTBCDField;
+    cdsVendasMOV_TIPO_FRETE: TStringField;
+    cdsVendasMOV_PERC_FRETE: TFMTBCDField;
+    cdsVendasMOV_IDTRANSPORTADORA: TIntegerField;
+    cdsVendasMOV_TABELA_PLANO: TIntegerField;
+    BitBtn1: TBitBtn;
+    ppReport1: TppReport;
+    ppDBPConsulta: TppDBPipeline;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppDBText4: TppDBText;
+    ppDBText5: TppDBText;
+    ppDBImage1: TppDBImage;
+    ppLine1: TppLine;
+    ppLabel1: TppLabel;
+    ppLabel2: TppLabel;
+    ppLabel3: TppLabel;
+    ppLabel4: TppLabel;
+    ppLabel5: TppLabel;
+    ppLine2: TppLine;
+    ppLine3: TppLine;
+    ppSummaryBand1: TppSummaryBand;
+    ppLine4: TppLine;
+    ppDBCalc1: TppDBCalc;
+    ppLabel6: TppLabel;
+    ppLabel7: TppLabel;
+    ppLabel14: TppLabel;
+    ppSystemVariable3: TppSystemVariable;
+    ppLabel15: TppLabel;
+    ppSystemVariable4: TppSystemVariable;
+    procedure btnFecharClick(Sender: TObject);
+    procedure edtDTVENDExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure edtDTVENDChange(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure grdConsultarDblClick(Sender: TObject);
+    procedure btnVisualizarClick(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+  private
+    { Private declarations }
+    procedure tratabotao;
+    procedure Consulta();
+  public
+    { Public declarations }
+  end;
+
+var
+  frmConsPedidosNovo: TfrmConsPedidosNovo;
+
+implementation
+
+uses Udm, udmConsulta, uFuncoes, uDmRelatorios;
+
+{$R *.dfm}
+
+procedure TfrmConsPedidosNovo.btnFecharClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmConsPedidosNovo.edtDTVENDExit(Sender: TObject);
+begin
+    If (edtDTVEND.Text <> '  /  /    ') Then
+      try
+          StrToDate(edtDTVEND.Text);
+      except
+          on EConvertError do
+          Begin
+              ShowMessage ('Data Inválida!');
+              edtDTVEND.Date := Date();
+              Exit;
+          End;
+      end;
+end;
+
+procedure TfrmConsPedidosNovo.FormShow(Sender: TObject);
+begin
+      dmRelatorios.CarregaRel; 
+      //
+      edtDTVEND.Date := Date();
+      //
+      dm.ConsultaPedidos(edtDTVEND.Date);
+end;
+
+procedure TfrmConsPedidosNovo.edtDTVENDChange(Sender: TObject);
+begin
+     if (edtDTVEND.Text <> '  /  /    ') Then
+        Consulta();
+
+end;
+
+procedure TfrmConsPedidosNovo.tratabotao;
+begin
+      if not (dmConsultas.cdsVendas.IsEmpty)  Then
+           btnExcluir.Enabled := True
+      Else
+           btnExcluir.Enabled := False;
+end;
+
+procedure TfrmConsPedidosNovo.btnExcluirClick(Sender: TObject);
+begin
+    If not (cdsVendas.IsEmpty) Then
+      If Application.MessageBox('Deseja excluir pedido?',
+         'ATENÇÃO', MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2+MB_APPLMODAL) = idYes then
+          begin
+               If (uFuncoes.ExcluirPedido(cdsVendasMOV_PEDIDO.AsInteger) ) Then
+               begin
+                   Application.MessageBox('Pedido excluído com sucesso.','ATENÇÃO',
+                      MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                   //
+                   Consulta(); 
+               End;
+          End;
+end;
+
+procedure TfrmConsPedidosNovo.grdConsultarDblClick(Sender: TObject);
+begin
+           ModalResult := mrOk;
+end;
+
+procedure TfrmConsPedidosNovo.btnVisualizarClick(Sender: TObject);
+begin
+      If not (cdsVendas.IsEmpty) Then
+      Begin
+           uFuncoes.CARREGAR_ITENS(cdsVendasMOV_PEDIDO.AsInteger);
+           dmRelatorios.VIA_PEDIDO_NOVO(cdsVendasMOV_PEDIDO.AsInteger,
+                               uFuncoes.GetModaPedido(cdsVendasMOV_PEDIDO.AsInteger)
+                               ,'S', '', 'N');
+           cdsVendas.Close;
+           Consulta();
+      End;
+end;
+
+procedure TfrmConsPedidosNovo.Consulta;
+begin
+       {if not (dm.ConsultaPedidos(edtDTVEND.Date)) Then
+           Application.MessageBox('Não há pedidos na data indicada.','ATENÇÃO',
+                   MB_OK+MB_ICONEXCLAMATION+MB_APPLMODAL);}
+      With cdsVendas do
+        begin
+              Close;
+              Params.ParamByName('pDTINIC').AsDate := edtDTVEND.Date; 
+              open;
+        End;
+end;
+
+procedure TfrmConsPedidosNovo.BitBtn1Click(Sender: TObject);
+begin
+     If not (cdsVendas.IsEmpty) Then
+       begin
+            With ppReport1 do
+              begin
+                   PrintReport; 
+              End;
+       End;
+end;
+
+end.

@@ -1,0 +1,315 @@
+unit uFrmRelPosEstoque;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls, FMTBcd, DB, SqlExpr, Provider,
+  DBClient, ppDB, ppDBPipe, ppComm, ppRelatv, ppProd, ppClass, ppReport,
+  ppCtrls, ppPrnabl, ppBands, ppCache, ppVar;
+
+type
+  TfrmRelPosicaoEstoque = class(TForm)
+    pnlDados: TPanel;
+    Label1: TLabel;
+    cmbNMSECAO: TComboBox;
+    Panel2: TPanel;
+    BtSair: TBitBtn;
+    btImprimir: TBitBtn;
+    Label2: TLabel;
+    cmbNMLOJA: TComboBox;
+    Label3: TLabel;
+    cmbSUBSECAO: TComboBox;
+    Label4: TLabel;
+    cmbFabricante: TComboBox;
+    dstProdutos: TSQLDataSet;
+    dspProdutos: TDataSetProvider;
+    cdsProdutos: TClientDataSet;
+    cdsProdutosPRO_CODIGO: TStringField;
+    cdsProdutosPRO_BARRAS: TStringField;
+    cdsProdutosPRO_DESCRICAO: TStringField;
+    cdsProdutosPRO_VLCOMPRA: TFMTBCDField;
+    cdsProdutosPRO_VLVENDA: TFMTBCDField;
+    cdsProdutosUNI_CODIGO: TStringField;
+    cdsProdutosEST_QUANTIDADE: TFMTBCDField;
+    cdsProdutosEST_DTENTRADA: TDateField;
+    cdsProdutosEST_DTSAIDA: TDateField;
+    cdsProdutosFABRICANTE: TStringField;
+    cdsProdutosSECAO: TStringField;
+    cdsProdutosSUBSECAO: TStringField;
+    dsProdutos: TDataSource;
+    ppReport1: TppReport;
+    ppDBProdutos: TppDBPipeline;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBImage1: TppDBImage;
+    ppLabel4: TppLabel;
+    ppLine3: TppLine;
+    ppLine1: TppLine;
+    ppLabel11: TppLabel;
+    ppLabel8: TppLabel;
+    ppLabel3: TppLabel;
+    lbl_NMRELA: TppLabel;
+    lbl_loja: TppLabel;
+    ppDBText1: TppDBText;
+    ppLabel1: TppLabel;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppLabel2: TppLabel;
+    ppDBText4: TppDBText;
+    ppLabel5: TppLabel;
+    ppDBText5: TppDBText;
+    ppLabel6: TppLabel;
+    ppDBText6: TppDBText;
+    ppLabel7: TppLabel;
+    ppDBText7: TppDBText;
+    ppLabel9: TppLabel;
+    ppDBText8: TppDBText;
+    ppLabel10: TppLabel;
+    ppDBText9: TppDBText;
+    cdsProdutosPRO_TOTAL: TCurrencyField;
+    ppLine5: TppLine;
+    ppLabel12: TppLabel;
+    ppSystemVariable1: TppSystemVariable;
+    ppLabel13: TppLabel;
+    ppSystemVariable2: TppSystemVariable;
+    ppLabel14: TppLabel;
+    ppLabel15: TppLabel;
+    ppLabel16: TppLabel;
+    txtSecao: TppLabel;
+    txtSubSecao: TppLabel;
+    txtFabricante: TppLabel;
+    ppSummaryBand1: TppSummaryBand;
+    ppLine2: TppLine;
+    ppLabel17: TppLabel;
+    ppDBCalc1: TppDBCalc;
+    procedure BtSairClick(Sender: TObject);
+    procedure cmbNMSECAOExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btImprimirClick(Sender: TObject);
+    procedure cdsProdutosCalcFields(DataSet: TDataSet);
+    procedure cmbNMSECAOEnter(Sender: TObject);
+  private
+    procedure SECOES;
+    procedure SUBSECAO;
+    procedure LOJAS;
+    procedure FABRICANTE;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmRelPosicaoEstoque: TfrmRelPosicaoEstoque;
+
+implementation
+
+uses udmConsulta, uFuncoes, Udm;
+
+{$R *.dfm}
+
+procedure TfrmRelPosicaoEstoque.BtSairClick(Sender: TObject);
+begin
+     Close;
+end;
+
+procedure TfrmRelPosicaoEstoque.LOJAS;
+begin
+     With dmConsultas.qryLoja do
+     Begin
+          SQL.Clear;
+          Close;
+          SQL.Add('Select EMP_CODIGO, EMP_FANTASIA from EMPRESAS');
+          SQL.Add('order by EMP_FANTASIA');
+          Open;
+          First;
+     End;
+     //
+     cmbNMLOJA.Clear;
+     While not (dmConsultas.qryLoja.Eof) do
+     Begin
+          cmbNMLOJA.Items.Add(dmConsultas.qryLoja.FieldByName('EMP_FANTASIA').AsString);
+          //
+          dmConsultas.qryLoja.Next;
+     End;
+end;
+
+procedure TfrmRelPosicaoEstoque.SECOES;
+begin
+     dmConsultas.cdsSecoes.Close;
+     With dmConsultas.dstSecoes do
+     Begin
+          Active := False;
+          CommandText :=  'Select * from SECAO order by SEC_DESCRICAO';
+          Active := True;
+     End;
+     dmConsultas.cdsSecoes.Open;
+     dmConsultas.cdsSecoes.First;
+     //
+     cmbNMSECAO.Clear;
+     cmbNMSECAO.Items.Add(' ');
+     While not (dmConsultas.cdsSecoes.Eof) do
+     Begin
+          If not uFuncoes.Empty(dmConsultas.cdsSecoes.FieldByName('SEC_DESCRICAO').AsString) Then
+             cmbNMSECAO.Items.Add(dmConsultas.cdsSecoes.FieldByName('SEC_DESCRICAO').AsString);
+          //
+          dmConsultas.cdsSecoes.Next;
+     End;
+end;
+
+procedure TfrmRelPosicaoEstoque.SUBSECAO;
+begin
+     dmConsultas.cdsSubSecao.Close;
+     With dmConsultas.dstSubSecao do
+     Begin
+          Active := False;
+          CommandText := 'Select * from SUBSECAO Where (SEC_CODIGO = :pSECAO) order by SUB_DESCRICAO';
+          //
+          Params.ParamByName('pSECAO').AsInteger := uFuncoes.CDSECAO(cmbNMSECAO.Text);
+          Active := True;
+     End;
+     dmConsultas.cdsSubSecao.Open;
+     //
+     dmConsultas.cdsSubSecao.First;
+     //
+     cmbSUBSECAO.Clear;
+     cmbSUBSECAO.Items.Add(' ');
+     While not (dmConsultas.cdsSubSecao.Eof) do
+     Begin
+          if not uFuncoes.Empty(dmConsultas.cdsSubSecao.FieldByName('SUB_DESCRICAO').AsString) Then
+             cmbSUBSECAO.Items.Add(dmConsultas.cdsSubSecao.FieldByName('SUB_DESCRICAO').AsString);
+          //
+          dmConsultas.cdsSubSecao.Next;
+     End;
+end;
+
+procedure TfrmRelPosicaoEstoque.cmbNMSECAOExit(Sender: TObject);
+begin
+      If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+         SUBSECAO;
+end;
+
+procedure TfrmRelPosicaoEstoque.FABRICANTE;
+begin
+     dmConsultas.cdsFornecedor.close;
+     With dmConsultas.dstSubSecao do
+     Begin
+          Active := False;
+          CommandText :=  'select FOR_CODIGO, FOR_FANTASIA, FOR_RAZAO from FORNECEDORES order by FOR_FANTASIA';
+          Active := True;
+     End;
+     dmConsultas.cdsFornecedor.Open;
+     dmConsultas.cdsFornecedor.First;
+     //
+     cmbFabricante.Clear;
+     cmbFabricante.Items.Add(' ');
+     While not (dmConsultas.cdsFornecedor.Eof) do
+     Begin
+          cmbFabricante.Items.Add(dmConsultas.cdsFornecedor.FieldByName('FOR_FANTASIA').AsString);
+          //
+          dmConsultas.cdsFornecedor.Next;
+     End;
+end;
+
+procedure TfrmRelPosicaoEstoque.FormShow(Sender: TObject);
+begin
+    SECOES;
+    LOJAS;
+    FABRICANTE;
+    //
+    cmbNMLOJA.SetFocus; 
+end;
+
+procedure TfrmRelPosicaoEstoque.btImprimirClick(Sender: TObject);
+Var
+   W_CDLOJA, W_CDSECA, W_CDSUBS, W_CDFORN : Integer;
+   Linha : String;
+begin
+     If uFuncoes.Empty(cmbNMLOJA.Text) Then
+     Begin
+           Application.MessageBox('Selecione a loja!!!','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+           cmbNMLOJA.SetFocus;
+           Exit;
+     End;
+     //
+     Try
+         W_CDLOJA := uFuncoes.CDLOJA(cmbNMLOJA.Text);
+         If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+            W_CDSECA := uFuncoes.CDSECAO(cmbNMSECAO.Text);
+         If not uFuncoes.Empty(cmbSUBSECAO.Text) Then
+            W_CDSUBS := uFuncoes.CDSUBSECAO(W_CDSECA,cmbSUBSECAO.Text);
+         If not uFuncoes.Empty(cmbFabricante.Text) Then
+            W_CDFORN := uFuncoes.CDFABRICANTE(cmbFabricante.Text);
+         //
+         cdsProdutos.Close;
+         With dstProdutos do
+         Begin
+              Active := False;
+              //
+              Linha := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, '+
+                  'P.PRO_VLVENDA, P.uni_codigo, E.est_quantidade, E.est_dtentrada, E.est_dtsaida, '+
+                  '(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'+
+                  '(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO,'+
+                  '(Select SUB.SUB_DESCRICAO from SUBSECAO SUB Where (SUB.SUB_CODIGO = P.SUB_CODIGO)) As SUBSECAO '+
+                  ' from PRODUTOS P INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                  ' Where (e.est_codigoloja = '+QuotedStr(InttoStr(W_CDLOJA))+') ';
+              //
+              If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+                 Linha := Linha + ' And (P.SEC_CODIGO = '+QuotedStr(InttoStr(W_CDSECA))+') ';
+              If not uFuncoes.Empty(cmbSUBSECAO.Text) Then
+                 Linha := Linha + ' And (P.SUB_CODIGO = '+QuotedStr(InttoStr(W_CDSUBS))+') ';
+              If not uFuncoes.Empty(cmbFabricante.Text) Then
+                 Linha := Linha + ' And (P.FOR_CODIGO = '+QuotedStr(InttoStr(W_CDFORN))+') ';
+              //
+              CommandText := Linha + ' order by P.PRO_DESCRICAO';
+              //Params.ParamByName('pLOJA').AsInteger := W_CDLOJA;
+              Active := True;
+         End;
+         cdsProdutos.Open;
+         //
+         With ppReport1 do
+         begin
+             lbl_loja.Caption := cmbNMLOJA.Text;
+             //
+             If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+                 txtSecao.Caption    := cmbNMSECAO.Text
+             Else
+                 txtSecao.Caption    := 'TODAS';
+             If not uFuncoes.Empty(cmbSUBSECAO.Text) Then
+                 txtSubsecao.Caption := cmbSUBSECAO.Text
+             Else
+                 txtSubsecao.Caption := 'TODAS';
+             If not uFuncoes.Empty(cmbFabricante.Text) Then
+                txtFabricante.Caption := cmbFabricante.Text
+             Else
+                txtFabricante.Caption := 'TODOS';
+             //
+             PrintReport;
+         End;
+     Except
+          on Exc:Exception do
+          begin
+                Application.MessageBox(PChar('Erro ao tentar gerar relatório!!!'+#13
+                        + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                //  Cancelar transação no BD.
+                //Dm.SqlAdmin.Rollback(TD);
+          End;
+     End;
+end;
+
+procedure TfrmRelPosicaoEstoque.cdsProdutosCalcFields(DataSet: TDataSet);
+begin
+    cdsProdutosPRO_TOTAL.AsCurrency :=
+       cdsProdutosEST_QUANTIDADE.AsCurrency *
+       cdsProdutosPRO_VLCOMPRA.AsCurrency;
+end;
+
+procedure TfrmRelPosicaoEstoque.cmbNMSECAOEnter(Sender: TObject);
+begin
+     cmbSUBSECAO.Clear; 
+end;
+
+end.

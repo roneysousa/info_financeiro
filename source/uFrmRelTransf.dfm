@@ -1,0 +1,852 @@
+object frmRelTransferencias: TfrmRelTransferencias
+  Left = 228
+  Top = 199
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Relat'#243'rio de Transfer'#234'ncias'
+  ClientHeight = 225
+  ClientWidth = 382
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnlDados: TPanel
+    Left = 0
+    Top = 0
+    Width = 382
+    Height = 184
+    Align = alClient
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 16
+      Top = 47
+      Width = 62
+      Height = 13
+      Caption = 'Loja &Destino:'
+      FocusControl = cmbDestino
+      Transparent = True
+    end
+    object Label2: TLabel
+      Left = 16
+      Top = 8
+      Width = 59
+      Height = 13
+      Caption = '&Loja Origem:'
+      FocusControl = cmbNMLOJA
+      Transparent = True
+    end
+    object Label3: TLabel
+      Left = 16
+      Top = 88
+      Width = 38
+      Height = 13
+      Caption = '&Per'#237'odo'
+      FocusControl = edtDTINIC
+      Transparent = True
+    end
+    object cmbDestino: TComboBox
+      Left = 17
+      Top = 62
+      Width = 256
+      Height = 22
+      Style = csOwnerDrawFixed
+      ItemHeight = 16
+      TabOrder = 1
+      OnExit = cmbDestinoExit
+    end
+    object cmbNMLOJA: TComboBox
+      Left = 17
+      Top = 24
+      Width = 256
+      Height = 22
+      Style = csOwnerDrawFixed
+      ItemHeight = 16
+      TabOrder = 0
+      OnExit = cmbNMLOJAExit
+    end
+    object edtDTINIC: TDateEdit
+      Left = 16
+      Top = 103
+      Width = 121
+      Height = 21
+      NumGlyphs = 2
+      TabOrder = 2
+      OnExit = edtDTINICExit
+    end
+    object edtDTFINA: TDateEdit
+      Left = 152
+      Top = 103
+      Width = 121
+      Height = 21
+      NumGlyphs = 2
+      TabOrder = 3
+      OnExit = edtDTFINAExit
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 184
+    Width = 382
+    Height = 41
+    Align = alBottom
+    Color = clNavy
+    TabOrder = 1
+    object BtSair: TBitBtn
+      Left = 297
+      Top = 10
+      Width = 75
+      Height = 25
+      Caption = '&Fechar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      OnClick = BtSairClick
+      Glyph.Data = {
+        36050000424D3605000000000000360400002800000010000000100000000100
+        08000000000000010000220B0000220B00000001000000010000006400004242
+        42008C6363009A666600B9666600BB686800B0717200C3686900C66A6B00C76A
+        6D00CF6C6E00D2686900D16D6E00CC6E7100C0797A00D2707200D4707100D572
+        7300D0727500D3747600D9757600D8767700E37D7E000080000000960000DC7F
+        8000FF00FF00D7868700DA888800D8888A00DA888A00DF898A00E6808100E085
+        8500E9818200EE868700E3888900E78C8D00F0878800F18B8C00F28B8C00F18D
+        8E00F48C8D00F48E8F00EB8F9000EC969700E49A9800F3919200F7909100F791
+        9200F2939400F9909200F9949500FA949500F9969700F0999A00FC999A00FF9D
+        9E00F7B58400F5A7A500FACCAA00FBD6BB00FADCDC00FFFFFF00000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        0000000000000000000000000000000000000000000000000000000000000000
+        00000000000000000000000000000000000000000000000000001A1A1A1A1A1A
+        1A02011A1A1A1A1A1A1A1A1A1A1A02030405011A1A1A1A1A1A1A1A1A0203080B
+        0B07010303030303031A1A1A030C0C0C0A09010E1F323B3B031A1A1A030C0C10
+        0F0D01181818183B031A1A1A03111114151201181818183B031A1A1A03161616
+        201301181717173B031A1A1A0326222D3E1D01171700003B031A1A1A03262337
+        3F1E013C3A3A3A3B031A1A1A03272B282A19013C3D3D3D3B031A1A1A03273031
+        2921013C3D3D3D3B031A1A1A032734352F24013C3D3D3D3B031A1A1A03273338
+        3625013C3D3D3D3B031A1A1A03032E33392C013C3D3D3D3B031A1A1A1A1A0306
+        1B1C010303030303031A1A1A1A1A1A1A0303011A1A1A1A1A1A1A}
+    end
+    object btImprimir: TBitBtn
+      Left = 209
+      Top = 9
+      Width = 75
+      Height = 25
+      Caption = '&Imprimir'
+      TabOrder = 0
+      OnClick = btImprimirClick
+      Glyph.Data = {
+        36050000424D3605000000000000360400002800000010000000100000000100
+        0800000000000001000000000000000000000001000000000000000000004000
+        000080000000FF000000002000004020000080200000FF200000004000004040
+        000080400000FF400000006000004060000080600000FF600000008000004080
+        000080800000FF80000000A0000040A0000080A00000FFA0000000C0000040C0
+        000080C00000FFC0000000FF000040FF000080FF0000FFFF0000000020004000
+        200080002000FF002000002020004020200080202000FF202000004020004040
+        200080402000FF402000006020004060200080602000FF602000008020004080
+        200080802000FF80200000A0200040A0200080A02000FFA0200000C0200040C0
+        200080C02000FFC0200000FF200040FF200080FF2000FFFF2000000040004000
+        400080004000FF004000002040004020400080204000FF204000004040004040
+        400080404000FF404000006040004060400080604000FF604000008040004080
+        400080804000FF80400000A0400040A0400080A04000FFA0400000C0400040C0
+        400080C04000FFC0400000FF400040FF400080FF4000FFFF4000000060004000
+        600080006000FF006000002060004020600080206000FF206000004060004040
+        600080406000FF406000006060004060600080606000FF606000008060004080
+        600080806000FF80600000A0600040A0600080A06000FFA0600000C0600040C0
+        600080C06000FFC0600000FF600040FF600080FF6000FFFF6000000080004000
+        800080008000FF008000002080004020800080208000FF208000004080004040
+        800080408000FF408000006080004060800080608000FF608000008080004080
+        800080808000FF80800000A0800040A0800080A08000FFA0800000C0800040C0
+        800080C08000FFC0800000FF800040FF800080FF8000FFFF80000000A0004000
+        A0008000A000FF00A0000020A0004020A0008020A000FF20A0000040A0004040
+        A0008040A000FF40A0000060A0004060A0008060A000FF60A0000080A0004080
+        A0008080A000FF80A00000A0A00040A0A00080A0A000FFA0A00000C0A00040C0
+        A00080C0A000FFC0A00000FFA00040FFA00080FFA000FFFFA0000000C0004000
+        C0008000C000FF00C0000020C0004020C0008020C000FF20C0000040C0004040
+        C0008040C000FF40C0000060C0004060C0008060C000FF60C0000080C0004080
+        C0008080C000FF80C00000A0C00040A0C00080A0C000FFA0C00000C0C00040C0
+        C00080C0C000FFC0C00000FFC00040FFC00080FFC000FFFFC0000000FF004000
+        FF008000FF00FF00FF000020FF004020FF008020FF00FF20FF000040FF004040
+        FF008040FF00FF40FF000060FF004060FF008060FF00FF60FF000080FF004080
+        FF008080FF00FF80FF0000A0FF0040A0FF0080A0FF00FFA0FF0000C0FF0040C0
+        FF0080C0FF00FFC0FF0000FFFF0040FFFF0080FFFF00FFFFFF00DBDBDBDBDBDB
+        DBDBDBDBDBDBDBDBDBDBDBDB0000000000000000000000DBDBDBDB00DBDBDBDB
+        DBDBDBDBDB00DB00DBDB00000000000000000000000000DB00DB00DBDBDBDBDB
+        DBFCFCFCDBDB000000DB00DBDBDBDBDBDB929292DBDB00DB00DB000000000000
+        00000000000000DBDB0000DBDBDBDBDBDBDBDBDBDB00DB00DB00DB0000000000
+        0000000000DB00DB0000DBDB00FFFFFFFFFFFFFFFF00DB00DB00DBDBDB00FF00
+        00000000FF00000000DBDBDBDB00FFFFFFFFFFFFFFFF00DBDBDBDBDBDBDB00FF
+        0000000000FF00DBDBDBDBDBDBDB00FFFFFFFFFFFFFFFF00DBDBDBDBDBDBDB00
+        0000000000000000DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB}
+    end
+  end
+  object dstTransferencias: TSQLDataSet
+    CommandText = 
+      'Select T.TRA_DATA,'#13#10'(Select L.EMP_FANTASIA from EMPRESAS L Where' +
+      ' (L.EMP_CODIGO = T.TRA_LOJAORIGEM)) AS LOJ_ORIGEM,'#13#10'(Select L.EM' +
+      'P_FANTASIA from EMPRESAS L Where (L.EMP_CODIGO = T.TRA_LOJADESTI' +
+      'NO)) AS LOJ_DESTINO,'#13#10'H.HIS_PRODUTO, P.PRO_DESCRICAO, P.UNI_CODI' +
+      'GO, H.HIS_MOVIMENTO,'#13#10'H.HIS_VLCOMPRA'#13#10'from HISTORICO H'#13#10'INNER jo' +
+      'in PRODUTOS P ON P.PRO_CODIGO = H.HIS_PRODUTO'#13#10'INNER join TRANSF' +
+      'ERENCIAS T ON T.tra_nrtransferencia = H.HIS_DOCUMENTO'#13#10'Where (H.' +
+      'HIS_TIPO = '#39'TS'#39')'#13#10'and (H.HIS_DATA >= :pDTINICIAL) AND (H.HIS_DAT' +
+      'A <= :pDTFINAL)'
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftDate
+        Name = 'pDTINICIAL'
+        ParamType = ptInput
+        Value = 0d
+      end
+      item
+        DataType = ftDate
+        Name = 'pDTFINAL'
+        ParamType = ptInput
+        Value = 0d
+      end>
+    SQLConnection = Dm.SqlAdmin
+    Left = 8
+    Top = 184
+  end
+  object dspTransf: TDataSetProvider
+    DataSet = dstTransferencias
+    Options = [poAllowCommandText]
+    Left = 40
+    Top = 184
+  end
+  object cdsTransf: TClientDataSet
+    Active = True
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspTransf'
+    OnCalcFields = cdsTransfCalcFields
+    Left = 72
+    Top = 184
+    object cdsTransfTRA_DATA: TDateField
+      Alignment = taRightJustify
+      FieldName = 'TRA_DATA'
+      EditMask = '99/99/9999;1;_'
+    end
+    object cdsTransfLOJ_ORIGEM: TStringField
+      FieldName = 'LOJ_ORIGEM'
+      Size = 50
+    end
+    object cdsTransfLOJ_DESTINO: TStringField
+      FieldName = 'LOJ_DESTINO'
+      Size = 50
+    end
+    object cdsTransfHIS_PRODUTO: TStringField
+      FieldName = 'HIS_PRODUTO'
+      FixedChar = True
+      Size = 13
+    end
+    object cdsTransfPRO_DESCRICAO: TStringField
+      FieldName = 'PRO_DESCRICAO'
+      Size = 60
+    end
+    object cdsTransfUNI_CODIGO: TStringField
+      FieldName = 'UNI_CODIGO'
+      FixedChar = True
+      Size = 2
+    end
+    object cdsTransfHIS_MOVIMENTO: TFMTBCDField
+      FieldName = 'HIS_MOVIMENTO'
+      Precision = 15
+      Size = 3
+    end
+    object cdsTransfHIS_VLCOMPRA: TFMTBCDField
+      FieldName = 'HIS_VLCOMPRA'
+      Precision = 15
+      Size = 2
+    end
+    object cdsTransfHIS_SUBTOTAL: TCurrencyField
+      FieldKind = fkCalculated
+      FieldName = 'HIS_SUBTOTAL'
+      Calculated = True
+    end
+  end
+  object dsTransf: TDataSource
+    DataSet = cdsTransf
+    Left = 104
+    Top = 184
+  end
+  object ppReport1: TppReport
+    AutoStop = False
+    DataPipeline = ppDBTransferencia
+    PrinterSetup.BinName = 'Default'
+    PrinterSetup.DocumentName = 'Report'
+    PrinterSetup.Orientation = poLandscape
+    PrinterSetup.PaperName = 'A4 (21 x 29,7 cm) '
+    PrinterSetup.PrinterName = 'Default'
+    PrinterSetup.mmMarginBottom = 6350
+    PrinterSetup.mmMarginLeft = 6350
+    PrinterSetup.mmMarginRight = 6350
+    PrinterSetup.mmMarginTop = 6350
+    PrinterSetup.mmPaperHeight = 210000
+    PrinterSetup.mmPaperWidth = 297000
+    PrinterSetup.PaperSize = 9
+    Units = utMillimeters
+    DeviceType = 'Screen'
+    OutlineSettings.CreateNode = True
+    OutlineSettings.CreatePageNodes = True
+    OutlineSettings.Enabled = True
+    OutlineSettings.Visible = False
+    PreviewFormSettings.WindowState = wsMaximized
+    PreviewFormSettings.ZoomSetting = zs100Percent
+    TextSearchSettings.DefaultString = '<FindText>'
+    TextSearchSettings.Enabled = True
+    Left = 312
+    Top = 40
+    Version = '7.01'
+    mmColumnWidth = 0
+    DataPipelineName = 'ppDBTransferencia'
+    object ppHeaderBand1: TppHeaderBand
+      mmBottomOffset = 0
+      mmHeight = 35454
+      mmPrintPosition = 0
+      object ppDBImage1: TppDBImage
+        UserName = 'DBImage1'
+        MaintainAspectRatio = False
+        Stretch = True
+        DataField = 'CFG_IMAGEMLOGO'
+        DataPipeline = Dm.ppDBParametros
+        GraphicType = 'Bitmap'
+        ParentDataPipeline = False
+        DataPipelineName = 'ppDBParametros'
+        mmHeight = 23283
+        mmLeft = 5556
+        mmTop = 2381
+        mmWidth = 41540
+        BandType = 0
+      end
+      object ppLine3: TppLine
+        UserName = 'Line3'
+        Style = lsDouble
+        Weight = 0.750000000000000000
+        mmHeight = 1323
+        mmLeft = 265
+        mmTop = 28046
+        mmWidth = 284692
+        BandType = 0
+      end
+      object ppLabel1: TppLabel
+        UserName = 'Label1'
+        Caption = 'LOJA ORIGEM'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 19315
+        mmTop = 29104
+        mmWidth = 24871
+        BandType = 0
+      end
+      object ppLabel4: TppLabel
+        UserName = 'Label4'
+        Caption = 'DATA'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 794
+        mmTop = 29369
+        mmWidth = 9737
+        BandType = 0
+      end
+      object ppLine1: TppLine
+        UserName = 'Line1'
+        Weight = 0.750000000000000000
+        mmHeight = 794
+        mmLeft = 265
+        mmTop = 34396
+        mmWidth = 284692
+        BandType = 0
+      end
+      object ppLabel8: TppLabel
+        UserName = 'lbl_NMRELA2'
+        Caption = 'RELAT'#211'RIO : TRANSFER'#202'NCIAS POR PERIODO'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        mmHeight = 4064
+        mmLeft = 113771
+        mmTop = 4233
+        mmWidth = 82127
+        BandType = 0
+      end
+      object ppLabel2: TppLabel
+        UserName = 'Label2'
+        Caption = 'LOJA DESTINO'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 64029
+        mmTop = 29369
+        mmWidth = 26331
+        BandType = 0
+      end
+      object ppLabel3: TppLabel
+        UserName = 'Label3'
+        Caption = 'CODIGO'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 108479
+        mmTop = 29369
+        mmWidth = 14478
+        BandType = 0
+      end
+      object ppLabel5: TppLabel
+        UserName = 'Label5'
+        Caption = 'DESCRI'#199#195'O'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 136261
+        mmTop = 29369
+        mmWidth = 21167
+        BandType = 0
+      end
+      object ppLabel6: TppLabel
+        UserName = 'Label6'
+        Caption = 'UNID.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 203994
+        mmTop = 29369
+        mmWidth = 9525
+        BandType = 0
+      end
+      object ppLabel7: TppLabel
+        UserName = 'Label7'
+        Caption = 'QUANTIDADE'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 214578
+        mmTop = 29369
+        mmWidth = 22490
+        BandType = 0
+      end
+      object ppLabel9: TppLabel
+        UserName = 'Label9'
+        Caption = 'VL.COMPRA'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 239184
+        mmTop = 29369
+        mmWidth = 21167
+        BandType = 0
+      end
+      object ppLabel10: TppLabel
+        UserName = 'Label10'
+        Caption = 'SUBTOTAL'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = [fsBold]
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 4233
+        mmLeft = 264319
+        mmTop = 29369
+        mmWidth = 19579
+        BandType = 0
+      end
+      object txtPeriodo: TppLabel
+        UserName = 'txtPeriodo'
+        Caption = '.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        mmHeight = 4064
+        mmLeft = 114036
+        mmTop = 8467
+        mmWidth = 1016
+        BandType = 0
+      end
+    end
+    object ppDetailBand1: TppDetailBand
+      mmBottomOffset = 0
+      mmHeight = 5292
+      mmPrintPosition = 0
+      object ppDBText1: TppDBText
+        UserName = 'DBText1'
+        DataField = 'TRA_DATA'
+        DataPipeline = ppDBTransferencia
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 4064
+        mmLeft = 529
+        mmTop = 529
+        mmWidth = 17198
+        BandType = 4
+      end
+      object ppDBText2: TppDBText
+        UserName = 'DBText2'
+        DataField = 'LOJ_ORIGEM'
+        DataPipeline = ppDBTransferencia
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3969
+        mmLeft = 18785
+        mmTop = 529
+        mmWidth = 43000
+        BandType = 4
+      end
+      object ppDBText3: TppDBText
+        UserName = 'DBText3'
+        DataField = 'LOJ_DESTINO'
+        DataPipeline = ppDBTransferencia
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3969
+        mmLeft = 64029
+        mmTop = 529
+        mmWidth = 42863
+        BandType = 4
+      end
+      object ppDBText4: TppDBText
+        UserName = 'DBText4'
+        AutoSize = True
+        DataField = 'HIS_PRODUTO'
+        DataPipeline = ppDBTransferencia
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3979
+        mmLeft = 108215
+        mmTop = 529
+        mmWidth = 27009
+        BandType = 4
+      end
+      object ppDBText5: TppDBText
+        UserName = 'DBText5'
+        AutoSize = True
+        DataField = 'PRO_DESCRICAO'
+        DataPipeline = ppDBTransferencia
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3979
+        mmLeft = 136261
+        mmTop = 529
+        mmWidth = 66379
+        BandType = 4
+      end
+      object ppDBText6: TppDBText
+        UserName = 'DBText6'
+        AutoSize = True
+        DataField = 'UNI_CODIGO'
+        DataPipeline = ppDBTransferencia
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        TextAlignment = taCentered
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3979
+        mmLeft = 204015
+        mmTop = 529
+        mmWidth = 9483
+        BandType = 4
+      end
+      object ppDBText7: TppDBText
+        UserName = 'DBText7'
+        AutoSize = True
+        DataField = 'HIS_MOVIMENTO'
+        DataPipeline = ppDBTransferencia
+        DisplayFormat = '###,##0.#00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3979
+        mmLeft = 214547
+        mmTop = 529
+        mmWidth = 22521
+        BandType = 4
+      end
+      object ppDBText8: TppDBText
+        UserName = 'DBText8'
+        DataField = 'HIS_VLCOMPRA'
+        DataPipeline = ppDBTransferencia
+        DisplayFormat = '###,##0.#0'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3979
+        mmLeft = 238125
+        mmTop = 529
+        mmWidth = 22490
+        BandType = 4
+      end
+      object ppDBText9: TppDBText
+        UserName = 'DBText9'
+        DataField = 'HIS_SUBTOTAL'
+        DataPipeline = ppDBTransferencia
+        DisplayFormat = '###,##0.#0'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        TextAlignment = taRightJustified
+        Transparent = True
+        DataPipelineName = 'ppDBTransferencia'
+        mmHeight = 3969
+        mmLeft = 261409
+        mmTop = 529
+        mmWidth = 23019
+        BandType = 4
+      end
+    end
+    object ppFooterBand1: TppFooterBand
+      mmBottomOffset = 0
+      mmHeight = 13229
+      mmPrintPosition = 0
+      object ppSystemVariable1: TppSystemVariable
+        UserName = 'SystemVariable1'
+        VarType = vtDateTime
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 250561
+        mmTop = 2117
+        mmWidth = 32279
+        BandType = 8
+      end
+      object ppLabel12: TppLabel
+        UserName = 'Label12'
+        Caption = 'Data/Hora:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 232569
+        mmTop = 2117
+        mmWidth = 17198
+        BandType = 8
+      end
+      object ppLine5: TppLine
+        UserName = 'Line5'
+        Style = lsDouble
+        Weight = 0.750000000000000000
+        mmHeight = 794
+        mmLeft = 0
+        mmTop = 529
+        mmWidth = 284692
+        BandType = 8
+      end
+      object ppLabel13: TppLabel
+        UserName = 'Label13'
+        Caption = 'P'#225'gina:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 267230
+        mmTop = 6615
+        mmWidth = 11906
+        BandType = 8
+      end
+      object ppSystemVariable2: TppSystemVariable
+        UserName = 'SystemVariable2'
+        VarType = vtPageCount
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Arial'
+        Font.Size = 10
+        Font.Style = []
+        Transparent = True
+        mmHeight = 3969
+        mmLeft = 280723
+        mmTop = 6615
+        mmWidth = 1852
+        BandType = 8
+      end
+    end
+  end
+  object ppDBTransferencia: TppDBPipeline
+    DataSource = dsTransf
+    UserName = 'DBTransferencia'
+    Left = 312
+    Top = 80
+    object ppDBTransferenciappField1: TppField
+      FieldAlias = 'TRA_DATA'
+      FieldName = 'TRA_DATA'
+      FieldLength = 0
+      DataType = dtDate
+      DisplayWidth = 0
+      Position = 0
+    end
+    object ppDBTransferenciappField2: TppField
+      FieldAlias = 'LOJ_ORIGEM'
+      FieldName = 'LOJ_ORIGEM'
+      FieldLength = 50
+      DisplayWidth = 50
+      Position = 1
+    end
+    object ppDBTransferenciappField3: TppField
+      FieldAlias = 'LOJ_DESTINO'
+      FieldName = 'LOJ_DESTINO'
+      FieldLength = 50
+      DisplayWidth = 50
+      Position = 2
+    end
+    object ppDBTransferenciappField4: TppField
+      FieldAlias = 'HIS_PRODUTO'
+      FieldName = 'HIS_PRODUTO'
+      FieldLength = 13
+      DisplayWidth = 13
+      Position = 3
+    end
+    object ppDBTransferenciappField5: TppField
+      FieldAlias = 'PRO_DESCRICAO'
+      FieldName = 'PRO_DESCRICAO'
+      FieldLength = 60
+      DisplayWidth = 60
+      Position = 4
+    end
+    object ppDBTransferenciappField6: TppField
+      FieldAlias = 'UNI_CODIGO'
+      FieldName = 'UNI_CODIGO'
+      FieldLength = 2
+      DisplayWidth = 2
+      Position = 5
+    end
+    object ppDBTransferenciappField7: TppField
+      Alignment = taRightJustify
+      FieldAlias = 'HIS_MOVIMENTO'
+      FieldName = 'HIS_MOVIMENTO'
+      FieldLength = 3
+      DataType = dtDouble
+      DisplayWidth = 16
+      Position = 6
+    end
+    object ppDBTransferenciappField8: TppField
+      Alignment = taRightJustify
+      FieldAlias = 'HIS_VLCOMPRA'
+      FieldName = 'HIS_VLCOMPRA'
+      FieldLength = 2
+      DataType = dtDouble
+      DisplayWidth = 16
+      Position = 7
+    end
+  end
+end

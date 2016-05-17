@@ -1,0 +1,242 @@
+program Admin;
+
+uses
+  Forms,
+  Windows,
+  Dialogs,
+  Controls,
+  SysUtils,
+  UFrmAdmin in 'UFrmAdmin.pas' {FrmAdmin},
+  Udm in 'Udm.pas' {Dm: TDataModule},
+  UFrmEmpresas in 'UFrmEmpresas.pas' {FrmEmpresas},
+  UFrmPesqEmpresa in 'UFrmPesqEmpresa.pas' {FrmPesqEmpresas},
+  UdmCon in 'UdmCon.pas' {DmCon: TDataModule},
+  UfrmClientes in 'UfrmClientes.pas' {FrmClientes},
+  UFrmPesqClientes in 'UFrmPesqClientes.pas' {FrmPesqClientes},
+  UFrmFornecedor in 'UFrmFornecedor.pas' {frmFornecedor},
+  uFuncoes in 'uFuncoes.pas',
+  uFrmCadastroAdm in 'uFrmCadastroAdm.pas' {frmCadastro},
+  uFrmCadBancos in 'uFrmCadBancos.pas' {frmCadBancos},
+  uFrmCadCidades in 'uFrmCadCidades.pas' {frmCadCidades},
+  uFrmCadBairro in 'uFrmCadBairro.pas' {frmCadBairro},
+  uFrmCadCargos in 'uFrmCadCargos.pas' {frmCadCargos},
+  uFrmCadSituacao in 'uFrmCadSituacao.pas' {frmCadSituacao},
+  uFrmCadAtividade in 'uFrmCadAtividade.pas' {frmCadAtividades},
+  uFrmCadContatos in 'uFrmCadContatos.pas' {frmCadContatos},
+  uLocCliente in 'uLocCliente.pas' {frmLocCliente},
+  uFrmCadSecao in 'uFrmCadSecao.pas' {frmCadSecao},
+  uFrmCadSubSecao in 'uFrmCadSubSecao.pas' {frmCadSubSecao},
+  uFrmCadTributacao in 'uFrmCadTributacao.pas' {frmCadTributacao},
+  uFrmCadProdutos in 'uFrmCadProdutos.pas' {frmCadProdutos},
+  uFrmBusca in 'uFrmBusca.pas' {frmBusca},
+  ufrmConsulta in 'ufrmConsulta.pas' {frmConsulta},
+  uFrmBuscaDados in 'uFrmBuscaDados.pas' {frmBuscaDados},
+  uFrmLocFornec in 'uFrmLocFornec.pas' {frmBuscaFornec},
+  uFrmCadEntradaMercadoria in 'uFrmCadEntradaMercadoria.pas' {frmCadEntrada},
+  udmConsulta in 'udmConsulta.pas' {dmConsultas: TDataModule},
+  uFrmFecharEntrada in 'uFrmFecharEntrada.pas' {frmFecharEntrada},
+  uFrmLocLoja in 'uFrmLocLoja.pas' {frmLocLoja},
+  uFrmCadUnidades2 in 'uFrmCadUnidades2.pas' {frmCadUnidades2},
+  uFrmCadFuncionarios in 'uFrmCadFuncionarios.pas' {frmCadFuncionarios},
+  uFrmContasReceber in 'uFrmContasReceber.pas' {frmContasReceber},
+  uFrmExclusaoTitulo in 'uFrmExclusaoTitulo.pas' {frmExclusaoTitulo},
+  uFrmCadCheques in 'uFrmCadCheques.pas' {frmCadCheques},
+  uFrmDevolucaoCheques in 'uFrmDevolucaoCheques.pas' {frmDevolucaoCheque},
+  ufrmAberturaCaixa in 'ufrmAberturaCaixa.pas' {frmAberturaCaixa},
+  uFrmUsuarios in 'uFrmUsuarios.pas' {frmCadUsuarios},
+  uBematech in 'uBematech.pas',
+  uFormaPagamento in 'uFormaPagamento.pas' {frmFormaPagamento},
+  uFrmVendas in 'uFrmVendas.pas' {frmVendas},
+  uFrmConsEstoque in 'uFrmConsEstoque.pas' {frmConsultaEstoque},
+  uFrmProcurarProduto in 'uFrmProcurarProduto.pas' {frmLocalizaProduto},
+  uFrmCadModalidades in 'uFrmCadModalidades.pas' {frmCadModalidades},
+  uFrmCancelarVenda in 'uFrmCancelarVenda.pas' {frmCancelarVenda},
+  uLogon in 'uLogon.pas' {frmLogon},
+  uFrmBuscaProdutos in 'uFrmBuscaProdutos.pas' {frmBuscaProduto},
+  uSobreADM in 'uSobreADM.pas' {frmSobre},
+  uFrmBuscaCaixa in 'uFrmBuscaCaixa.pas' {frmBuscaCaixa},
+  uFrmInvertario in 'uFrmInvertario.pas' {frmInvertario},
+  uFrmOperadorCaixa in 'uFrmOperadorCaixa.pas' {frmOperadorCaixa},
+  uFrmCadDerivados in 'uFrmCadDerivados.pas' {frmCadDerivados},
+  uFrmAbate in 'uFrmAbate.pas' {frmCadAbate},
+  uFrmCadPerdas in 'uFrmCadPerdas.pas' {frmCadPerdas},
+  uFrmTransferencia in 'uFrmTransferencia.pas' {frmTransferencias},
+  uDm2 in 'uDm2.pas' {DM2: TDataModule},
+  uFrmEntradasSaidas in 'uFrmEntradasSaidas.pas' {frmEntradaSaida},
+  uFrmFecharCaixa in 'uFrmFecharCaixa.pas' {frmFechamentoCaixa},
+  uFrmSituacaoCaixa in 'uFrmSituacaoCaixa.pas' {frmSituacaoCaixa},
+  uDmRelatorios in 'uDmRelatorios.pas' {dmRelatorios: TDataModule},
+  uFrmCadNatureza in 'uFrmCadNatureza.pas' {frmCadNatureza},
+  uFrmConfiguracoes in 'uFrmConfiguracoes.pas' {frmConfiguracoes},
+  uFrmFecharCaixa2 in 'uFrmFecharCaixa2.pas' {frmFecharCaixa2},
+  uFrmSituacaoCaixa2 in 'uFrmSituacaoCaixa2.pas' {frmSituacaoCaixa2},
+  uFrmCadLojas in 'uFrmCadLojas.pas' {frmCadLojas},
+  uFrmConsVendas in 'uFrmConsVendas.pas' {frmConsultaVendas},
+  uFrmRelCaixa in 'uFrmRelCaixa.pas' {frmRelCaixa},
+  uFrmBuscaDerivados in 'uFrmBuscaDerivados.pas' {frmBuscaDerivados},
+  uFrmRelCaixaData in 'uFrmRelCaixaData.pas' {frmRelCaixaData},
+  uRelTotVendidoProduto in 'uRelTotVendidoProduto.pas' {frmRelTotalProdutos},
+  uFrmSupervisor in 'uFrmSupervisor.pas' {frmSupervisor},
+  uFrmCadContasReceber in 'uFrmCadContasReceber.pas' {frmCadContasReceber},
+  uFrmEditarTitulo in 'uFrmEditarTitulo.pas' {frmEditarTitulo},
+  uCadContaPagar in 'uCadContaPagar.pas' {frmCadContasPagar},
+  uBuscarNatureza in 'uBuscarNatureza.pas' {frmBuscaNatureza},
+  uFrmEditarContaPagar in 'uFrmEditarContaPagar.pas' {frmEditaContaPagar},
+  uFrmExcContPagar in 'uFrmExcContPagar.pas' {frmExcContPagar},
+  uFrmBaixaContPagar in 'uFrmBaixaContPagar.pas' {frmBaixaContPagar},
+  uFrmManuContasPagar in 'uFrmManuContasPagar.pas' {frmManuContasPagar},
+  uFrmEditContaPagar in 'uFrmEditContaPagar.pas' {frmEditaContPagar},
+  uFrmRelProdutos in 'uFrmRelProdutos.pas' {frmRelProdutos},
+  uFrmCadContReceber in 'uFrmCadContReceber.pas' {frmCadContaReceber},
+  uFrmBuscaClientes in 'uFrmBuscaClientes.pas' {frmBuscaClientes},
+  uFrmManuContReceber in 'uFrmManuContReceber.pas' {frmManuContReceber},
+  uFrmParcelas in 'uFrmParcelas.pas' {frmParcelas},
+  uFrmBaixaContReceber in 'uFrmBaixaContReceber.pas' {frmBaixaContReceber},
+  uFrmBaixaReceber in 'uFrmBaixaReceber.pas' {frmBaixaReceber},
+  uFrmRelClieAnivers in 'uFrmRelClieAnivers.pas' {frmRelClinAniversariantes},
+  uFrmSelecionarProdutos in 'uFrmSelecionarProdutos.pas' {frmSeleProdutos},
+  uFrmRelGondulas in 'uFrmRelGondulas.pas' {frmRelGondulas},
+  uFrmRelFornecedores in 'uFrmRelFornecedores.pas' {frmRelFornecedores},
+  uRelEtiquetaProdutos in 'uRelEtiquetaProdutos.pas' {frmRelEtiqueta},
+  uFrmEtiqClientes in 'uFrmEtiqClientes.pas' {frmSelecioneCliente},
+  uFrmTabelaPrecos in 'uFrmTabelaPrecos.pas' {frmTabelaPrecos},
+  uFrmRelEtiqProdutos in 'uFrmRelEtiqProdutos.pas' {frmQuantEtiquetas},
+  uFrmRelPosEstoque in 'uFrmRelPosEstoque.pas' {frmRelPosicaoEstoque},
+  uFrmTotVendidoProd in 'uFrmTotVendidoProd.pas' {frmRelTotalVendido},
+  uFrmRelHisEstProdutos in 'uFrmRelHisEstProdutos.pas' {frmRelHistEstProdutos},
+  uFrmRelTotVendVendedor in 'uFrmRelTotVendVendedor.pas' {frmRelTotVendVendedor},
+  uFrmRelVendaCaixa in 'uFrmRelVendaCaixa.pas' {frmRelVendaCaixa},
+  uFrmRelTransf in 'uFrmRelTransf.pas' {frmRelTransferencias},
+  uRelEtiquetaClientes in 'uRelEtiquetaClientes.pas' {frmRelEtiquetaClientes},
+  uFrmExcessoSugestao in 'uFrmExcessoSugestao.pas' {frmRelExcessoSugestao},
+  uFrmMemFiscal in 'uFrmMemFiscal.pas' {frmMemoriaFiscal},
+  uFrmCadMotDevolucao in 'uFrmCadMotDevolucao.pas' {frmCadMotivoDevolucao},
+  uFrmSeleLote in 'uFrmSeleLote.pas' {frmSelecionaLote},
+  uFrmRelProdutoVencer in 'uFrmRelProdutoVencer.pas' {frmRelProdutosVencer},
+  uFiscal in 'uFiscal.pas',
+  uCadDerivados2 in 'uCadDerivados2.pas' {frmCadDerivados2},
+  uFrmRelDerivadosProdutos in 'uFrmRelDerivadosProdutos.pas' {frmRelDerivadosProdutos},
+  uFrmRelProdutos2 in 'uFrmRelProdutos2.pas' {frmRelProdutos2},
+  uDaruma in 'uDaruma.pas',
+  uFrmReajuste in 'uFrmReajuste.pas' {frmReajuste},
+  uFrmRelPeriodo in 'uFrmRelPeriodo.pas' {frmRelPeriodo},
+  uFrmRelProdReajustado in 'uFrmRelProdReajustado.pas' {frmRelProdutosReajustados},
+  uFrmRelFluxoCaixa in 'uFrmRelFluxoCaixa.pas' {frmRelFluxoCaixa},
+  uFrmPreviewMatricial in 'uFrmPreviewMatricial.pas' {frmPreviewMatr},
+  uFrmRelProdutos3 in 'uFrmRelProdutos3.pas' {frmRelacaoProdutos},
+  uFrmCadPedido in 'uFrmCadPedido.pas' {frmCadPedidos},
+  ufrmLocProdutos in 'ufrmLocProdutos.pas' {frmLocProdutos},
+  uFrmUltimasVendas in 'uFrmUltimasVendas.pas' {frmUltimaVendas},
+  ufrmRelatorio in 'ufrmRelatorio.pas' {frmRelatorio},
+  uFrmRelTotVendFabricante in 'uFrmRelTotVendFabricante.pas' {frmRelTotalVendidoFabricante},
+  uFrmRelTotVendCliente in 'uFrmRelTotVendCliente.pas' {frmRelTotVendCliente},
+  uFrmEnviarEmail in 'uFrmEnviarEmail.pas' {frmEnviarEmail},
+  uFrmRelCaixaPeriodo in 'uFrmRelCaixaPeriodo.pas' {FrmRelCaixaPeriodo},
+  uFrmCadCores in 'uFrmCadCores.pas' {frmCadCores},
+  uFrmDescontos in 'uFrmDescontos.pas' {frmDescontos},
+  uFrmCadTabPrecos in 'uFrmCadTabPrecos.pas' {frmCadTabelaPrecos},
+  uFrmCadTipoClientes in 'uFrmCadTipoClientes.pas' {frmCadTipoCliente},
+  uFrmCadRegiao in 'uFrmCadRegiao.pas' {frmCadRegiao},
+  uFrmOrcamentos in 'uFrmOrcamentos.pas' {frmOrcamentos},
+  uFrmRelProdClientes in 'uFrmRelProdClientes.pas' {frmRelProdCliente},
+  uFrmRelVisitaCliente in 'uFrmRelVisitaCliente.pas' {frmRelVisitaCliente},
+  uFrmRelFichaClientes in 'uFrmRelFichaClientes.pas' {frmRelFichaClientes},
+  uFrmRelContasReceber in 'uFrmRelContasReceber.pas' {frmRelContReceber},
+  uFrmRelContasPagar in 'uFrmRelContasPagar.pas' {frmRelContasPagar},
+  uFrmNewEtiqueta in 'uFrmNewEtiqueta.pas' {frmNewEtiqueta},
+  uFrmRelTotalRecebido in 'uFrmRelTotalRecebido.pas' {frmRelTotalMes},
+  uFrmRelTotalNatureza in 'uFrmRelTotalNatureza.pas' {frmRelTotalNatureza},
+  udmDados in 'udmDados.pas' {dmDados: TDataModule},
+  uFrmCadCedentes in 'uFrmCadCedentes.pas' {frmCadCedentes},
+  uCodBarras in 'uCodBarras.pas',
+  uFrmBaixaAutomatico in 'uFrmBaixaAutomatico.pas' {frmBaixaAutomatico},
+  uFrmCadPermissoes in 'uFrmCadPermissoes.pas' {frmCadPermissoes},
+  uFrmCadContaSaldo in 'uFrmCadContaSaldo.pas' {frmCadContasSaldo},
+  uFrmLogin in 'uFrmLogin.pas' {frmLogin},
+  uFrmRelMovCaixa in 'uFrmRelMovCaixa.pas' {frmRelMovimentoCaixa},
+  uFrmImportaDados in 'uFrmImportaDados.pas' {frmImportaDados},
+  uFrmCadTransportadoras in 'uFrmCadTransportadoras.pas' {frmCadTransportadora},
+  uFrmCadNewPedidos in 'uFrmCadNewPedidos.pas' {frmCadNewPedidos},
+  uFrmLocCor in 'uFrmLocCor.pas' {frmBuscaCor},
+  uFrmCadPlano in 'uFrmCadPlano.pas' {frmCadPlano},
+  uFrmObsevacaoPedido in 'uFrmObsevacaoPedido.pas' {frmObsPedido},
+  UFrmEmailFornecedor in 'UFrmEmailFornecedor.pas' {frmEmailForn},
+  uFrmEnviarEmailNew in 'uFrmEnviarEmailNew.pas' {frmEnviarPedido},
+  uFrmEditarItem in 'uFrmEditarItem.pas' {frmEditarItem},
+  uFrmConsPedidosNovo in 'uFrmConsPedidosNovo.pas' {frmConsPedidosNovo},
+  untFrmPreview in 'untFrmPreview.pas' {FrmPreview},
+  untFrmPrint in 'untFrmPrint.pas' {FrmPrint},
+  frmGerarArquivosXML in 'frmGerarArquivosXML.pas' {frmImportaXML},
+  uFrmCadMesas in 'uFrmCadMesas.pas' {frmCadMesas},
+  untHeranca in 'untHeranca.pas' {frmHeranca},
+  uFrmNewVenda in 'uFrmNewVenda.pas' {frmNewVenda},
+  uFrmLocVendendor in 'uFrmLocVendendor.pas' {frmBuscaAtendente},
+  uFrmCadPromocoes in 'uFrmCadPromocoes.pas' {frmCadPromocoes},
+  uFrmTeleEntrega in 'uFrmTeleEntrega.pas' {frmTeleEntrega},
+  uFrmStatusServico in 'uFrmStatusServico.pas' {frmStatusServico},
+  uFrmSeleProdutos in 'uFrmSeleProdutos.pas' {frmSelecionaProduto},
+  uFrmInvertarioNew in 'uFrmInvertarioNew.pas' {frmInvertarioNew},
+  uFrmRelTotalVendido in 'uFrmRelTotalVendido.pas' {frmRelMesasEntregas},
+  uFrmRenegociacao in 'uFrmRenegociacao.pas' {frmRenegociacao},
+  uFrmGerarContasReceber in 'uFrmGerarContasReceber.pas' {frmGeraContasReceber},
+  uFrmConfigurarBoletos in 'uFrmConfigurarBoletos.pas' {frmConfiguraBoletos},
+  uFrmCadGrupos in 'uFrmCadGrupos.pas' {frmCadGrupos},
+  uFrmGerarBoletos in 'uFrmGerarBoletos.pas' {frmGerarBoletos},
+  uFrmBaixaBanco in 'uFrmBaixaBanco.pas' {frmBaixaBanco},
+  uFrmGrupoLojas in 'uFrmGrupoLojas.pas' {frmGrupoLojas},
+  uFrmExcluirFatura in 'uFrmExcluirFatura.pas' {frmExcluirFatura},
+  uFrmListaClientes in 'uFrmListaClientes.pas' {frmListaClientes},
+  uFrmListaInadimplente in 'uFrmListaInadimplente.pas' {frmRelListaInadimplentes},
+  uFrmTarefaUsuario in 'uFrmTarefaUsuario.pas' {frmTarefaUsuarios},
+  uFrmVisualizarPC in 'uFrmVisualizarPC.pas' {frmVisualizarPC},
+  uFrmRelMultaJuros in 'uFrmRelMultaJuros.pas' {frmRelMultaJuros},
+  uFrmCadClientes in 'uFrmCadClientes.pas' {frmCadClientesNew},
+  CapturaCam in 'CapturaCam.pas' {fCaptura},
+  uFrmRelRenegPeriodo in 'uFrmRelRenegPeriodo.pas' {frmRelRenegociacaoPeriodo},
+  uFrmCadEletros in 'uFrmCadEletros.pas' {frmCadEletros},
+  uFrmCadClienteEletro in 'uFrmCadClienteEletro.pas' {frmCadClienteEletro},
+  uFrmRelClienteEletros in 'uFrmRelClienteEletros.pas' {frmRelClienteEletros},
+  uFrmMovimentoBox in 'uFrmMovimentoBox.pas' {FrmMovimentoBox};
+
+{$R *.res}
+
+Var
+   hMutex : LongWord;
+
+begin
+    hMutex := CreateMutex(nil,False,'OneInstance');
+
+    if WaitForSingleObject(hMutex,0) <> WAIT_TIMEOUT then
+    begin
+         Application.Initialize;
+         Application.CreateForm(TDm, Dm);
+  Application.CreateForm(TdmConsultas, dmConsultas);
+  Application.CreateForm(TDM2, DM2);
+  Application.CreateForm(TDmCon, DmCon);
+  Application.CreateForm(TdmDados, dmDados);
+  Application.CreateForm(TdmRelatorios, dmRelatorios);
+  frmLogin := TfrmLogin.Create(nil);
+         if frmLogin.ShowModal = mrOk then
+         begin
+              Application.CreateForm(TFrmAdmin, FrmAdmin);
+              uFrmAdmin.M_CDUSUA := InttoStr(frmLogin.codigoUsuario);
+              uFrmAdmin.M_NMUSUA := frmLogin.nomeUsuario;
+              uFrmAdmin.admin    := frmLogin.administrador;
+              FreeAndNil(frmLogin);
+              Application.Run;
+         end
+         else
+         begin
+              FreeAndNil(Dm);
+              FreeAndNil(dmConsultas);
+              FreeAndNil(DM2);
+              FreeAndNil(DmCon);
+              FreeAndNil(dmDados);
+              FreeAndNil(dmRelatorios);
+              //
+              Application.Terminate;
+         End;
+    End
+    else
+        MessageDlg('Aplicativo já está sendo executado!!!', mtInformation, [mbOK], 0);
+end.

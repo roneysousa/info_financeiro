@@ -1,0 +1,225 @@
+object frmEnviarEmail: TfrmEnviarEmail
+  Left = 155
+  Top = 105
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Enviar Email'
+  ClientHeight = 427
+  ClientWidth = 581
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poScreenCenter
+  ShowHint = True
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnlSuperior: TPanel
+    Left = 0
+    Top = 0
+    Width = 581
+    Height = 89
+    Align = alTop
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 16
+      Top = 23
+      Width = 25
+      Height = 13
+      Caption = 'Para:'
+      Transparent = True
+    end
+    object Label2: TLabel
+      Left = 16
+      Top = 51
+      Width = 41
+      Height = 13
+      Caption = 'Assunto:'
+    end
+    object lblMens: TLabel
+      Left = 72
+      Top = 72
+      Width = 44
+      Height = 13
+      Caption = 'lblMens'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlue
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object edtPara: TEdit
+      Left = 68
+      Top = 16
+      Width = 369
+      Height = 21
+      Hint = 'Digite o email do destinat'#225'rio'
+      CharCase = ecLowerCase
+      TabOrder = 0
+      OnChange = edtParaChange
+      OnExit = edtParaExit
+    end
+    object edtAssunto: TEdit
+      Left = 68
+      Top = 45
+      Width = 369
+      Height = 21
+      Hint = 'Digite o assunto do email'
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 89
+    Width = 581
+    Height = 24
+    Align = alTop
+    TabOrder = 1
+    object Label3: TLabel
+      Left = 11
+      Top = 4
+      Width = 55
+      Height = 13
+      Caption = 'Mensagem:'
+      Transparent = True
+    end
+  end
+  object pnlMensagem: TPanel
+    Left = 0
+    Top = 113
+    Width = 581
+    Height = 273
+    Align = alClient
+    TabOrder = 2
+    object mmMensagem: TMemo
+      Left = 1
+      Top = 1
+      Width = 579
+      Height = 271
+      Align = alClient
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Courier New'
+      Font.Style = []
+      ParentFont = False
+      ReadOnly = True
+      ScrollBars = ssBoth
+      TabOrder = 0
+    end
+    object Animate1: TAnimate
+      Left = 136
+      Top = 116
+      Width = 300
+      Height = 60
+      Hint = 'Enviando Solicita'#231#227'o'
+      FileName = 'C:\Empresa\SERVICO\DELPHI\c_c.avi'
+      StopFrame = 94
+      Visible = False
+    end
+  end
+  object pnlBotoes: TPanel
+    Left = 0
+    Top = 386
+    Width = 581
+    Height = 41
+    Align = alBottom
+    Color = clNavy
+    TabOrder = 3
+    object btEnviar: TBitBtn
+      Left = 400
+      Top = 8
+      Width = 75
+      Height = 25
+      Hint = 'Enviar email'
+      Caption = 'Enviar'
+      TabOrder = 0
+      OnClick = btEnviarClick
+      Glyph.Data = {
+        F6000000424DF600000000000000760000002800000010000000100000000100
+        04000000000080000000C40E0000C40E00001000000000000000000000000000
+        80000080000000808000800000008000800080800000C0C0C000808080000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00AAAAAAAAAAAA
+        AAAA00000000000AAAAA0FFFFFFFFF0AAAAA00FFFFFF000000000F0FFFFF0FF7
+        77700FF0FFF00B8008700F0F000F0F07F07000F7F7F70B07B0700F7F7F7F0F07
+        F070A0F7F7F70B07B070AA0F7F7F0F07F070AAA0F7F00B07BFB0AAAA000A0008
+        8000AAAAAAAAAA07F0AAAAAAAAAAAA800AAAAAAAAAAAAAAAAAAA}
+    end
+    object btFechar: TBitBtn
+      Left = 488
+      Top = 8
+      Width = 75
+      Height = 25
+      Hint = 'Fechar janela'
+      Caption = '&Fechar'
+      TabOrder = 1
+      OnClick = btFecharClick
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        18000000000000030000120B0000120B00000000000000000000FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FF824B4B4E1E1FFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF824B4B824B4BA64B4BA9
+        4D4D4E1E1FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+        824B4B824B4BB64F50C24F50C54D4EB24D4E4E1E1F824B4B824B4B824B4B824B
+        4B824B4B824B4BFF00FFFF00FFFF00FF824B4BD45859CB5556C95455C95253B7
+        4F524E1E1FFE8B8CFB9A9CF8AAABF7B5B6F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BD75C5DD05A5BCF595ACF5758BD53564E1E1F23B54A13C14816BD480CBC
+        41F7B5B6824B4BFF00FFFF00FFFF00FF824B4BDD6364D75F60D55E5FD55C5DC2
+        575A4E1E1F2AB44D1CBF4C1EBC4C13BC45F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BE36869DD6566DA6364DE6667C6595B4E1E1F26B14916BC481BBB4910BB
+        43F7B5B6824B4BFF00FFFF00FFFF00FF824B4BEB6D6EE26768E67E7FFAD3D4CC
+        6E704E1E1FA5D89750D16F42C9662DC758F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BF27374E96C6DEB8182FCD1D3CF6E704E1E1FFFF2CCFFFFD7FFFFD4E6FC
+        C7F7B5B6824B4BFF00FFFF00FFFF00FF824B4BF87879F07576EE7273F07374D1
+        65664E1E1FFCEFC7FFFFD5FFFFD3FFFFD7F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BFE7F80F77A7BF6797AF77779D76B6B4E1E1FFCEFC7FFFFD5FFFFD3FFFF
+        D5F7B5B6824B4BFF00FFFF00FFFF00FF824B4BFF8384FC7F80FB7E7FFE7F80DA
+        6E6F4E1E1FFCEFC7FFFFD5FFFFD3FFFFD5F7B5B6824B4BFF00FFFF00FFFF00FF
+        824B4BFF8889FF8283FF8182FF8283E073744E1E1FFCEFC7FFFFD5FFFFD3FFFF
+        D5F7B5B6824B4BFF00FFFF00FFFF00FF824B4B824B4BE27576FE8182FF8687E5
+        76774E1E1FFAEBC5FCFBD1FCFBCFFCFBD1F7B5B6824B4BFF00FFFF00FFFF00FF
+        FF00FFFF00FF824B4B9C5657CB6C6DCF6E6E4E1E1F824B4B824B4B824B4B824B
+        4B824B4B824B4BFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF824B4B82
+        4B4B4E1E1FFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+    end
+  end
+  object IdSMTP: TIdSMTP
+    MaxLineAction = maException
+    ReadTimeout = 0
+    Host = 'smtp.ig.com.br'
+    Port = 25
+    AuthenticationType = atLogin
+    Username = 'roneyweb'
+    Left = 368
+    Top = 80
+  end
+  object odAnexos: TOpenDialog
+    Left = 424
+    Top = 80
+  end
+  object IdMessage: TIdMessage
+    AttachmentEncoding = 'MIME'
+    BccList = <>
+    CCList = <>
+    Encoding = meMIME
+    Recipients = <>
+    ReplyTo = <>
+    Left = 464
+    Top = 88
+  end
+  object IdSSLIOHandlerSocket1: TIdSSLIOHandlerSocket
+    SSLOptions.Method = sslvSSLv2
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 504
+    Top = 64
+  end
+end

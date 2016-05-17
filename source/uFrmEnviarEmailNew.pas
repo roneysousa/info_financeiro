@@ -1,0 +1,169 @@
+unit uFrmEnviarEmailNew;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, Buttons, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdMessageClient, IdSMTP, IdMessage,
+  IdIOHandler, IdIOHandlerSocket, IdSSLOpenSSL, ComCtrls, Mask, DBCtrls,
+  IdPOP3;
+
+type
+  TfrmEnviarPedido = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    edtPara: TEdit;
+    Label2: TLabel;
+    edtCC: TEdit;
+    Label3: TLabel;
+    edtAssunto: TEdit;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Label4: TLabel;
+    btnEnviar: TBitBtn;
+    btnSair: TBitBtn;
+    mmMensagem: TMemo;
+    Label5: TLabel;
+    IdSMTP: TIdSMTP;
+    OpenDialogAnexo: TOpenDialog;
+    IdMessage: TIdMessage;
+    lbxAnexos: TListBox;
+    IdSSLIOHandlerSocket1: TIdSSLIOHandlerSocket;
+    statusBar: TStatusBar;
+    BitBtn3: TBitBtn;
+    btnRemover: TBitBtn;
+    Label6: TLabel;
+    edtFromDe: TEdit;
+    procedure btnSairClick(Sender: TObject);
+    procedure btnEnviarClick(Sender: TObject);
+    procedure BitBtn3Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure IdSMTPStatus(ASender: TObject; const AStatus: TIdStatus;
+      const AStatusText: String);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnRemoverClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmEnviarPedido: TfrmEnviarPedido;
+  aEmail : String;
+  HNDicmp, HNDicmp2 : integer;
+
+implementation
+
+uses Udm, uFuncoes;
+
+{$R *.dfm}
+
+procedure TfrmEnviarPedido.btnSairClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmEnviarPedido.btnEnviarClick(Sender: TObject);
+var Anexo : Integer;
+begin
+ btnEnviar.Enabled := False;
+ btnSair.Enabled := False;
+ //
+ statusBar.Panels[0].Text := 'Aguarde...';
+ //
+ try
+  Screen.Cursor := crHourGlass;
+  //
+  IdSMTP.Host            := dm.CdsConfigCFG_SMTP_EMAIL.AsString;
+  IdSMTP.Port            := Dm.CdsConfigCFG_EMAIL_PORTA.AsInteger;
+  If (Dm.CdsConfigCFG_EMAIL_AUTENTICACAO.AsString = 'S') THen
+      IdSMTP.IOHandler := IdSSLIOHandlerSocket1;
+  Idsmtp.AuthenticationType  := atLogin;
+  IdSMTP.Username        := Dm.CdsConfigCFG_EMAIL.AsString;
+  //IdSMTP.Password        := Dm.CdsConfigCFG_EMAIL_PASSWORD.AsString;
+  IdSMTP.Password        := uFuncoes.Criptografia(Dm.CdsConfigCFG_EMAIL_PASSWORD.AsString, uFuncoes.chave);
+  //
+  IdMessage.From.Address := Dm.CdsConfigCFG_EMAIL.AsString;
+  IdMessage.From.Name    := edtFromDe.Text;
+  IdMessage.Subject := edtAssunto.Text;
+  IdMessage.Body := mmMensagem.Lines;
+  IdMessage.Recipients.Clear;
+  IdMessage.Recipients.EMailAddresses := edtPara.Text;
+  IdMessage.Priority := mpNormal;
+  If not uFuncoes.Empty(edtCC.Text) Then
+      IdMessage.CCList.EMailAddresses := edtCC.Text;
+  //Manipulando os Anexos
+  for Anexo := 0 to lbxAnexos.Items.Count-1 do
+    TIdAttachment.Create(idmessage.MessageParts, TFileName(lbxAnexos.Items.Strings[Anexo]));
+  //
+  IdSMTP.Connect;
+  //
+  If (Dm.CdsConfigCFG_EMAIL_AUTENTICACAO.AsString = 'S') THen
+       IdSMTP.Authenticate;
+  //
+  try
+        IdSMTP.Send(IdMessage);
+  finally
+        IdSMTP.Disconnect;
+  end;
+  Application.MessageBox('Email enviado com sucesso!', 'Confirmação',
+      MB_ICONINFORMATION +   MB_OK);
+  //
+  Close;
+ Finally
+     btnEnviar.Enabled := True;
+     btnSair.Enabled := True;
+     //
+     statusBar.Panels[0].Text := '';
+     Screen.Cursor := crDefault;
+ End;
+ Application.ProcessMessages;
+end;
+
+procedure TfrmEnviarPedido.BitBtn3Click(Sender: TObject);
+begin
+    if OpenDialogAnexo.Execute then
+        lbxAnexos.Items.Add(OpenDialogAnexo.FileName);
+end;
+
+procedure TfrmEnviarPedido.FormShow(Sender: TObject);
+begin
+    Dm.RefreshCDS(Dm.CdsConfig);
+    OpenDialogAnexo.InitialDir :=  Dm.CdsConfigCFG_ARQUIVO_PEDIDO.AsString;
+    edtFromDe.Text := Dm.CdsConfigCFG_EMAIL_FROM.AsString;  
+    edtPara.Text := aEmail;
+end;
+
+procedure TfrmEnviarPedido.IdSMTPStatus(ASender: TObject;
+  const AStatus: TIdStatus; const AStatusText: String);
+begin
+    Application.ProcessMessages;
+    statusBar.Panels[0].Text := 'idSMTP: ' + AStatusText;
+end;
+
+procedure TfrmEnviarPedido.FormCreate(Sender: TObject);
+begin
+     HNDicmp := LoadLibrary('libeay32.DLL');
+     HNDicmp2 := LoadLibrary('ssleay32.DLL');
+end;
+
+procedure TfrmEnviarPedido.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+      FreeLibrary(HNDicmp);
+      FreeLibrary(HNDicmp2);
+      //
+       
+end;
+
+procedure TfrmEnviarPedido.btnRemoverClick(Sender: TObject);
+begin
+     if (lbxAnexos.Items.Count > 0) Then
+        lbxAnexos.Items.Delete(lbxAnexos.ItemIndex);
+end;
+
+end.

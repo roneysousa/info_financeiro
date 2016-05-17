@@ -1,0 +1,443 @@
+unit uFrmTeleEntrega;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, Buttons, StdCtrls, Mask, FMTBcd, DB, SqlExpr;
+
+type
+  TfrmTeleEntrega = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Label1: TLabel;
+    edtTelefone: TMaskEdit;
+    sbLocProduto: TSpeedButton;
+    edtNome: TEdit;
+    edtEndereco: TEdit;
+    Label2: TLabel;
+    edtNumero: TEdit;
+    Label3: TLabel;
+    edtComplemento: TEdit;
+    Label4: TLabel;
+    edtBairro: TEdit;
+    Label5: TLabel;
+    edtCidade: TEdit;
+    BtCancelar: TBitBtn;
+    BtGravar: TBitBtn;
+    Label7: TLabel;
+    edtReferencia: TEdit;
+    Label6: TLabel;
+    Label8: TLabel;
+    edtUF: TEdit;
+    Label9: TLabel;
+    edtDDD: TMaskEdit;
+    procedure edtNumeroKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
+    procedure BtGravarClick(Sender: TObject);
+    procedure BtCancelarClick(Sender: TObject);
+    procedure edtTelefoneKeyPress(Sender: TObject; var Key: Char);
+    procedure edtNomeKeyPress(Sender: TObject; var Key: Char);
+    procedure edtEnderecoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtComplementoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtBairroKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCidadeKeyPress(Sender: TObject; var Key: Char);
+    procedure edtReferenciaKeyPress(Sender: TObject; var Key: Char);
+    procedure edtTelefoneExit(Sender: TObject);
+    procedure edtTelefoneChange(Sender: TObject);
+    procedure edtCidadeExit(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnClienteClick(Sender: TObject);
+    procedure edtUFKeyPress(Sender: TObject; var Key: Char);
+    procedure edtDDDKeyPress(Sender: TObject; var Key: Char);
+  private
+    { Private declarations }
+    Function GetTelefone(aTelefone : String) : boolean ;
+    procedure LimparCampos;
+  public
+    { Public declarations }
+  end;
+
+const
+    ScreenWidth: LongInt = 800; {I designed my form in 800x600 mode.}
+    ScreenHeight: LongInt = 600;
+
+var
+  frmTeleEntrega: TfrmTeleEntrega;
+  M_FLGRAV, M_FLVISU, M_FLUPDA : Boolean;
+  M_CDCLIE : Integer;
+
+implementation
+
+uses uFuncoes, Udm, udmDados, DBClient, uFrmAdmin, UfrmClientes;
+
+{$R *.dfm}
+
+procedure TfrmTeleEntrega.edtNumeroKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If not( key in['0'..'9',#8, #13] ) then
+          key:=#0;
+      //
+      If (Key = #13) and not uFuncoes.Empty(edtNumero.Text)  then
+        begin
+             Key := #0;
+             edtComplemento.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.FormShow(Sender: TObject);
+begin
+     M_FLGRAV := false;
+     //
+     edtDDD.Text := Dm.CdsConfigCFG_DDD_PADRAO.AsString;
+     //
+     If (M_FLVISU = True) Then
+      begin
+           LimparCampos;
+           edtTelefone.Text := dmDados.cdsPreVendaDOM_NRFONE.AsString;
+           GetTelefone(edtTelefone.Text);
+      End
+      Else
+          edtTelefone.SetFocus;
+end;
+
+procedure TfrmTeleEntrega.BtGravarClick(Sender: TObject);
+Var
+   M_CDCIDA, M_CDBARR, M_CDCLIE : integer;
+begin
+     If uFuncoes.Empty(edtDDD.Text) Then
+      begin
+          Application.MessageBox(PChar('Digite o DDD do telefone !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtDDD.SetFocus;
+          Exit;
+      End;
+     //
+     If uFuncoes.Empty(edtNome.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o nome do cliente !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtNome.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(edtTelefone.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o número do telefone !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtTelefone.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(edtEndereco.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o endereço do cliente !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtEndereco.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(edtNumero.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o número do endereço !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtNumero.SetFocus;
+          Exit;
+     End;
+     //
+     {If uFuncoes.Empty(edtComplemento.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o complemento de endereço !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtComplemento.SetFocus;
+          Exit;
+     End;}
+     //
+     If uFuncoes.Empty(edtBairro.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o bairro do cliente !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtBairro.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(edtCidade.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite a cidade do cliente !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtCidade.SetFocus;
+          Exit;
+     End;
+     //
+     {If uFuncoes.Empty(edtReferencia.Text) Then
+     begin
+          Application.MessageBox(PChar('Digite o nome para referência !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtReferencia.SetFocus;
+          Exit;
+     End;}
+     //
+     If not uFuncoes.Empty(edtTelefone.Text) and not (Dm.GetVerificaTelefone(edtDDD.Text+edtTelefone.Text)) Then
+      begin
+          M_CDCIDA := Dm.GetCodigoCidade(edtCidade.Text);
+          M_CDBARR := Dm.GetCodigoBairro(edtBairro.Text, M_CDCIDA);
+          // aNome, aTelefone, aEndereco, aComplemento,
+          //  aReferencia, aUF: String; iNumero, iBairro, iCidade: Integer
+          if not (Dm.IncluirCliente(edtNome.Text, edtDDD.Text+edtTelefone.Text, edtEndereco.Text, edtComplemento.Text,
+                    edtReferencia.Text, edtUF.Text, StrtoInt(edtNumero.Text), M_CDBARR, M_CDCIDA)) Then
+                Application.MessageBox(PChar('Erro ao tentar incluir dados do cliente !'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL)
+      End;
+      //
+      If (M_FLUPDA) Then
+       begin
+            M_CDCLIE := DM.GetCodigoClienteTelefone(edtDDD.Text+edtTelefone.Text);
+            M_CDCIDA := Dm.GetCodigoCidade(edtCidade.Text);
+            M_CDBARR := Dm.GetCodigoBairro(edtBairro.Text, M_CDCIDA);
+            //
+            If (M_CDCLIE > 0) Then
+             begin
+                  Dm.FilterCDS(Dm.CdsClientes, fsInteger, InttoStr(M_CDCLIE));
+                  //
+                  If not (Dm.CdsClientes.IsEmpty) Then
+                   begin
+                        With Dm.CdsClientes do
+                          begin
+                             Dm.Start;
+                             try
+                               Edit;
+                               FieldByName('CLI_RAZAO').AsString    := edtNome.Text;
+                               FieldByName('CLI_FANTASIA').AsString := edtNome.Text;
+                               FieldByName('CLI_ENDERECO').AsString := edtEndereco.Text;
+                               FieldByName('CLI_END_COBRANCA').AsString := edtComplemento.Text;
+                               FieldByName('CLI_NUMERO').AsInteger  := StrtoInt(edtNumero.Text);
+                               FieldByName('CLI_PONTO_REFERENCIA').AsString := edtReferencia.Text;
+                               FieldByName('CLI_FONE1').AsString    := edtDDD.Text+edtTelefone.Text;
+                               FieldByName('BAI_CODIGO').AsInteger  := M_CDBARR;
+                               FieldByName('CID_CODIGO').AsInteger  := M_CDCIDA;
+                               FieldByName('CLI_UFCLIENTE').AsString := edtUF.Text;
+                               FieldByName('CLI_DATA_ALT').AsDateTime := Date();
+                               FieldByName('CLI_HORA_ALT').AsString := TimetoStr(Time);
+                               //
+                               ApplyUpdates(0);
+                               //
+                               Dm.Comit(Dm.Transc);
+                             Except
+                                 dm.Rollback;
+                             End;
+                          End;
+                   End;
+             End;
+       End
+      Else
+          M_FLGRAV := true;
+      //
+      Close;
+      ModalResult := mrOk;
+end;
+
+procedure TfrmTeleEntrega.BtCancelarClick(Sender: TObject);
+begin
+      M_FLGRAV := False;
+      ModalResult := mrCancel;
+      Close;
+end;
+
+procedure TfrmTeleEntrega.edtTelefoneKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtTelefone.Text)  then
+        begin
+             Key := #0;
+             edtNome.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtNomeKeyPress(Sender: TObject; var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtNome.Text)  then
+        begin
+             Key := #0;
+             edtEndereco.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtEnderecoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtEndereco.Text)  then
+        begin
+             Key := #0;
+             edtNumero.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtComplementoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtComplemento.Text)  then
+        begin
+             Key := #0;
+             edtBairro.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtBairroKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtBairro.Text)  then
+        begin
+             Key := #0;
+             edtCidade.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtCidadeKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtCidade.Text)  then
+        begin
+             Key := #0;
+             edtUF.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtReferenciaKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtReferencia.Text)  then
+        begin
+             Key := #0;
+             BtGravar.SetFocus;
+        End;
+end;
+
+Function TfrmTeleEntrega.GetTelefone(aTelefone: String) : boolean;
+var
+    texto : string;
+begin
+  //texto := 'Select * from PRE_VENDA where (DOM_NRFONE = :pNRFONE)';
+  result := false;
+  //
+  with dmDados.cdsBuscaTelefone do
+   begin
+      Close;
+      //CommandText := texto;
+      Params.ParamByName('pNRFONE').AsString := aTelefone;
+      Open;
+      //
+      If not (IsEmpty) Then
+       begin
+            M_CDCLIE := FieldByName('CLI_CODIGO').AsInteger; 
+            edtDDD.Text      := Copy(FieldByName('CLI_FONE1').AsString,1,2);
+            edtTelefone.Text := Copy(FieldByName('CLI_FONE1').AsString,3,8);
+            edtNome.Text     := FieldByName('CLI_RAZAO').AsString;  //
+            edtEndereco.Text := FieldByName('CLI_ENDERECO').AsString;
+            edtNumero.Text   := FieldByName('CLI_NUMERO').AsString;
+            edtComplemento.Text := FieldByName('CLI_END_COBRANCA').AsString;
+            edtBairro.Text   := uFuncoes.GetBairro(FieldByName('CID_CODIGO').AsInteger, FieldByName('BAI_CODIGO').AsInteger);
+            edtCidade.Text   := uFuncoes.GetCidade(FieldByName('CID_CODIGO').AsInteger);
+            edtUF.Text       := FieldByName('CLI_UFCLIENTE').AsString;
+            edtReferencia.Text := FieldByName('CLI_PONTO_REFERENCIA').AsString;
+            //
+       End
+       Else
+       begin
+            LimparCampos;
+            Result := true;
+       End;
+  End;
+end;
+
+procedure TfrmTeleEntrega.LimparCampos;
+begin
+     //edtDDD.Text := Dm.CdsConfigCFG_DDD_PADRAO.AsString;
+     edtNome.Clear;
+     edtEndereco.Clear;
+     edtNumero.Clear;
+     edtComplemento.Clear;
+     edtBairro.Clear;
+     edtCidade.Clear;
+     edtReferencia.Clear;
+end;
+
+procedure TfrmTeleEntrega.edtTelefoneExit(Sender: TObject);
+Var
+   aNumero : String;
+begin
+    if (edtTelefone.Text <> '(__) ____-____') Then
+     begin
+          LimparCampos;
+          aNumero := edtDDD.Text + edtTelefone.Text;
+          If (GetTelefone(aNumero)) Then
+              M_FLUPDA := False
+          Else
+              M_FLUPDA := True;
+     End;
+end;
+
+procedure TfrmTeleEntrega.edtTelefoneChange(Sender: TObject);
+begin
+    //if (edtTelefone.Text = '(__) ____-____') Then
+    if uFuncoes.Empty(edtTelefone.Text)  Then
+         LimparCampos;
+end;
+
+procedure TfrmTeleEntrega.edtCidadeExit(Sender: TObject);
+Var
+    M_CDCIDA, M_CDBARR : Integer;
+begin
+     If not uFuncoes.Empty(edtCidade.Text) Then
+      begin
+           If not (Dm.GetVerificarCidade(edtCidade.Text)) Then
+            begin
+                 If not (Dm.AddCidade(edtCidade.Text, 'UF')) Then
+                     ShowMessage('Erro ao tentar incluir cidade !');
+            End;
+      end;
+      //
+      M_CDCIDA := Dm.GetCodigoCidade(edtCidade.Text);
+      M_CDBARR := Dm.GetCodigoBairro(edtBairro.Text, M_CDCIDA);
+      //
+      if not uFuncoes.Empty(edtBairro.Text) and not uFuncoes.Empty(edtCidade.Text) Then
+        if not (Dm.GetValidarBairro(edtBairro.Text, M_CDCIDA)) Then
+          begin
+               If not (Dm.AddBairro(edtBairro.Text, M_CDCIDA)) Then
+                   ShowMessage('Erro ao tentar incluir bairro na cidade !');
+          End;
+end;
+
+procedure TfrmTeleEntrega.FormCreate(Sender: TObject);
+begin
+      M_FLVISU := False;
+end;
+
+procedure TfrmTeleEntrega.btnClienteClick(Sender: TObject);
+begin
+     codMenu := retornarCodMenu(RetirarCarecterAtalho('Clientes...'));
+     //
+     dm.Verificar_Direitoa_Acesso(Strtoint(UFrmAdmin.M_CDUSUA), codMenu);
+     //
+     FrmAdmin.AbreForm(TFrmClientes, FrmClientes);
+end;
+
+procedure TfrmTeleEntrega.edtUFKeyPress(Sender: TObject; var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtUF.Text)  then
+        begin
+             Key := #0;
+             edtReferencia.SetFocus;
+        End;
+end;
+
+procedure TfrmTeleEntrega.edtDDDKeyPress(Sender: TObject; var Key: Char);
+begin
+      If (Key = #13) and not uFuncoes.Empty(edtDDD.Text)  then
+        begin
+             Key := #0;
+             edtTelefone.SetFocus;
+        End;
+end;
+
+end.

@@ -1,0 +1,318 @@
+object frmDescontos: TfrmDescontos
+  Left = 163
+  Top = 114
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Tabela'
+  ClientHeight = 243
+  ClientWidth = 541
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 541
+    Height = 144
+    Align = alClient
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 17
+      Top = 32
+      Width = 54
+      Height = 13
+      Caption = '&Descontos:'
+      Transparent = True
+    end
+    object Label14: TLabel
+      Left = 91
+      Top = 54
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label3: TLabel
+      Left = 174
+      Top = 54
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label4: TLabel
+      Left = 258
+      Top = 54
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label2: TLabel
+      Left = 427
+      Top = 54
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label5: TLabel
+      Left = 343
+      Top = 54
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label6: TLabel
+      Left = 514
+      Top = 54
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label7: TLabel
+      Left = 18
+      Top = 80
+      Width = 57
+      Height = 13
+      Caption = 'Acr'#233'scimos:'
+      Transparent = True
+    end
+    object Label8: TLabel
+      Left = 91
+      Top = 101
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object Label9: TLabel
+      Left = 174
+      Top = 101
+      Width = 10
+      Height = 13
+      Caption = '%'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+    end
+    object edtDesconto1: TCurrencyEdit
+      Left = 18
+      Top = 49
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 0
+      OnExit = edtDesconto1Exit
+    end
+    object edtDesconto2: TCurrencyEdit
+      Left = 102
+      Top = 49
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 1
+      OnExit = edtDesconto2Exit
+    end
+    object edtDesconto3: TCurrencyEdit
+      Left = 186
+      Top = 49
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 2
+      OnExit = edtDesconto3Exit
+    end
+    object edtDesconto4: TCurrencyEdit
+      Left = 271
+      Top = 49
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 3
+      OnExit = edtDesconto4Exit
+    end
+    object edtDesconto5: TCurrencyEdit
+      Left = 355
+      Top = 49
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 4
+      OnExit = edtDesconto5Exit
+    end
+    object edtDesconto6: TCurrencyEdit
+      Left = 440
+      Top = 49
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 5
+      OnExit = edtDesconto6Exit
+    end
+    object edtAcrescimo: TCurrencyEdit
+      Left = 18
+      Top = 97
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 6
+      OnExit = edtAcrescimoExit
+    end
+    object edtAcrescimo2: TCurrencyEdit
+      Left = 102
+      Top = 97
+      Width = 70
+      Height = 21
+      AutoSize = False
+      DisplayFormat = ',0.00;-,0.00'
+      MaxValue = 100.000000000000000000
+      TabOrder = 7
+      OnExit = edtAcrescimo2Exit
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 202
+    Width = 541
+    Height = 41
+    Align = alBottom
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 1
+      Top = -1
+      Width = 539
+      Height = 41
+      Align = alBottom
+      Color = clNavy
+      TabOrder = 0
+      object BtGravar: TBitBtn
+        Left = 450
+        Top = 9
+        Width = 80
+        Height = 25
+        Caption = '&Confirma'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        Glyph.Data = {
+          DE010000424DDE01000000000000760000002800000024000000120000000100
+          0400000000006801000000000000000000001000000000000000000000000000
+          80000080000000808000800000008000800080800000C0C0C000808080000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333333333333333330000333333333333333333333333F33333333333
+          00003333344333333333333333388F3333333333000033334224333333333333
+          338338F3333333330000333422224333333333333833338F3333333300003342
+          222224333333333383333338F3333333000034222A22224333333338F338F333
+          8F33333300003222A3A2224333333338F3838F338F33333300003A2A333A2224
+          33333338F83338F338F33333000033A33333A222433333338333338F338F3333
+          0000333333333A222433333333333338F338F33300003333333333A222433333
+          333333338F338F33000033333333333A222433333333333338F338F300003333
+          33333333A222433333333333338F338F00003333333333333A22433333333333
+          3338F38F000033333333333333A223333333333333338F830000333333333333
+          333A333333333333333338330000333333333333333333333333333333333333
+          0000}
+        NumGlyphs = 2
+      end
+    end
+  end
+  object Panel4: TPanel
+    Left = 0
+    Top = 144
+    Width = 541
+    Height = 58
+    Align = alBottom
+    TabOrder = 2
+    object edtTOTAL: TPanel
+      Left = 264
+      Top = 5
+      Width = 269
+      Height = 47
+      Alignment = taRightJustify
+      BorderStyle = bsSingle
+      Caption = '0,00'
+      Color = clRed
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWhite
+      Font.Height = -35
+      Font.Name = 'Arial Black'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+end

@@ -1,0 +1,505 @@
+unit uFrmRelFichaClientes;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ufrmRelatorio, StdCtrls, Buttons, ExtCtrls, FMTBcd, DB,
+  DBClient, Provider, SqlExpr, ppDB, ppDBPipe, ppComm, ppRelatv, ppProd,
+  ppClass, ppReport, ppCtrls, ppPrnabl, ppBands, ppCache, ppVar;
+
+type
+  TfrmRelFichaClientes = class(TfrmRelatorio)
+    Label2: TLabel;
+    cmbTPCLIENTE: TComboBox;
+    Label1: TLabel;
+    cmbRegiao: TComboBox;
+    cmbOrdem: TComboBox;
+    Label3: TLabel;
+    Label4: TLabel;
+    edtCDCLIE: TEdit;
+    spLocCliente: TSpeedButton;
+    rgTipo: TRadioGroup;
+    dstLista: TSQLDataSet;
+    dspLista: TDataSetProvider;
+    cdsLista: TClientDataSet;
+    dsLista: TDataSource;
+    cdsListaCLI_CODIGO: TIntegerField;
+    cdsListaCLI_FANTASIA: TStringField;
+    cdsListaCLI_RAZAO: TStringField;
+    cdsListaCLI_TIPOPESSOA: TStringField;
+    cdsListaCLI_CGC: TStringField;
+    cdsListaCLI_ENDERECO: TStringField;
+    cdsListaCLI_NUMERO: TIntegerField;
+    cdsListaCLI_CEP: TStringField;
+    cdsListaCLI_FONE1: TStringField;
+    cdsListaCLI_INSCESTADUAL: TStringField;
+    cdsListaCLI_ORGAOEMISSOR: TStringField;
+    cdsListaCLI_UFEMISSOR: TStringField;
+    cdsListaCLI_UFCLIENTE: TStringField;
+    cdsListaCLI_DTANIVERSARIO: TDateField;
+    cdsListaCLI_NMCIDADE: TStringField;
+    cdsListaCLI_NMBAIRRO: TStringField;
+    cdsListaCLI_FONE2: TStringField;
+    cdsListaCLI_FAX: TStringField;
+    ppReport1: TppReport;
+    ppDBPLista: TppDBPipeline;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBImage1: TppDBImage;
+    ppLabel8: TppLabel;
+    txtTipo: TppLabel;
+    txtRegiao: TppLabel;
+    txtOrdem: TppLabel;
+    txtFluxo: TppLabel;
+    ppLabel17: TppLabel;
+    ppSystemVariable1: TppSystemVariable;
+    ppLabel18: TppLabel;
+    ppLine5: TppLine;
+    ppSystemVariable2: TppSystemVariable;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppDBText4: TppDBText;
+    cdsListaTELEFONE: TStringField;
+    cdsListaFAX: TStringField;
+    ppLabel1: TppLabel;
+    ppLine2: TppLine;
+    ppLine1: TppLine;
+    ppLabel2: TppLabel;
+    ppLabel3: TppLabel;
+    ppLabel4: TppLabel;
+    ppSummaryBand1: TppSummaryBand;
+    ppLabel5: TppLabel;
+    ppDBCalc1: TppDBCalc;
+    ppLine3: TppLine;
+    cdsListaCLI_NRBOX: TStringField;
+    Label12: TLabel;
+    cmbGrupos: TComboBox;
+    cdsListaCLI_CDGRUPO: TIntegerField;
+    txtGrupo: TppLabel;
+    Label5: TLabel;
+    cmbSituacao: TComboBox;
+    lblCliente: TEdit;
+    txtSituacao: TppLabel;
+    procedure btImprimirClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure spLocClienteClick(Sender: TObject);
+    procedure edtCDCLIEChange(Sender: TObject);
+    procedure edtCDCLIEExit(Sender: TObject);
+    procedure edtCDCLIEKeyPress(Sender: TObject; var Key: Char);
+    procedure cdsListaCalcFields(DataSet: TDataSet);
+  private
+    { Private declarations }
+    procedure TIPOCLIENTES;
+    procedure REGIAO;
+    procedure Carregar_Grupos;
+    procedure Carregar_Situcaoes;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmRelFichaClientes: TfrmRelFichaClientes;
+
+implementation
+
+uses uDmRelatorios, udmConsulta, uFuncoes, uLocCliente, Udm;
+
+{$R *.dfm}
+
+procedure TfrmRelFichaClientes.btImprimirClick(Sender: TObject);
+Var
+    Linha : String;
+    iSituacao, iCodLoja : integer;
+begin
+  if not uFuncoes.Empty(cmbSituacao.Text) Then
+      iSituacao := dm.GetCodigoSituacao(cmbSituacao.Text)
+  Else
+      iSituacao := 0; 
+  if (rgTipo.ItemIndex = 0) Then
+   begin
+    try
+          dmRelatorios.txtTipo.Caption   := 'TIPO CLIENTE : TODOS';
+          dmRelatorios.txtRegiao.Caption := 'REGIÃO : TODAS';
+          dmRelatorios.txtFluxo.Caption := '';
+          //
+          Linha := 'Select CLI_CODIGO, CLI_FANTASIA, CLI_RAZAO, CLI_TIPOPESSOA, CLI_CGC, CLI_ENDERECO, CLI_NUMERO, CLI_CEP, CLI_FONE1, CLI_INSCESTADUAL, CLI_ORGAOEMISSOR, CLI_UFEMISSOR, CLI_UFCLIENTE, '
+                  +'CLI_DTANIVERSARIO,(Select C.CID_NOME from CIDADES C Where (C.CID_CODIGO = CLIENTES.CID_CODIGO)) AS CLI_NMCIDADE, '
+                  +'(Select B.BAI_NOME from BAIRROS B Where (B.BAI_CODIGO = CLIENTES.BAI_CODIGO)) AS CLI_NMBAIRRO, '
+                  +'CLI_FONE2, CLI_FONE3, CLI_RAMAL1, CLI_RAMAL2, CLI_RAMAL3, CLI_FAX, CLI_PAGINA, CLI_NRBOX '
+                  +'from CLIENTES ';
+          //
+          dmRelatorios.cdsClientes.Close;
+          With dmRelatorios.dstClientes do
+          Begin
+               Active := False;
+               CommandText := Linha;
+               //
+               If uFuncoes.Empty(edtCDCLIE.Text) Then
+                   CommandText := CommandText + ' Where (CLI_CODIGO >'+QuotedStr('0')+')'
+               Else
+                   CommandText := CommandText + ' Where (CLI_CODIGO ='+QuotedStr(edtCDCLIE.Text)+')';
+               //
+               If not uFuncoes.Empty(cmbTPCLIENTE.Text) Then
+                   CommandText := CommandText + ' And (CLI_TIPOCLIENTE = '+QuotedStr(InttoStr(uFuncoes.GetTipoCliente(cmbTPCLIENTE.Text) ))+')';
+               //
+               If not uFuncoes.Empty(cmbRegiao.Text) Then
+                   CommandText := CommandText + ' And (CLI_REGIAO = '+QuotedStr(InttoStr(uFuncoes.GetRegiao(cmbRegiao.Text) ))+')';
+               if (iSituacao > 0) Then
+                   CommandText := CommandText + ' And (SIT_CODIGO = '+QuotedStr(InttoStr(iSituacao))+') ';
+               //
+               {If (RadioGroup1.ItemIndex = 0 ) Then
+                   CommandText := CommandText + ' AND (CLI_FLMATRIZ = '+QuotedStr('M')+')';}
+               //
+               {If (RadioGroup1.ItemIndex = 1 ) Then
+                   CommandText := CommandText + ' AND (CLI_FLMATRIZ = '+QuotedStr('F')+')';}
+               //
+               {If not uFuncoes.Empty(cmbTPCLIENTE.Text)
+                and uFuncoes.Empty(cmbRegiao.Text)
+                And (RadioGroup1.ItemIndex < 0) Then
+                    CommandText := CommandText + ' Where (CLI_TIPOCLIENTE = '+QuotedStr(InttoStr(uFuncoes.GetTipoCliente(cmbTPCLIENTE.Text) ))+')';
+               If not uFuncoes.Empty(cmbTPCLIENTE.Text)
+                and not uFuncoes.Empty(cmbRegiao.Text)
+                and (RadioGroup1.ItemIndex >= 0) Then
+               begin
+                    CommandText := CommandText + ' Where (CLI_TIPOCLIENTE = '+QuotedStr(InttoStr(uFuncoes.GetTipoCliente(cmbTPCLIENTE.Text) ))+')';
+                    CommandText := CommandText + ' And (CLI_REGIAO = '+QuotedStr(InttoStr(uFuncoes.GetRegiao(cmbRegiao.Text) ))  +')';
+               End;
+               //
+               If uFuncoes.Empty(cmbTPCLIENTE.Text)
+                and uFuncoes.Empty(cmbRegiao.Text)
+                AND (RadioGroup1.ItemIndex >= 0) Then
+                 If (RadioGroup1.ItemIndex = 0 ) Then
+                    CommandText := CommandText + ' Where (CLI_FLMATRIZ = '+QuotedStr('M')+')'
+                 Else
+                    CommandText := CommandText + ' Where (CLI_FLMATRIZ = '+QuotedStr('F')+')';
+               //
+               If NOT uFuncoes.Empty(cmbTPCLIENTE.Text)
+                and uFuncoes.Empty(cmbRegiao.Text) Then
+                if (RadioGroup1.ItemIndex >= 0) Then
+                begin
+                 If (RadioGroup1.ItemIndex = 0 ) Then
+                    CommandText := CommandText + ' Where (CLI_TIPOCLIENTE = '+QuotedStr(InttoStr(uFuncoes.GetTipoCliente(cmbTPCLIENTE.Text) ))+')' +
+                         ' AND (CLI_FLMATRIZ = '+QuotedStr('M')+')';
+                 If (RadioGroup1.ItemIndex = 1 ) Then
+                    CommandText := CommandText + ' Where (CLI_TIPOCLIENTE = '+QuotedStr(InttoStr(uFuncoes.GetTipoCliente(cmbTPCLIENTE.Text) ))+')' +
+                         ' AND (CLI_FLMATRIZ = '+QuotedStr('F')+')';
+                End;
+               //
+               if (uFuncoes.Empty(cmbTPCLIENTE.Text))
+                and (not uFuncoes.Empty(cmbRegiao.Text))
+                AND (RadioGroup1.ItemIndex >= 0) Then
+                Begin
+                  If (RadioGroup1.ItemIndex = 0) Then
+                     CommandText := CommandText + ' Where (CLI_REGIAO = '+QuotedStr(InttoStr(uFuncoes.GetRegiao(cmbRegiao.Text) ))+')' +
+                          ' AND (CLI_FLMATRIZ = '+QuotedStr('M')+')';
+                  If (RadioGroup1.ItemIndex = 1 ) Then
+                     CommandText := CommandText + ' Where (CLI_REGIAO = '+QuotedStr(InttoStr(uFuncoes.GetRegiao(cmbRegiao.Text) ))+')' +
+                          ' AND (CLI_FLMATRIZ = '+QuotedStr('F')+')';
+                End;}
+               //
+               if (cmbOrdem.ItemIndex = 0) Then
+                  CommandText := CommandText + ' order by CLI_CODIGO';
+               if (cmbOrdem.ItemIndex = 1 ) Then
+                  CommandText := CommandText + ' order by CLI_FANTASIA';
+               if (cmbOrdem.ItemIndex = 2 ) Then
+                  CommandText := CommandText + ' order by CLI_RAZAO';
+               Active := True;
+          End;
+          dmRelatorios.cdsClientes.Open;
+          //
+          if not (dmRelatorios.cdsClientes.IsEmpty) Then
+          begin
+            With dmRelatorios.ppRepFichaCliente do
+            begin
+               If not uFuncoes.Empty(cmbTPCLIENTE.Text) Then
+                  dmRelatorios.txtTipo.Caption   := 'TIPO CLIENTE : '+cmbTPCLIENTE.Text;
+               If not uFuncoes.Empty(cmbRegiao.Text) Then
+                  dmRelatorios.txtRegiao.Caption := 'REGIÃO : '+cmbRegiao.Text;
+               dmRelatorios.txtSituacao.Caption := 'SITUAÇÃO : '+  cmbSituacao.Text;
+               //
+               {If (RadioGroup1.ItemIndex < 0) Then
+                    dmRelatorios.txtFluxo.Caption  := ' ';
+               If (RadioGroup1.ItemIndex = 0) Then
+                    dmRelatorios.txtFluxo.Caption  := 'FLUXO CLIENTE : MATRIZ';
+               If (RadioGroup1.ItemIndex = 1) Then
+                    dmRelatorios.txtFluxo.Caption  := 'FLUXO CLIENTE : FILIAL';}
+               //
+               dmRelatorios.txtOrdem.Caption := 'ORDEM : '+cmbOrdem.Text;
+               //
+               PrintReport;
+            End;
+          End
+          Else
+              Application.MessageBox(PChar('Não há dados para parametros selecionados.'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          //
+     Except
+        on Exc:Exception do
+        begin
+           Application.MessageBox(PChar('Error ao tentar gerar relatorio!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+        End;
+     End;
+   End
+   Else
+   Begin
+    try
+          txtTipo.Caption   := 'TIPO CLIENTE : TODOS';
+          txtRegiao.Caption := 'REGIÃO : TODAS';
+          txtFluxo.Caption := '';
+          //
+          Linha := 'Select CLI_CODIGO, CLI_FANTASIA, CLI_RAZAO, CLI_TIPOPESSOA, CLI_CGC, CLI_ENDERECO, CLI_NUMERO, CLI_CEP, CLI_FONE1, CLI_INSCESTADUAL, CLI_ORGAOEMISSOR, CLI_UFEMISSOR, CLI_UFCLIENTE, '
+                  +'CLI_DTANIVERSARIO,(Select C.CID_NOME from CIDADES C Where (C.CID_CODIGO = CLIENTES.CID_CODIGO)) AS CLI_NMCIDADE, '
+                  +'(Select B.BAI_NOME from BAIRROS B Where (B.BAI_CODIGO = CLIENTES.BAI_CODIGO)) AS CLI_NMBAIRRO, '
+                  +'CLI_FONE2, CLI_FONE3, CLI_RAMAL1, CLI_RAMAL2, CLI_RAMAL3, CLI_FAX, CLI_PAGINA, CLI_NRBOX, CLI_CDGRUPO '
+                  +'from CLIENTES ';
+          //
+          With cdsLista do
+          Begin
+               Active := False;
+               CommandText := Linha;
+               //
+               If uFuncoes.Empty(edtCDCLIE.Text) Then
+                   CommandText := CommandText + ' Where (CLI_CODIGO >'+QuotedStr('0')+')'
+               Else
+                   CommandText := CommandText + ' Where (CLI_CODIGO ='+QuotedStr(edtCDCLIE.Text)+')';
+               //
+               If not uFuncoes.Empty(cmbTPCLIENTE.Text) Then
+                   CommandText := CommandText + ' And (CLI_TIPOCLIENTE = '+QuotedStr(InttoStr(uFuncoes.GetTipoCliente(cmbTPCLIENTE.Text) ))+')';
+               //
+               If not uFuncoes.Empty(cmbRegiao.Text) Then
+                   CommandText := CommandText + ' And (CLI_REGIAO = '+QuotedStr(InttoStr(uFuncoes.GetRegiao(cmbRegiao.Text) ))+')';
+               //
+               If not uFuncoes.Empty(cmbGrupos.Text) Then
+                   CommandText := CommandText + ' And (CLI_CDGRUPO = '+QuotedStr(InttoStr(Dm.GetCodigoGrupo(cmbGrupos.Text)))+')';
+               if (iSituacao > 0) Then
+                   CommandText := CommandText + ' And (SIT_CODIGO = '+QuotedStr(InttoStr(iSituacao))+') ';
+
+               {If (RadioGroup1.ItemIndex = 0 ) Then
+                   CommandText := CommandText + ' AND (CLI_FLMATRIZ = '+QuotedStr('M')+')';
+               //
+               If (RadioGroup1.ItemIndex = 1 ) Then
+                   CommandText := CommandText + ' AND (CLI_FLMATRIZ = '+QuotedStr('F')+')';}
+               //
+               if (cmbOrdem.ItemIndex = 0) Then
+                  CommandText := CommandText + ' order by CLI_CODIGO';
+               if (cmbOrdem.ItemIndex = 1 ) Then
+                  CommandText := CommandText + ' order by CLI_FANTASIA';
+               if (cmbOrdem.ItemIndex = 2 ) Then
+                  CommandText := CommandText + ' order by CLI_RAZAO';
+               Active := True;
+          End;
+          //
+          if not (cdsLista.IsEmpty) Then
+          begin
+            With ppReport1 do
+            begin
+               If not uFuncoes.Empty(cmbTPCLIENTE.Text) Then
+                  txtTipo.Caption   := 'TIPO CLIENTE : '+cmbTPCLIENTE.Text;
+               If not uFuncoes.Empty(cmbRegiao.Text) Then
+                  txtRegiao.Caption := 'REGIÃO : '+cmbRegiao.Text;
+               //
+               If not uFuncoes.Empty(cmbGrupos.Text) Then
+                  txtGrupo.Caption := 'GRUPO : '+cmbGrupos.Text;
+               txtSituacao.Caption := 'SITUAÇÃO : '+  cmbSituacao.Text;
+               {If (RadioGroup1.ItemIndex < 0) Then
+                   txtFluxo.Caption  := ' ';
+               If (RadioGroup1.ItemIndex = 0) Then
+                   txtFluxo.Caption  := 'FLUXO CLIENTE : MATRIZ';
+               If (RadioGroup1.ItemIndex = 1) Then
+                   txtFluxo.Caption  := 'FLUXO CLIENTE : FILIAL';}
+               //
+               txtOrdem.Caption := 'ORDEM : '+cmbOrdem.Text;
+               //
+               PrintReport;
+            End;
+          End
+          Else
+              Application.MessageBox(PChar('Não há dados para parametros selecionados.'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          //
+     Except
+        on Exc:Exception do
+        begin
+           Application.MessageBox(PChar('Error ao tentar gerar relatorio!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+        End;
+     End;
+
+   End;
+end;
+
+procedure TfrmRelFichaClientes.REGIAO;
+begin
+     With dmConsultas.qryConsulta do
+     Begin
+          SQL.Clear;
+          Close;
+          SQL.Add('Select REG_CODIGO, REG_DESCRICAO from REGIAO');
+          SQL.Add('order by REG_DESCRICAO');
+          Open;
+          First;
+     End;
+     //
+     cmbRegiao.Clear;
+     cmbRegiao.Items.Add(' ');
+     While not (dmConsultas.qryConsulta.Eof) do
+     Begin
+          cmbRegiao.Items.Add(dmConsultas.qryConsulta.FieldByName('REG_DESCRICAO').AsString);
+          //
+          dmConsultas.qryConsulta.Next;
+     End;
+end;
+
+procedure TfrmRelFichaClientes.TIPOCLIENTES;
+begin
+     With dmConsultas.qryConsulta do
+     Begin
+          SQL.Clear;
+          Close;
+          SQL.Add('Select TPC_CODIGO, TPC_DESCRICAO from TIPOCLIENTE');
+          SQL.Add('order by TPC_DESCRICAO');
+          Open;
+          First;
+     End;
+     //
+     cmbTPCLIENTE.Clear;
+     cmbTPCLIENTE.Items.Add(' ');
+     While not (dmConsultas.qryConsulta.Eof) do
+     Begin
+          cmbTPCLIENTE.Items.Add(dmConsultas.qryConsulta.FieldByName('TPC_DESCRICAO').AsString);
+          //
+          dmConsultas.qryConsulta.Next;
+     End;
+end;
+
+procedure TfrmRelFichaClientes.FormShow(Sender: TObject);
+begin
+  inherited;
+    dmConsultas.Lojas(cmbNMLOJA);
+    REGIAO;
+    TIPOCLIENTES;
+    //
+    Carregar_Grupos;
+    Carregar_Situcaoes;
+    //
+    lblCliente.Clear;
+end;
+
+procedure TfrmRelFichaClientes.spLocClienteClick(Sender: TObject);
+begin
+  inherited;
+  edtCDCLIE.SetFocus;
+  with TfrmLocCliente.create(self) do
+  try
+    uLocCliente.M_NRFROM := 5;
+    showmodal;
+  finally
+    If not (cdsConsultaCliente.IsEmpty) Then
+       edtCDCLIE.Text := uFuncoes.StrZero(cdsConsultaCliente.FieldByname('CLI_CODIGO').AsString,7);
+    free;
+  end;
+end;
+
+procedure TfrmRelFichaClientes.edtCDCLIEChange(Sender: TObject);
+begin
+  inherited;
+       If uFuncoes.Empty(edtCDCLIE.Text) Then
+           lblCliente.Clear;
+end;
+
+procedure TfrmRelFichaClientes.edtCDCLIEExit(Sender: TObject);
+begin
+  inherited;
+     If not uFuncoes.Empty(edtCDCLIE.Text) Then
+      begin
+           edtCDCLIE.Text := uFuncoes.StrZero(edtCDCLIE.Text,7);
+           If not (dmConsultas.BUSCA_CLIENTE(StrtoInt(edtCDCLIE.Text))) Then
+            begin
+                 Application.MessageBox(PChar('Código de loja não cadastrado!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                 lblCliente.Clear;
+                 edtCDCLIE.Clear;
+                 edtCDCLIE.SetFocus;
+                 Exit;
+            End
+            Else
+                lblCliente.Text := dmConsultas.qryLocCliente.FieldByName('CLI_FANTASIA').AsString;
+      End;
+end;
+
+procedure TfrmRelFichaClientes.edtCDCLIEKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+     If not( key in['0'..'9',#8, #13] ) then
+        key:=#0;
+     //
+     If (Key = #13) and uFuncoes.Empty(edtCDCLIE.Text) Then
+     Begin
+          Key := #0;
+          spLocClienteClick(Sender);
+     End;
+     //
+     {If (Key = #13) and not uFuncoes.Empty(edtCDCLIE.Text) Then
+     Begin
+          Key := #0;
+          //
+          RadioGroup1.SetFocus;
+     End;}
+end;
+
+procedure TfrmRelFichaClientes.cdsListaCalcFields(DataSet: TDataSet);
+begin
+  inherited;
+     If (cdsLista.State in [dsInternalCalc]) Then
+      begin
+           if not uFuncoes.Empty(cdsListaCLI_FONE1.AsString) Then
+               cdsListaTELEFONE.AsString := uFuncoes.FormataFONE(cdsListaCLI_FONE1.AsString);
+           if not uFuncoes.Empty(cdsListaCLI_FAX.AsString) Then
+               cdsListaFAX.AsString := uFuncoes.FormataFONE(cdsListaCLI_FAX.AsString);
+      End;
+end;
+
+procedure TfrmRelFichaClientes.Carregar_Grupos;
+begin
+      dm.RefreshCDS(dmConsultas.cdsGrupos);
+      //
+      cmbGrupos.Clear;
+      With dmConsultas.cdsGrupos do
+        begin
+             first;
+             cmbGrupos.Items.Add(' ');
+             While not (Eof) do
+              begin
+                   cmbGrupos.Items.Add(FieldByName('GRU_DESCRICAO').AsString);
+                   //
+                   Next;
+              End;
+        End;
+end;
+
+procedure TfrmRelFichaClientes.Carregar_Situcaoes;
+begin
+      dm.RefreshCDS(Dm.cdsListaSituacao);
+      //
+      cmbSituacao.Clear;
+      With Dm.cdsListaSituacao do
+        begin
+             first;
+             cmbSituacao.Items.Add(' ');
+             While not (Eof) do
+              begin
+                   cmbSituacao.Items.Add(FieldByName('SIT_NOME').AsString);
+                   //
+                   Next;
+              End;
+        End;
+end;
+
+end.

@@ -1,0 +1,84 @@
+unit untHeranca;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Grids, DBGrids, Buttons, ComCtrls, ExtCtrls, DB,
+  DBClient, Mask, DBCtrls;
+
+type
+  TfrmHeranca = class(TForm)
+    dsrCadastro: TDataSource;
+    dsrPesquisa: TDataSource;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    pnlTopo: TPanel;
+    pclPrincipal: TPageControl;
+    tbsConsulta: TTabSheet;
+    DBGrid1: TDBGrid;
+    tbsCadastro: TTabSheet;
+    pnlBotoes: TPanel;
+    BtAdicionar: TBitBtn;
+    BtEditar: TBitBtn;
+    BtExcluir: TBitBtn;
+    BtPesquisar: TBitBtn;
+    BtCancelar: TBitBtn;
+    BtGravar: TBitBtn;
+    BtSair: TBitBtn;
+    procedure BtSairClick(Sender: TObject);
+    procedure BtAdicionarClick(Sender: TObject);
+    procedure BtEditarClick(Sender: TObject);
+    procedure BtCancelarClick(Sender: TObject);
+    procedure BtGravarClick(Sender: TObject);
+  private
+    { Private declarations }
+     procedure tratabotoes;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmHeranca: TfrmHeranca;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmHeranca.BtSairClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmHeranca.tratabotoes;
+begin
+   BtAdicionar.Enabled := not BtAdicionar.Enabled;
+   BtEditar.Enabled := not BtEditar.Enabled;
+   BtExcluir.Enabled := not BtExcluir.Enabled;
+   BtPesquisar.Enabled := not BtPesquisar.Enabled;
+   BtCancelar.Enabled := not BtCancelar.Enabled;
+   BtGravar.Enabled := not BtGravar.Enabled;
+   BtSair.Enabled := not BtSair.Enabled;
+end;
+
+procedure TfrmHeranca.BtAdicionarClick(Sender: TObject);
+begin
+      tratabotoes;
+end;
+
+procedure TfrmHeranca.BtEditarClick(Sender: TObject);
+begin
+     tratabotoes;
+end;
+
+procedure TfrmHeranca.BtCancelarClick(Sender: TObject);
+begin
+      tratabotoes;
+end;
+
+procedure TfrmHeranca.BtGravarClick(Sender: TObject);
+begin
+      tratabotoes;
+end;
+
+end.

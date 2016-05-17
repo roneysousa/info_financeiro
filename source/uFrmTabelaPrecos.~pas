@@ -1,0 +1,430 @@
+unit uFrmTabelaPrecos;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls, FMTBcd, DB, DBClient, Provider,
+  SqlExpr, ppCtrls, ppPrnabl, ppClass, ppBands, ppCache, ppDB, ppProd,
+  ppReport, ppComm, ppRelatv, ppDBPipe, ppVar;
+
+type
+  TfrmTabelaPrecos = class(TForm)
+    pnlDados: TPanel;
+    Panel2: TPanel;
+    BtSair: TBitBtn;
+    btImprimir: TBitBtn;
+    Label1: TLabel;
+    cmbNMSECAO: TComboBox;
+    dstProdutos: TSQLDataSet;
+    dspProdutos: TDataSetProvider;
+    cdsProdutos: TClientDataSet;
+    dsProdutos: TDataSource;
+    cdsProdutosPRO_CODIGO: TStringField;
+    cdsProdutosPRO_BARRAS: TStringField;
+    cdsProdutosPRO_DESCRICAO: TStringField;
+    cdsProdutosPRO_VLCOMPRA: TFMTBCDField;
+    cdsProdutosPRO_VLCUSTO: TFMTBCDField;
+    cdsProdutosPRO_VLVENDA: TFMTBCDField;
+    cdsProdutosFABRICANTE: TStringField;
+    cdsProdutosSECAO: TStringField;
+    ppDBProdutos: TppDBPipeline;
+    ppRepVendedores: TppReport;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppDBImage2: TppDBImage;
+    ppLabel26: TppLabel;
+    ppLabel27: TppLabel;
+    ppLine4: TppLine;
+    ppLine1: TppLine;
+    ppLabel28: TppLabel;
+    ppLabel25: TppLabel;
+    ppLabel1: TppLabel;
+    ppLabel2: TppLabel;
+    ppDBText1: TppDBText;
+    ppDBText2: TppDBText;
+    ppDBText3: TppDBText;
+    ppDBText4: TppDBText;
+    ppDBText5: TppDBText;
+    ppLine2: TppLine;
+    ppLabel29: TppLabel;
+    ppSystemVariable3: TppSystemVariable;
+    ppLabel30: TppLabel;
+    ppSystemVariable4: TppSystemVariable;
+    btArquivo: TBitBtn;
+    cmbEstoque: TComboBox;
+    Label2: TLabel;
+    dstProdutosPRO_CODIGO: TStringField;
+    dstProdutosPRO_BARRAS: TStringField;
+    dstProdutosPRO_DESCRICAO: TStringField;
+    dstProdutosPRO_VLCOMPRA: TFMTBCDField;
+    dstProdutosPRO_VLCUSTO: TFMTBCDField;
+    dstProdutosPRO_VLVENDA: TFMTBCDField;
+    dstProdutosFABRICANTE: TStringField;
+    dstProdutosSECAO: TStringField;
+    lblSecao: TppLabel;
+    ppSummaryBand1: TppSummaryBand;
+    ppLabel3: TppLabel;
+    ppDBCalc1: TppDBCalc;
+    ppLine3: TppLine;
+    lblOpcao: TppLabel;
+    cdsTabProdutos: TClientDataSet;
+    dspTabProdutos: TDataSetProvider;
+    dsTabProdutos: TDataSource;
+    ppRepTabProdutos: TppReport;
+    ppDBPipTabProdutos: TppDBPipeline;
+    ppHeaderBand2: TppHeaderBand;
+    ppDBImage1: TppDBImage;
+    ppLabel4: TppLabel;
+    ppLabel5: TppLabel;
+    ppLine5: TppLine;
+    ppLine6: TppLine;
+    ppLabel6: TppLabel;
+    ppLabel7: TppLabel;
+    ppLabel8: TppLabel;
+    ppLabel9: TppLabel;
+    txtSecao2: TppLabel;
+    txtOpcao: TppLabel;
+    ppDetailBand2: TppDetailBand;
+    ppDBText6: TppDBText;
+    ppDBText7: TppDBText;
+    ppDBText8: TppDBText;
+    ppDBText9: TppDBText;
+    ppDBText10: TppDBText;
+    ppFooterBand2: TppFooterBand;
+    ppLine7: TppLine;
+    ppLabel12: TppLabel;
+    ppSystemVariable1: TppSystemVariable;
+    ppLabel13: TppLabel;
+    ppSystemVariable2: TppSystemVariable;
+    ppSummaryBand2: TppSummaryBand;
+    ppLabel14: TppLabel;
+    ppDBCalc2: TppDBCalc;
+    ppLine8: TppLine;
+    cmbOrdem: TComboBox;
+    Label3: TLabel;
+    txtOrdem: TppLabel;
+    lblOrdem: TppLabel;
+    procedure BtSairClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure cmbNMSECAOChange(Sender: TObject);
+    procedure btImprimirClick(Sender: TObject);
+    procedure btArquivoClick(Sender: TObject);
+  private
+    procedure SECOES;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmTabelaPrecos: TfrmTabelaPrecos;
+
+implementation
+
+uses udmConsulta, uFuncoes, Udm;
+
+{$R *.dfm}
+
+procedure TfrmTabelaPrecos.BtSairClick(Sender: TObject);
+begin
+      Close;
+end;
+
+procedure TfrmTabelaPrecos.SECOES;
+begin
+     dmConsultas.cdsSecoes.Close;
+     With dmConsultas.dstSecoes do
+     Begin
+          Active := False;
+          CommandText :=  'Select * from SECAO order by SEC_DESCRICAO';
+          Active := True;
+     End;
+     dmConsultas.cdsSecoes.Open;
+     dmConsultas.cdsSecoes.First;
+     //
+     cmbNMSECAO.Clear;
+     //cmbNMSECAO.Items.Add('TODOS');
+     While not (dmConsultas.cdsSecoes.Eof) do
+     Begin
+          If not uFuncoes.Empty(dmConsultas.cdsSecoes.FieldByName('SEC_DESCRICAO').AsString) Then
+              cmbNMSECAO.Items.Add( dmConsultas.cdsSecoes.FieldByName('SEC_DESCRICAO').AsString);
+          //
+          dmConsultas.cdsSecoes.Next;
+     End;
+end;
+
+procedure TfrmTabelaPrecos.FormShow(Sender: TObject);
+begin
+     SECOES;
+end;
+
+procedure TfrmTabelaPrecos.cmbNMSECAOChange(Sender: TObject);
+begin
+      {If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+         btImprimir.Enabled := True
+      Else
+         btImprimir.Enabled := False;}
+end;
+
+procedure TfrmTabelaPrecos.btImprimirClick(Sender: TObject);
+Var
+   M_CDSECA : integer;
+begin
+  btImprimir.Enabled := False;
+  Try
+      Screen.Cursor := crHourGlass;
+      try
+          If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+           //AND (cmbNMSECAO.Text <> 'TODOS') Then
+          begin
+              M_CDSECA := uFuncoes.CDSECAO(cmbNMSECAO.Text);
+              //
+            If (cmbEstoque.ItemIndex <>2) Then
+            begin
+              cdsProdutos.Close;
+              With dstProdutos do
+              Begin
+                 Active := False;
+                 CommandText := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, P.PRO_VLCUSTO, P.PRO_VLVENDA,'
+                             +'(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'
+                             +'(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO '
+                             +' from PRODUTOS P ';
+                 If (cmbEstoque.ItemIndex = 0) Then
+                      CommandText := CommandText + ' INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                                      ' Where (P.SEC_CODIGO = :pSECAO) and (E.EST_QUANTIDADE > 0) '
+                 Else
+                      CommandText := CommandText + ' INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                                      ' Where (P.SEC_CODIGO = :pSECAO) and (E.EST_QUANTIDADE <= 0) ';
+                 //
+                 CommandText := CommandText + ' order by P.PRO_DESCRICAO ';
+                 Params.ParamByName('pSECAO').AsInteger := M_CDSECA;
+                 Active := True;
+            End;
+            cdsProdutos.Open;
+           End
+           Else
+           begin
+              With cdsTabProdutos do
+              Begin
+                   Close;
+                   CommandText := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, P.PRO_VLCUSTO, P.PRO_VLVENDA,'
+                             +'(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'
+                             +'(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO '
+                             +' from PRODUTOS P ';
+                   //
+                   If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+                       CommandText := CommandText + ' Where (P.SEC_CODIGO = '+QuotedStr(InttoStr(M_CDSECA))+')';
+                   //
+                   If (cmbOrdem.ItemIndex = 0) Then
+                      CommandText := CommandText + ' order by P.PRO_DESCRICAO '
+                   Else
+                      CommandText := CommandText + ' order by P.PRO_CODIGO ';
+                   Open;
+              End;  //fim-with
+           End;  // fim-se
+         End
+         Else
+         Begin
+           If (cmbEstoque.ItemIndex <>2) Then
+            begin
+                cdsProdutos.Close;
+                With dstProdutos do
+                Begin
+                   Active := False;
+                   CommandText := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, P.PRO_VLCUSTO, P.PRO_VLVENDA,'
+                             +'(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'
+                             +'(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO '
+                             +' from PRODUTOS P ';
+                   If (cmbEstoque.ItemIndex = 0) Then
+                      CommandText := CommandText + ' INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                                      ' Where (E.EST_QUANTIDADE > 0) '
+                   Else
+                      CommandText := CommandText + ' INNER join ESTOQUE E ON P.PRO_CODIGO = E.PRO_CODIGO '+
+                                      ' Where (E.EST_QUANTIDADE <= 0) ';
+                   //
+                   CommandText := CommandText + ' order by P.PRO_DESCRICAO ';
+                   Active := True;
+                End;
+                cdsProdutos.Open;
+            End
+            Else
+            begin
+              With cdsTabProdutos do
+              Begin
+                   Close;
+                   CommandText := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, P.PRO_VLCUSTO, P.PRO_VLVENDA,'
+                             +'(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'
+                             +'(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO '
+                             +' from PRODUTOS P ';
+                   //
+                   If (cmbOrdem.ItemIndex = 0) Then
+                      CommandText := CommandText + ' order by P.PRO_DESCRICAO '
+                   Else
+                      CommandText := CommandText + ' order by P.PRO_CODIGO ';
+                   Open;
+              End;  //fim-with
+            End;
+         End;
+        //
+        If (cmbEstoque.ItemIndex <>2) Then
+        begin
+          With ppRepVendedores do
+          begin
+               If uFuncoes.Empty(cmbNMSECAO.Text) Then
+                  lblSecao.Caption := 'SEÇÃO : TODAS'
+               Else
+                  lblSecao.Caption := 'SEÇÃO : '+cmbNMSECAO.Text;
+               //
+               lblOpcao.Caption := 'OPÇÃO : '+cmbEstoque.Text;
+               lblOrdem.Caption := 'ORDEM : '+cmbOrdem.Text;
+               //
+               PrintReport;
+          End;
+        End
+        Else
+        begin
+          With ppRepTabProdutos do
+          begin
+               If uFuncoes.Empty(cmbNMSECAO.Text) Then
+                  txtSecao2.Caption := 'SEÇÃO : TODAS'
+               Else
+                  txtSecao2.Caption := 'SEÇÃO : '+cmbNMSECAO.Text;
+               //
+               txtOpcao.Caption := 'OPÇÃO : '+cmbEstoque.Text;
+               txtOrdem.Caption := 'ORDEM : '+cmbOrdem.Text;
+               //
+               PrintReport;
+          End;
+        End;
+      Except
+        on Exc:Exception do
+        begin
+              Application.MessageBox(PChar('Error ao tentar gerar relatorio!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                //  Cancelar transação no BD.
+        End;
+      End;
+   Finally
+       btImprimir.Enabled := True;
+       Screen.Cursor := crDefault;
+   End;
+   Application.ProcessMessages;
+end;
+
+procedure TfrmTabelaPrecos.btArquivoClick(Sender: TObject);
+Var
+    M_NMARQU : textfile;
+    W_NMARQU : String;
+    M_NMDESC, M_NMFABR, M_NMSECA, M_CDPROD : String;
+    M_VLVEND : double;
+    M_CDSECA : integer;
+begin
+     If dm.SaveDialog1.Execute then
+         W_NMARQU := dm.SaveDialog1.FileName
+     Else
+         Exit;
+     //
+     If uFuncoes.Empty(W_NMARQU) Then
+     Begin
+          Application.MessageBox('Nome de arquivo em branco!!!',
+                   'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          btArquivo.SetFocus;
+          Exit;
+     End;
+     //
+      try
+          btArquivo.Enabled := False;
+          If not uFuncoes.Empty(cmbNMSECAO.Text) Then
+          begin
+              M_CDSECA := uFuncoes.CDSECAO(cmbNMSECAO.Text);
+              //
+              cdsProdutos.Close;
+              With dstProdutos do
+              Begin
+                 Active := False;
+                 CommandText := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, P.PRO_VLCUSTO, P.PRO_VLVENDA,'
+                             +'(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'
+                             +'(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO '
+                             +' from PRODUTOS P Where (P.SEC_CODIGO = :pSECAO) order by P.PRO_DESCRICAO';
+                 Params.ParamByName('pSECAO').AsInteger := M_CDSECA;
+                 Active := True;
+            End;
+            cdsProdutos.Open;
+         End
+         Else
+         Begin
+              cdsProdutos.Close;
+              With dstProdutos do
+              Begin
+                 Active := False;
+                 CommandText := 'Select P.PRO_CODIGO, P.PRO_BARRAS, P.PRO_DESCRICAO, P.PRO_VLCOMPRA, P.PRO_VLCUSTO, P.PRO_VLVENDA,'
+                             +'(Select F.FOR_FANTASIA from FORNECEDORES F Where (F.FOR_CODIGO = P.FOR_CODIGO)) as FABRICANTE,'
+                             +'(Select S.SEC_DESCRICAO from SECAO S Where (S.SEC_CODIGO = P.SEC_CODIGO)) As SECAO '
+                             +' from PRODUTOS P order by P.PRO_DESCRICAO';
+                 Active := True;
+            End;
+            cdsProdutos.Open;
+         End;
+         // Criar o arquivo de texto
+         W_NMARQU := dm.SaveDialog1.FileName+'.txt';
+         AssignFile(M_NMARQU, W_NMARQU);
+         Rewrite(M_NMARQU, W_NMARQU);
+         //
+         Append(M_NMARQU);
+         Write(M_NMARQU);
+         // Cabeçalho
+         Writeln(M_NMARQU, Format('%-30s',  ['RELATORIO : TABELA DE PREÇOS']));
+         Writeln(M_NMARQU, Format('%-30s',  ['DATA/HORA : '+DatetoStr(Date)+' - '+TimetoStr(Time)]));
+         Writeln(M_NMARQU, Format('%-30s',  ['']));
+         //
+         Writeln(M_NMARQU, Format('%-1s',[uFuncoes.Replicate('=',147)]));
+         //
+         Write(M_NMARQU, Format('%-13s',['CODIGO        ']));
+         Write(M_NMARQU, Format('%-40s',['DESCRIÇÃO                              '+' ']));
+         Write(M_NMARQU, Format('%-50s',['FABRICANTE/FORNECEDOR ']));
+         Write(M_NMARQU, Format('%-30s',['SEÇÃO                         '+' ']));
+         Writeln(M_NMARQU, Format('%-20s',['VALOR VENDA']));
+         Writeln(M_NMARQU, Format('%-1s',[uFuncoes.Replicate('-',147)]));
+         //
+         cdsProdutos.First;
+         While not (cdsProdutos.Eof) do
+         Begin
+              M_CDPROD := cdsProdutos.FieldByName('PRO_CODIGO').AsString;
+              M_NMDESC := cdsProdutos.FieldByName('PRO_DESCRICAO').AsString;
+              M_NMFABR := cdsProdutos.FieldByName('FABRICANTE').AsString;
+              M_NMSECA := cdsProdutos.FieldByName('SECAO').AsString;
+              M_VLVEND := cdsProdutos.FieldByName('PRO_VLVENDA').AsCurrency;
+              //
+              Write(M_NMARQU, Format('%-13s',[M_CDPROD+' ']));
+              Write(M_NMARQU, Format('%-40s',[M_NMDESC+' ']));
+              Write(M_NMARQU, Format('%-50s',[M_NMFABR+uFuncoes.Replicate(' ',50-length(M_NMFABR))+' ']));
+              Write(M_NMARQU, Format('%-30s',[M_NMSECA+' ']));
+              Writeln(M_NMARQU, Format('%12s',[FormatFloat('###,###,##0.#0',M_VLVEND)]));
+              //
+              cdsProdutos.Next;
+         End;
+         // rodape
+         Writeln(M_NMARQU, Format('%-1s',[uFuncoes.Replicate('-',147)]));
+         Writeln(M_NMARQU);
+         Writeln(M_NMARQU);
+         //
+         CloseFile(M_NMARQU);
+         //
+         Application.MessageBox(PChar('Arquivo gerado com sucesso!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+         btArquivo.Enabled := True;
+      Except
+        on Exc:Exception do
+        begin
+              Application.MessageBox(PChar('Error ao tentar gerar relatorio!!!'+#13
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+              btArquivo.Enabled := True;
+        End;
+      End;
+end;
+
+end.

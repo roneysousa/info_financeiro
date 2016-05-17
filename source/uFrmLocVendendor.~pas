@@ -1,0 +1,25 @@
+unit uFrmLocVendendor;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, uFrmBuscaDados, FMTBcd, DB, DBClient, Provider, SqlExpr, Grids,
+  DBGrids, StdCtrls, Buttons, ExtCtrls;
+
+type
+  TfrmBuscaAtendente = class(TfrmBuscaDados)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmBuscaAtendente: TfrmBuscaAtendente;
+
+implementation
+
+{$R *.dfm}
+
+end.

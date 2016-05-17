@@ -1,0 +1,175 @@
+object frmLocCliente: TfrmLocCliente
+  Left = 171
+  Top = 169
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Localizar Cliente'
+  ClientHeight = 257
+  ClientWidth = 541
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 541
+    Height = 61
+    Align = alTop
+    TabOrder = 0
+    object lblConsultar: TLabel
+      Left = 127
+      Top = 11
+      Width = 31
+      Height = 13
+      Caption = 'Nome:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object edtConsultar: TEdit
+      Left = 126
+      Top = 27
+      Width = 325
+      Height = 19
+      CharCase = ecUpperCase
+      Ctl3D = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentCtl3D = False
+      ParentFont = False
+      TabOrder = 0
+      OnChange = edtConsultarChange
+      OnKeyDown = edtConsultarKeyDown
+      OnKeyPress = edtConsultarKeyPress
+    end
+    object btConfirma: TBitBtn
+      Left = 459
+      Top = 23
+      Width = 75
+      Height = 25
+      TabOrder = 1
+      OnClick = btConfirmaClick
+      Kind = bkOK
+    end
+    object rgConsultar: TRadioGroup
+      Left = 4
+      Top = 1
+      Width = 112
+      Height = 57
+      Caption = 'Consultar por:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ItemIndex = 0
+      Items.Strings = (
+        '&Nome/Fantasia'
+        '&Raz'#227'o/Apelido')
+      ParentFont = False
+      TabOrder = 2
+      OnClick = rgConsultarClick
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 61
+    Width = 541
+    Height = 196
+    Align = alClient
+    TabOrder = 1
+    object grdConsultar: TDBGrid
+      Left = 1
+      Top = 1
+      Width = 539
+      Height = 194
+      Align = alClient
+      Ctl3D = False
+      DataSource = dsConsultarCliente
+      Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+      ParentCtl3D = False
+      ReadOnly = True
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Style = []
+      OnDblClick = grdConsultarDblClick
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'CLI_CODIGO'
+          Title.Caption = 'CODIGO'
+          Width = 47
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'CLI_RAZAO'
+          Title.Caption = 'RAZ'#195'O SOCIAL'
+          Width = 220
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'CLI_FANTASIA'
+          Title.Caption = 'NOME'
+          Width = 265
+          Visible = True
+        end>
+    end
+  end
+  object dsConsultarCliente: TDataSource
+    DataSet = cdsConsultaCliente
+    Left = 148
+    Top = 142
+  end
+  object dstConsultarCliente: TSQLDataSet
+    CommandText = 'select CLI_CODIGO, CLI_FANTASIA, CLI_RAZAO from CLIENTES'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = Dm.SqlAdmin
+    Left = 220
+    Top = 134
+  end
+  object dpsConsultaCliente: TDataSetProvider
+    DataSet = dstConsultarCliente
+    Options = [poAllowCommandText]
+    Left = 300
+    Top = 134
+  end
+  object cdsConsultaCliente: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dpsConsultaCliente'
+    Left = 372
+    Top = 134
+    object cdsConsultaClienteCLI_CODIGO: TIntegerField
+      FieldName = 'CLI_CODIGO'
+      Required = True
+      DisplayFormat = '000000'
+    end
+    object cdsConsultaClienteCLI_FANTASIA: TStringField
+      FieldName = 'CLI_FANTASIA'
+      Size = 50
+    end
+    object cdsConsultaClienteCLI_RAZAO: TStringField
+      FieldName = 'CLI_RAZAO'
+      Size = 50
+    end
+  end
+end

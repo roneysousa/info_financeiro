@@ -1,0 +1,1023 @@
+unit uFrmEditContaPagar;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls, DBCtrls, Mask, DB, DBXpress,
+  FMTBcd, SqlExpr;
+
+type
+  TfrmEditaContPagar = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    BtCancelar: TBitBtn;
+    BtGravar: TBitBtn;
+    cmbLoja: TDBLookupComboBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    edtCDFORN: TDBLookupComboBox;
+    Label4: TLabel;
+    dbeNRNOTA: TDBEdit;
+    dbeSERIE: TDBEdit;
+    Label5: TLabel;
+    edtDTCOMP: TDBEdit;
+    Label6: TLabel;
+    Label1: TLabel;
+    edtCDNATU: TDBEdit;
+    Label7: TLabel;
+    dbeDTVENC: TDBEdit;
+    Label8: TLabel;
+    dbeVALOR: TDBEdit;
+    spNatureza: TSpeedButton;
+    lbl_Natureza: TLabel;
+    DBText1: TDBText;
+    Label9: TLabel;
+    Label10: TLabel;
+    dbeCDBANC: TDBEdit;
+    Label11: TLabel;
+    dbeNRAGEN: TDBEdit;
+    Label12: TLabel;
+    dbeNRCONT: TDBEdit;
+    Label13: TLabel;
+    dbeNRCHEQ: TDBEdit;
+    Label14: TLabel;
+    DBText2: TDBText;
+    qryIncParcela: TSQLQuery;
+    Label15: TLabel;
+    dbeVLJURO: TDBEdit;
+    Label16: TLabel;
+    dbeVLDESC: TDBEdit;
+    Label17: TLabel;
+    dbeVLPAGO: TDBEdit;
+    Label18: TLabel;
+    dbeDTPAGA: TDBEdit;
+    mmoDescricao: TDBMemo;
+    DBEdit5: TDBEdit;
+    Label19: TLabel;
+    btOK: TBitBtn;
+    lblConta: TLabel;
+    cmbConta: TComboBox;
+    procedure BtSairClick(Sender: TObject);
+    procedure spNaturezaClick(Sender: TObject);
+    procedure dbeNRNOTAExit(Sender: TObject);
+    procedure dbeSERIEExit(Sender: TObject);
+    procedure edtCDNATUExit(Sender: TObject);
+    procedure edtDTCOMPExit(Sender: TObject);
+    procedure BtGravarClick(Sender: TObject);
+    procedure edtCDNATUKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCDNATUChange(Sender: TObject);
+    procedure BtCancelarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure dbeDTVENCKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeVALORKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeNRAGENKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeNRCONTKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeNRCHEQKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeDTVENCExit(Sender: TObject);
+    procedure dbeCDBANCExit(Sender: TObject);
+    procedure dbeNRCONTExit(Sender: TObject);
+    procedure dbeNRCHEQExit(Sender: TObject);
+    procedure dbeCDBANCKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeVLJUROExit(Sender: TObject);
+    procedure dbeVLDESCExit(Sender: TObject);
+    procedure dbeVLPAGOExit(Sender: TObject);
+    procedure dbeNRNOTAKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeSERIEKeyPress(Sender: TObject; var Key: Char);
+    procedure dbeVLPAGOEnter(Sender: TObject);
+  private
+    Function VALIDAR_EDICAO() : Boolean;
+    procedure NATUREZA;
+    procedure CONTROLES(TIPO : String);
+    procedure DESABILITAR_CONTROLES(W_TIPO : String);
+    procedure CONTROLES_LEITURA;
+    procedure CALCULAR;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmEditaContPagar: TfrmEditaContPagar;
+  TD : TTransactionDesc;
+  M_CDNATU, M_FLGRAV, M_FLOPER, M_FLCXGR : String;
+
+implementation
+
+uses uFuncoes, uDm2, UFrmAdmin, udmConsulta, Udm, uBuscarNatureza, uFrmManuContasPagar,
+  udmDados;
+
+{$R *.dfm}
+
+procedure TfrmEditaContPagar.BtSairClick(Sender: TObject);
+begin
+     Close;
+end;
+
+procedure TfrmEditaContPagar.spNaturezaClick(Sender: TObject);
+begin
+  with TfrmBuscaNatureza.create(self) do
+  try
+     uBuscarNatureza.M_NRFROM := 2;
+     showmodal;
+  finally
+    If not uFuncoes.Empty(M_CDNATU) Then
+    Begin
+         edtCDNATU.Text := uFuncoes.StrZero(M_CDNATU,4);
+    End
+    Else
+       edtCDNATU.SetFocus;
+    free;
+  end;
+end;
+
+procedure TfrmEditaContPagar.dbeNRNOTAExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(dbeNRNOTA.Text) Then
+        dbeNRNOTA.Text := uFuncoes.StrZero(dbeNRNOTA.Text,10);
+end;
+
+procedure TfrmEditaContPagar.dbeSERIEExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(dbeSERIE.Text) Then
+        dbeSERIE.Text := uFuncoes.StrZero(dbeSERIE.Text,2);
+end;
+
+procedure TfrmEditaContPagar.edtCDNATUExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(edtCDNATU.Text) Then
+     Begin
+          With dmConsultas.qryNatureza do
+          Begin
+               Close;
+               Params.ParamByName('pCODIGO').AsInteger := StrtoInt(edtCDNATU.Text);
+               Open;
+          End;
+          //
+          If (dmConsultas.qryNatureza.IsEmpty) Then
+          Begin
+              Application.MessageBox(PChar('Natureza não cadastrada!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+              lbl_Natureza.Caption := '';
+              edtCDNATU.Clear;
+              edtCDNATU.SetFocus;
+              Exit;
+          End
+          Else
+          Begin
+             If (dmConsultas.qryNatureza.FieldByName('NAT_TIPO').AsString = '2') Then
+             Begin
+                  Application.MessageBox(PChar('Tipo de Natureza não é de despesa!!!'),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                  lbl_Natureza.Caption := '';
+                  edtCDNATU.Clear;
+                  edtCDNATU.SetFocus;
+                  Exit;
+             End
+             Else
+             begin
+                 lbl_Natureza.Caption := dmConsultas.qryNatureza.FieldByName('NAT_NOME').AsString;
+                 edtCDNATU.Text := uFuncoes.StrZero(edtCDNATU.Text,4);
+             End;
+          End;
+     End;
+end;
+
+procedure TfrmEditaContPagar.edtDTCOMPExit(Sender: TObject);
+begin
+   If (dm2.cdsContasPagar.State in [dsEdit]) Then
+   begin
+     If (edtDTCOMP.Text <> '  /  /    ') Then
+     Begin
+          try
+              StrToDate(edtDTCOMP.Text);
+              //
+              If (StrToDate(edtDTCOMP.Text)> Date()) Then
+              Begin
+                   Application.MessageBox(PChar('Data da compra deve ser menor ou '+#13' igual a atual!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                   edtDTCOMP.Clear;
+                   edtDTCOMP.SetFocus;
+                   Exit;
+              End;
+           except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     edtDTCOMP.Clear;
+                     edtDTCOMP.SetFocus;
+                End;
+           end;
+     End;
+  End;
+end;
+
+procedure TfrmEditaContPagar.BtGravarClick(Sender: TObject);
+Var
+     M_DTCOMP, M_DTVENC, M_DTMOVI : TDate;
+     M_CDFORN, M_CDLOJA, W_CDNATU, M_NRCOMP, M_QTPARC, M_SEQPAG : Integer;
+     M_NRNOTA, M_NRSERI, M_DESCRI, M_NRPARC, M_FLNVPC : String;
+     M_VLREST, M_VLPARC, M_VLPAGO : Real;
+     M_CDBANC, M_NRAGEN, M_NRCONT, M_NRCHEQ : String;
+     W_CDCAIX, N_CDNATU, W_NRVEND, M_CDMODA : Integer;
+     aDescNat, M_HOMOVI : String;
+     M_VLANTE, M_VLMOVI, M_VLATUA : Double;
+     iUsuario : Integer;
+begin
+ iUsuario := StrtoInt(UFrmAdmin.M_CDUSUA);
+ //
+ If (M_FLOPER = 'E') Then  // se editar
+ Begin
+  If (M_FLGRAV = 'S') Then
+  Begin
+     If uFuncoes.Empty(edtCDFORN.Text) Then
+     Begin
+          Application.MessageBox('Digite o código do fornecedor!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtCDFORN.SetFocus;
+          Exit;
+     End;
+     //
+     If (edtDTCOMP.Text = '  /  /    ') Then
+     Begin
+          Application.MessageBox('Digite a data da compra!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtDTCOMP.SetFocus;
+          Exit;
+     End;
+     //
+     If (mmoDescricao.Lines.Text = '') Then
+     Begin
+          Application.MessageBox('Digite a descrição da conta!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          mmoDescricao.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(edtCDNATU.Text) Then
+     Begin
+          Application.MessageBox('Digite o código da natureza!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          edtCDNATU.SetFocus;
+          Exit;
+     End;
+     //
+  End;
+  //
+     If (dbeDTVENC.Text = '  /  /    ') Then
+     Begin
+          Application.MessageBox('Digite a data de vencimento!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          dbeDTVENC.SetFocus;
+          Exit;
+     End;
+     //
+     If uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsString)
+       or (dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsCurrency = 0) Then
+     Begin
+          Application.MessageBox('Digite o valor da parcela!!!','ATENÇÃO',
+             MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+          dbeVALOR.SetFocus;
+          Exit;
+     End;
+     //
+     If (cmbConta.Visible) Then
+       if Empty(cmbConta.Text) Then
+        begin
+            Application.MessageBox('Selecione a conta.','ATENÇÃO',
+               MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+            cmbConta.SetFocus;
+            Exit;
+        End;
+     // Inicia um transação no BD
+     TD.TransactionID  := StrtoInt(uFrmAdmin.M_CDUSUA);
+     TD.IsolationLevel := xilREADCOMMITTED;
+     Dm.SqlAdmin.StartTransaction(TD);
+     //
+     try
+        //
+        dm2.cdsContasPagar.Post;
+        dm2.cdsContasPagar.ApplyUpdates(0);
+        //
+        //
+        If (M_FLGRAV = 'S') Then
+        Begin
+           M_HOMOVI := Copy(TimetoStr(Time),1,5);
+           M_DTMOVI := Date();
+           M_VLPARC := dm2.cdsContasReceber.FieldByName('REC_VALORPARCELA').AsCurrency;
+           M_VLPAGO := dm2.cdsContasReceber.FieldByName('REC_PAGO').AsFloat;
+           W_CDCAIX := StrtoInt(UFrmAdmin.M_CDUSUA);
+           //
+           M_NRCOMP := dm2.cdsContasPagar.FieldByName('PAG_NRENTRADA').AsInteger;
+           M_DTCOMP := dm2.cdsContasPagar.FieldByName('PAG_DATACOMPRA').AsDateTime;
+           M_CDFORN := dm2.cdsContasPagar.FieldByName('PAG_FORNECEDOR').AsInteger;
+           M_CDLOJA := dm2.cdsContasPagar.FieldByName('PAG_LOJA').AsInteger;
+           W_CDNATU := dm2.cdsContasPagar.FieldByName('PAG_NATUREZADESPESA').AsInteger;
+           M_DESCRI := mmoDescricao.Lines.Text;
+           //
+           If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_NRNOTA').AsString) Then
+               M_NRNOTA := dm2.cdsContasPagar.FieldByName('PAG_NRNOTA').AsString;
+           If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_SERIENOTA').AsString) Then
+               M_NRSERI := dm2.cdsContasPagar.FieldByName('PAG_SERIENOTA').AsString;
+           //
+           dm2.cdsContasPagar.Close;
+           With dm2.dstContasPagar do
+           Begin
+                Active := False;
+                CommandText := 'Select * from CONTASPAGAR Where (PAG_LOJA = :pLOJA) '+
+                               'AND (PAG_NRENTRADA = :pNRENTRADA)';
+                Params.ParamByName('pLOJA').AsInteger      := M_CDLOJA;
+                Params.ParamByName('pNRENTRADA').AsInteger := M_NRCOMP;
+                Active := True;
+           End;
+           dm2.cdsContasPagar.FetchParams;
+           dm2.cdsContasPagar.Open;
+           dm2.cdsContasPagar.DisableControls;
+           dm2.cdsContasPagar.First;
+           While not (dm2.cdsContasPagar.Eof) do
+           Begin
+                dm2.cdsContasPagar.Edit;
+                dm2.cdsContasPagar.FieldByName('PAG_NRENTRADA').AsInteger   := M_NRCOMP;
+                dm2.cdsContasPagar.FieldByName('PAG_DATACOMPRA').AsDateTime := M_DTCOMP ;
+                dm2.cdsContasPagar.FieldByName('PAG_FORNECEDOR').AsInteger  := M_CDFORN;
+                dm2.cdsContasPagar.FieldByName('PAG_LOJA').AsInteger        := M_CDLOJA;
+                dm2.cdsContasPagar.FieldByName('PAG_NATUREZADESPESA').AsInteger := W_CDNATU;
+                dm2.cdsContasPagar.FieldByName('PAG_DESCRICAO').AsString    := M_DESCRI;
+                If not uFuncoes.Empty(M_NRNOTA) Then
+                   dm2.cdsContasPagar.FieldByName('PAG_NRNOTA').AsString     := M_NRNOTA;
+                If not uFuncoes.Empty(M_NRSERI) Then
+                    dm2.cdsContasPagar.FieldByName('PAG_SERIENOTA').AsString := M_NRSERI;
+                //
+                dm2.cdsContasPagar.Next;
+           End;
+           //
+           dm2.cdsContasPagar.ApplyUpdates(0);
+           //
+           //
+           dm2.cdsContasPagar.EnableControls;
+        End;
+        // Grava
+        Dm.SqlAdmin.Commit(TD);  // on success, commit the changes
+        //
+        MessageBox (Application.Handle, pChar('Registro gravado com sucesso!!!'),
+                     'ATENÇÃO',MB_ICONINFORMATION+ MB_OK);
+        //
+        If not (dm.IncluirTarefaUsuario( iUsuario,
+            'Editou Conta Pagar > Compra: '+uFuncoes.StrZero(DM2.cdsContasPagarPAG_NRENTRADA.AsString,7)+
+            ' Fornecedor :'+uFuncoes.StrZero(DM2.cdsContasPagarPAG_FORNECEDOR.AsString,5)+' *F*')) Then
+              ShowMessage('Erro ao adicionar tarefa do usuário.');
+        //
+        Close;
+     Except
+        on Exc:Exception do
+        begin
+              Application.MessageBox(PChar('Erro ao tentar incluir conta!!!'
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+              //  Cancelar transação no BD.
+              Dm.SqlAdmin.Rollback(TD);
+        End;
+     End;
+  End
+  Else      // Se baixa
+  Begin
+       If (dbeDTPAGA.Text = '  /  /    ') Then
+       Begin
+           Application.MessageBox('Digite a data do pagamento!!!','ATENÇÃO',
+               MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+           dbeDTPAGA.SetFocus;
+           Exit;
+       End;
+       //
+       If (dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency = 0)
+         or uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsString) Then
+       Begin
+           Application.MessageBox('Digite o valor pago!!!','ATENÇÃO',
+               MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+           dbeVLPAGO.SetFocus;
+           Exit;
+       End;
+      //
+       If Dm.GetVerifica_Conta(cmbConta.Text) Then
+       Begin
+            dm2.cdsContasPagar.FieldByName('PAG_BANCO').AsInteger :=
+                dmConsultas.qryConsulta.FieldByName('CGS_BANCO').AsInteger;
+            dm2.cdsContasPagar.FieldByName('PAG_AGENCIA').AsString :=
+                dmConsultas.qryConsulta.FieldByName('CGS_AGENCIA').AsString;
+            dm2.cdsContasPagar.FieldByName('PAG_NRCONTA').AsString :=
+                dmConsultas.qryConsulta.FieldByName('CGS_NRCONTA').AsString;
+            //
+            If Empty(dbeNRCHEQ.Text) Then
+            Begin
+                Application.MessageBox('Digite o número do cheque.','ATENÇÃO',
+                   MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                //
+                dbeNRCHEQ.ReadOnly := False;
+                dbeNRCHEQ.Enabled  := True;
+                //
+                dbeNRCHEQ.SetFocus;
+                Exit;
+            End;
+       End;
+      //
+       If (M_FLCXGR = 'S') and Empty(cmbConta.Text) Then
+         Begin
+             Application.MessageBox('Selecione a conta.','ATENÇÃO',
+                 MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+             //
+             cmbConta.SetFocus;
+             Exit;
+         End;
+      // Inicia um transação no BD
+      TD.TransactionID  := StrtoInt(uFrmAdmin.M_CDUSUA);
+      TD.IsolationLevel := xilREADCOMMITTED;
+      Dm.SqlAdmin.StartTransaction(TD);
+      //
+      Try
+         M_HOMOVI := Copy(TimetoStr(Time),1,5);
+         M_DTMOVI := Date();
+         M_CDMODA := Dm.GetCodConta(cmbConta.Text);
+         M_VLANTE := 0;
+         M_VLMOVI := 0;
+         M_VLATUA := 0;
+         M_CDLOJA := dm2.cdsContasPagar.FieldByName('PAG_LOJA').AsInteger;
+         //
+        If (dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsCurrency >
+            dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency) Then
+        begin
+             M_FLNVPC := 'S';
+             //
+             M_NRCOMP := dm2.cdsContasPagar.FieldByName('PAG_NRENTRADA').AsInteger;
+             M_CDLOJA := dm2.cdsContasPagar.FieldByName('PAG_LOJA').AsInteger;
+             M_NRPARC := dm2.cdsContasPagar.FieldByName('PAG_PARCELA').AsString;
+             M_QTPARC := dm2.cdsContasPagar.FieldByName('PAG_QTPARCELAS').AsInteger;
+             M_CDFORN := dm2.cdsContasPagar.FieldByName('PAG_FORNECEDOR').AsInteger;
+             M_DTCOMP := dm2.cdsContasPagar.FieldByName('PAG_DATACOMPRA').AsDateTime;
+             M_DTVENC := dm2.cdsContasPagar.FieldByName('PAG_DATAVENCIMENTO').AsDateTime;
+             W_CDNATU := dm2.cdsContasPagar.FieldByName('PAG_NATUREZADESPESA').AsInteger;
+             //
+             If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_NRNOTA').AsString) Then
+                 M_NRNOTA := dm2.cdsContasPagar.FieldByName('PAG_NRNOTA').AsString;
+             If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_SERIENOTA').AsString) Then
+                 M_NRSERI := dm2.cdsContasPagar.FieldByName('PAG_SERIENOTA').AsString;
+             If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_DESCRICAO').AsString) Then
+                 M_DESCRI := dm2.cdsContasPagar.FieldByName('PAG_DESCRICAO').AsString;
+             //
+             M_VLREST := dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsCurrency -
+                         dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency;
+             //
+             If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_BANCO').AsString) Then
+                 M_CDBANC := dm2.cdsContasPagar.FieldByName('PAG_BANCO').AsString;
+             If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_NRCONTA').AsString) Then
+                 M_NRAGEN := dm2.cdsContasPagar.FieldByName('PAG_NRCONTA').AsString;
+             If not uFuncoes.Empty(dm2.cdsContasPagar.FieldByName('PAG_AGENCIA').AsString) Then
+                 M_NRCONT := dm2.cdsContasPagar.FieldByName('PAG_AGENCIA').AsString;
+        End
+        Else
+            M_FLNVPC := 'N';
+          // Grava
+          dm2.cdsContasPagar.FieldByName('PAG_SITUACAO').AsString := 'P';
+          dm2.cdsContasPagar.Post;
+          dm2.cdsContasPagar.ApplyUpdates(0);
+        //
+        M_VLPAGO := dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency;
+          //  Incluir Movimento de Caixa
+          Dm.Incluir_Movimento_Caixa(M_CDLOJA, 0, StrtoInt(uFrmAdmin.M_CDUSUA), StrtoInt(edtCDNATU.Text), 'P',
+                               M_HOMOVI, '1', '', 'PAGAMENTO DE CONTA', M_DTMOVI, M_VLPAGO, M_VLPAGO, 0);
+          //
+          If (M_FLNVPC = 'S') Then
+          Begin
+             // Incluir novo registro
+             dm.parametros;
+             dm.CdsConfig.Edit;
+             dm.CdsConfigCFG_SEQPAGAR.AsInteger  := dm.CdsConfigCFG_SEQPAGAR.AsInteger + 1;
+             M_SEQPAG := dm.CdsConfigCFG_SEQPAGAR.AsInteger;
+             dm.CdsConfig.Post;
+             dm.CdsConfig.ApplyUpdates(0);
+             //
+             With dm2.cdsContasPagar do
+             Begin
+                  Append;
+                  FieldByName('PAG_SEQUENCIA').AsInteger := M_SEQPAG;
+                  FieldByName('PAG_LOJA').AsInteger      := M_CDLOJA;
+                  FieldByName('PAG_NRENTRADA').AsInteger := M_NRCOMP;
+                  FieldByName('PAG_PARCELA').AsString    := uFuncoes.StrZero(M_NRPARC,2);
+                  FieldByName('PAG_QTPARCELAS').AsInteger   := M_QTPARC;
+                  FieldByName('PAG_DATACOMPRA').AsDateTime  := M_DTCOMP;
+                  FieldByName('PAG_FORNECEDOR').AsInteger   := M_CDFORN;
+                  FieldByName('PAG_NRNOTA').AsString            := M_NRNOTA;
+                  FieldByName('PAG_SERIENOTA').AsString         := M_NRSERI;
+                  FieldByName('PAG_NATUREZADESPESA').AsInteger  := W_CDNATU;
+                  FieldByName('PAG_DESCONTOANTECIPADO').AsFloat := 0;
+                  FieldByName('PAG_VALORPARCELA').AsCurrency    := M_VLREST;
+                  FieldByName('PAG_DATAVENCIMENTO').AsDateTime  := M_DTVENC;
+                  FieldByName('PAG_DESCRICAO').AsString         := M_DESCRI;
+                  FieldByName('PAG_SITUACAO').AsString          := 'A';
+                  FieldByName('PAG_VALORJUROS').AsCurrency      := 0;
+                  FieldByName('PAG_VALORDESCONTO').AsCurrency   := 0;
+                  If not uFuncoes.Empty(M_CDBANC) Then
+                     FieldByName('PAG_BANCO').AsString   := StrZero(M_CDBANC,3);
+                  If not uFuncoes.Empty(M_NRCONT) Then
+                     FieldByName('PAG_NRCONTA').AsString := uFuncoes.StrZero(M_NRCONT,10);
+                  If not uFuncoes.Empty(M_NRAGEN) Then
+                      FieldByName('PAG_AGENCIA').AsString := M_NRAGEN;
+                  //
+                  FieldByName('PAG_USUARIO').AsInteger          := StrtoInt(uFrmAdmin.M_CDUSUA);
+                  //
+                  Post;
+                  ApplyUpdates(0);
+             End;
+          End;
+          //
+          M_CDFORN := dm2.cdsContasPagar.FieldByName('PAG_FORNECEDOR').AsInteger;
+          M_VLANTE := dmDados.GetValorAtual(M_CDMODA);
+          M_VLMOVI := dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency;
+          //
+          dmDados.SetSaldoConta(M_CDMODA,M_VLMOVI,'S');
+          //
+          M_VLATUA := dmDados.GetValorAtual(M_CDMODA);
+          // Nova alteração   incluir registro o Caixa Geral
+          If (M_FLCXGR = 'S') Then
+            begin
+                 dmDados.Incluir_Movimento_Contas(M_CDLOJA, StrtoInt(uFrmAdmin.M_CDUSUA),
+                    M_CDMODA, W_CDNATU, 0, M_CDFORN,
+                    M_VLANTE, M_VLMOVI, M_VLATUA,
+                    dm2.cdsContasPagar.FieldByName('PAG_NRNOTA').AsString,
+                    'S', M_HOMOVI, 'PAGAMENTO DE CONTA', '',
+                    dm2.cdsContasPagar.FieldByName('PAG_NRCHEQUE').AsString
+                    ,M_DTMOVI);
+            End;
+          //
+          Dm.SqlAdmin.Commit(TD);  // on success, commit the changes
+          //
+          Application.MessageBox (pChar('Baixa realizada com sucesso!!!'),
+                     'CONCLUÍDO',MB_ICONINFORMATION+ MB_OK);
+          //
+          If not (dm.IncluirTarefaUsuario( iUsuario,
+            'Baixou Conta Pagar > Compra: '+uFuncoes.StrZero(InttoStr(M_NRCOMP),7)+
+            ' PC : '+uFuncoes.StrZero(M_NRPARC,2)+
+            ' Fornecedor :'+uFuncoes.StrZero(InttoStr(M_CDFORN),5)+
+            ' Valor Pago :'+FormatFloat('###,##0.#0', M_VLMOVI)+' *F*')) Then
+              ShowMessage('Erro ao adicionar tarefa do usuário.');
+          //
+          Close;
+       Except
+          on Exc:Exception do
+          begin
+                Application.MessageBox(PChar('Erro ao tentar realizar baixa de conta!!!'
+                      + Exc.Message),
+                      'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                //  Cancelar transação no BD.
+                Dm.SqlAdmin.Rollback(TD);
+          End;
+       End;
+  End;
+end;
+
+procedure TfrmEditaContPagar.edtCDNATUKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+     //
+     If (key = #13) and uFuncoes.Empty(edtCDNATU.Text) Then
+     Begin
+          Key := #0;
+          spNaturezaClick(Sender);
+     End;
+     //
+     If (key = #13) and not uFuncoes.Empty(edtCDNATU.Text) Then
+     Begin
+          Key := #0;
+          dbeDTVENC.SetFocus;
+     End;
+end;
+
+procedure TfrmEditaContPagar.edtCDNATUChange(Sender: TObject);
+begin
+     If uFuncoes.Empty(edtCDNATU.text) Then
+        lbl_Natureza.Caption := '';
+end;
+
+procedure TfrmEditaContPagar.BtCancelarClick(Sender: TObject);
+begin
+      dm2.cdsContasPagar.Cancel;
+      //
+      Close;
+end;
+
+function TfrmEditaContPagar.VALIDAR_EDICAO: Boolean;
+begin
+     With dm2.qryProcurarConta do
+     Begin
+          Close;
+          Params.ParamByName('pLOJA').AsInteger      := dm2.cdsContasPagar.FieldByName('PAG_LOJA').AsInteger;
+          Params.ParamByName('pNRENTRADA').AsInteger := dm2.cdsContasPagar.FieldByName('PAG_NRENTRADA').AsInteger;
+          Params.ParamByName('pSITUACAO').AsString   := 'P';
+          Open;
+          //
+
+     End;
+     If (dm2.qryProcurarConta.IsEmpty) Then
+         result := true
+     Else
+         result := False;
+end;
+
+procedure TfrmEditaContPagar.FormShow(Sender: TObject);
+begin
+     btOK.Visible       := False;
+     //
+     If (VALIDAR_EDICAO() = True ) Then
+         M_FLGRAV := 'S'
+     Else
+         M_FLGRAV := 'N';
+     //
+     NATUREZA;
+     //
+     IF (M_FLOPER = 'E') Then
+     Begin
+        DESABILITAR_CONTROLES('H');
+     End;
+     //
+     IF (M_FLOPER = 'B') Then
+     begin
+        DESABILITAR_CONTROLES('D');
+        //
+        dbeCDBANC.Enabled  := True;
+        dbeNRAGEN.Enabled  := True;
+        dbeNRCONT.Enabled  := True;
+        //
+        dbeNRCHEQ.ReadOnly := False;
+        dbeNRCHEQ.Enabled  := True;
+        //dbeVLJURO.SetFocus;
+        dbeVLPAGO.SetFocus;
+     End;
+     //
+     IF (M_FLOPER = 'C') Then
+     begin
+          BtGravar.Visible   := False;
+          BtCancelar.Visible := False;
+          btOK.Left := BtGravar.Left;
+          //
+          btOK.Visible       := True;
+          //
+          CONTROLES_LEITURA;
+          //
+          If (btOK.CanFocus) Then
+             btOK.SetFocus;
+     End;
+     //
+     If (M_FLGRAV = 'S') Then
+        CONTROLES('H');
+     If (M_FLGRAV = 'N') Then
+        CONTROLES('D');
+     //
+     If (M_FLCXGR = 'S') Then
+      begin
+          lblConta.Visible := True;
+          cmbConta.Visible := True;
+          //
+          Dm.CampoConta(cmbConta);
+      End
+      Else
+      begin
+          lblConta.Visible := False;
+          cmbConta.Visible := False;
+      End;
+      //
+      dbeCDBANC.ReadOnly    := False;
+      dbeNRAGEN.ReadOnly    := False;
+      dbeNRCONT.ReadOnly    := False;
+      dbeNRCHEQ.ReadOnly    := False;
+      //
+      dbeCDBANC.Enabled    := True;
+      dbeNRAGEN.Enabled    := True;
+      dbeNRCONT.Enabled    := True;
+      dbeNRCHEQ.Enabled    := True;
+end;
+
+procedure TfrmEditaContPagar.dbeDTVENCKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If (key = #13) and not uFuncoes.Empty(dbeDTVENC.Text) Then
+     Begin
+          Key := #0;
+          dbeVALOR.SetFocus;
+     End;
+end;
+
+procedure TfrmEditaContPagar.dbeVALORKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If (key = #13) and not uFuncoes.Empty(dbeVALOR.Text) Then
+     Begin
+          Key := #0;
+          dbeCDBANC.SetFocus;
+     End;
+end;
+
+procedure TfrmEditaContPagar.dbeNRAGENKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     //    
+     If (key = #13) and not uFuncoes.Empty(dbeNRAGEN.Text) Then
+     Begin
+          Key := #0;
+          dbeNRCONT.SetFocus;
+     End;
+end;
+
+procedure TfrmEditaContPagar.dbeNRCONTKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+     //    
+     If (key = #13) and not uFuncoes.Empty(dbeNRCONT.Text) Then
+     Begin
+          Key := #0;
+          dbeNRCHEQ.SetFocus;
+     End;
+end;
+
+procedure TfrmEditaContPagar.dbeNRCHEQKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+     //
+     If (key = #13) and not uFuncoes.Empty(dbeNRCHEQ.Text) Then
+     Begin
+          Key := #0;
+          BtGravar.SetFocus;
+     End;
+end;
+
+procedure TfrmEditaContPagar.NATUREZA;
+begin
+     If not uFuncoes.Empty(edtCDNATU.Text) Then
+     Begin
+          With dmConsultas.qryNatureza do
+          Begin
+               Close;
+               Params.ParamByName('pCODIGO').AsInteger := StrtoInt(edtCDNATU.Text);
+               Open;
+          End;
+          //
+          If not (dmConsultas.qryNatureza.IsEmpty) Then
+             lbl_Natureza.Caption := dmConsultas.qryNatureza.FieldByName('NAT_NOME').AsString;
+     End
+     Else
+         lbl_Natureza.Caption := '';
+end;
+
+procedure TfrmEditaContPagar.dbeDTVENCExit(Sender: TObject);
+begin
+     If (dbeDTVENC.Text <> '  /  /    ') Then
+     Begin
+          try
+              StrToDate(dbeDTVENC.Text);
+              //
+              If (dm2.cdsContasPagar.State in [dsEdit]) Then
+              begin
+                 If (dm2.cdsContasPagar.FieldByName('PAG_DATAVENCIMENTO').AsDateTime < Strtodate(edtDTCOMP.Text)) Then
+                 Begin
+                      Application.MessageBox(PChar('Data de vencimento deve ser '+#13'maior ou igual a da compra!!!'),
+                                 'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                      dm2.cdsContasPagar.FieldByName('PAG_DATAVENCIMENTO').AsDateTime := Strtodate(edtDTCOMP.Text);
+                      dbeDTVENC.SetFocus;
+                      Exit;
+                 End;
+              End;
+           except
+                on EConvertError do
+                Begin
+                     Application.MessageBox(PChar('Data Inválida!!!'),
+                         'ATENÇÃO', MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+                     dbeDTVENC.Clear;
+                     dbeDTVENC.SetFocus;
+                End;
+           end;
+     End;
+     //
+end;
+
+procedure TfrmEditaContPagar.CONTROLES(TIPO: String);
+begin
+     If (TIPO = 'D') Then
+     Begin
+         edtDTCOMP.Enabled    := False;
+         dbeNRNOTA.Enabled    := False;
+         dbeSERIE.Enabled     := False;
+         mmoDescricao.Enabled := False;
+         edtCDNATU.Enabled    := False;
+         //
+         cmbLoja.Enabled      := False;
+         edtCDFORN.Enabled    := False;
+         dbeVALOR.Enabled     := False;
+         dbeCDBANC.Enabled    := False;
+         dbeNRAGEN.Enabled    := False;
+         dbeNRCONT.Enabled    := False;
+         dbeNRCHEQ.Enabled    := False;
+         //
+         M_FLGRAV := 'N';
+     End;
+     //
+     If (TIPO = 'H') Then
+     Begin
+         edtDTCOMP.Enabled    := True;
+         dbeNRNOTA.Enabled    := True;
+         dbeSERIE.Enabled     := True;
+         mmoDescricao.Enabled := True;
+         edtCDNATU.Enabled    := True;
+         //
+         cmbLoja.Enabled      := True;
+         edtCDFORN.Enabled    := True;
+         dbeVALOR.Enabled     := True;
+         dbeCDBANC.Enabled    := True;
+         dbeNRAGEN.Enabled    := True;
+         dbeNRCONT.Enabled    := True;
+         dbeNRCHEQ.Enabled    := True;
+         //M_FLGRAV := 'S';
+     End;
+end;
+
+procedure TfrmEditaContPagar.dbeCDBANCExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(dbeCDBANC.Text) Then
+     Begin
+        If (uFuncoes.LOCALIZAR_BANCO(uFuncoes.StrZero(dbeCDBANC.Text,3)) = False) Then
+        begin
+             Application.MessageBox('Código de banco não cadastrado!!!','ATENÇÃO',
+                   MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+             dbeCDBANC.Clear;
+             dbeCDBANC.SetFocus;
+             Exit;
+        End
+        Else
+            dbeCDBANC.Text := uFuncoes.StrZero(dbeCDBANC.Text,3);        
+     End;
+end;
+
+procedure TfrmEditaContPagar.dbeNRCONTExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(dbeNRCONT.Text) Then
+        dbeNRCONT.Text := uFuncoes.StrZero(dbeNRCONT.Text,10);
+end;
+
+procedure TfrmEditaContPagar.dbeNRCHEQExit(Sender: TObject);
+begin
+     If not uFuncoes.Empty(dbeNRCHEQ.Text) Then
+        dbeNRCHEQ.Text := uFuncoes.StrZero(dbeNRCHEQ.Text,10);
+end;
+
+procedure TfrmEditaContPagar.dbeCDBANCKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+end;
+
+procedure TfrmEditaContPagar.dbeVLJUROExit(Sender: TObject);
+begin
+     If (dm2.cdsContasPagar.State in [dsEdit]) Then
+        CALCULAR;
+end;
+
+procedure TfrmEditaContPagar.dbeVLDESCExit(Sender: TObject);
+begin
+     If (dm2.cdsContasPagar.State in [dsEdit]) Then
+          CALCULAR;
+end;
+
+procedure TfrmEditaContPagar.dbeVLPAGOExit(Sender: TObject);
+begin
+     If (dm2.cdsContasPagar.State in [dsEdit])
+     and (dm2.cdsContasPagar.FieldByName('PAG_VALORJUROS').AsCurrency = 0)
+     and (dm2.cdsContasPagar.FieldByName('PAG_VALORDESCONTO').AsCurrency = 0) Then
+       If (dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency >
+         dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsCurrency) Then
+       begin
+             Application.MessageBox(PChar('Valor pago deve ser menor ou igual '+#13
+                    +'valor da parcela!!!'),'ATENÇÃO',
+                   MB_OK+MB_ICONINFORMATION+MB_APPLMODAL);
+             dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency :=
+                 dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsCurrency;
+             dbeVLPAGO.SetFocus;
+             Exit;
+       End;
+end;
+
+procedure TfrmEditaContPagar.DESABILITAR_CONTROLES(W_TIPO : String);
+begin
+   If (W_TIPO = 'D') Then
+   Begin
+     cmbLoja.ReadOnly   := True;
+     edtCDFORN.ReadOnly := True;
+     dbeNRNOTA.ReadOnly := True;
+     dbeSERIE.ReadOnly := True;
+     edtDTCOMP.ReadOnly := True;
+     mmoDescricao.ReadOnly := True;
+     edtCDNATU.ReadOnly := True;
+     spNatureza.Enabled := False;
+     dbeDTVENC.ReadOnly := True;
+     dbeVALOR.ReadOnly  := True;
+     dbeCDBANC.ReadOnly := True;
+     dbeNRAGEN.ReadOnly := True;
+     dbeNRCONT.ReadOnly := True;
+     dbeNRCHEQ.ReadOnly := True;
+     //
+     dbeVLJURO.Enabled := True;
+     dbeVLDESC.Enabled := True;
+     dbeVLPAGO.Enabled := True;
+     dbeDTPAGA.Enabled := True;
+  End
+  Else
+  Begin
+     cmbLoja.ReadOnly   := False;
+     edtCDFORN.ReadOnly := False;
+     dbeNRNOTA.ReadOnly := False;
+     dbeSERIE.ReadOnly := False;
+     edtDTCOMP.ReadOnly := False;
+     mmoDescricao.ReadOnly := False;
+     edtCDNATU.ReadOnly := False;
+     spNatureza.Enabled := True;
+     dbeDTVENC.ReadOnly := False;
+     dbeVALOR.ReadOnly  := False;
+     dbeCDBANC.ReadOnly := False;
+     dbeNRAGEN.ReadOnly := False;
+     dbeNRCONT.ReadOnly := False;
+     dbeNRCHEQ.ReadOnly := False;
+     //
+     dbeVLJURO.Enabled := False;
+     dbeVLDESC.Enabled := False;
+     dbeVLPAGO.Enabled := False;
+     dbeDTPAGA.Enabled := False;
+  End;
+end;
+
+procedure TfrmEditaContPagar.dbeNRNOTAKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+end;
+
+procedure TfrmEditaContPagar.dbeSERIEKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+     If not( key in['0'..'9',#8, #13] ) then
+         key:=#0;
+end;
+
+procedure TfrmEditaContPagar.CALCULAR;
+begin
+     dm2.cdsContasPagar.FieldByName('PAG_VALORPAGO').AsCurrency :=
+       (dm2.cdsContasPagar.FieldByName('PAG_VALORPARCELA').AsCurrency+
+       dm2.cdsContasPagar.FieldByName('PAG_VALORJUROS').AsCurrency)
+       - dm2.cdsContasPagar.FieldByName('PAG_VALORDESCONTO').AsCurrency;
+end;
+
+procedure TfrmEditaContPagar.CONTROLES_LEITURA;
+begin
+     cmbLoja.ReadOnly   := True;
+     edtCDFORN.ReadOnly := True;
+     dbeNRNOTA.ReadOnly := True;
+     dbeSERIE.ReadOnly := True;
+     edtDTCOMP.ReadOnly := True;
+     mmoDescricao.ReadOnly := True;
+     edtCDNATU.ReadOnly := True;
+     spNatureza.Enabled := False;
+     dbeDTVENC.ReadOnly := True;
+     dbeVALOR.ReadOnly  := True;
+     dbeCDBANC.ReadOnly := True;
+     dbeNRAGEN.ReadOnly := True;
+     dbeNRCONT.ReadOnly := True;
+     dbeNRCHEQ.ReadOnly := True;
+     //
+     dbeVLJURO.ReadOnly := True;
+     dbeVLDESC.ReadOnly := True;
+     dbeVLPAGO.ReadOnly := True;
+     dbeDTPAGA.ReadOnly := True;
+end;
+
+procedure TfrmEditaContPagar.dbeVLPAGOEnter(Sender: TObject);
+begin
+   {  IF (M_FLOPER = 'B') Then
+     begin
+        //
+        dbeCDBANC.Enabled  := True;
+        dbeNRAGEN.Enabled  := True;
+        dbeNRCONT.Enabled  := True;
+        dbeNRCHEQ.Enabled  := True;
+        //
+        dbeCDBANC.ReadOnly := False;
+        dbeNRAGEN.ReadOnly := False;
+        dbeNRCONT.ReadOnly := False;
+        dbeNRCHEQ.ReadOnly := False;
+     End;}
+end;
+
+end.
