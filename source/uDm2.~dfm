@@ -1,7 +1,7 @@
 object DM2: TDM2
   OldCreateOrder = False
-  Left = 205
-  Top = 113
+  Left = 197
+  Top = 192
   Height = 655
   Width = 800
   object dstTransferencias: TSQLDataSet

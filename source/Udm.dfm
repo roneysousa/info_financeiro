@@ -2,10 +2,10 @@ object Dm: TDm
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Left = 196
-  Top = 189
+  Left = 204
+  Top = 137
   Height = 646
-  Width = 821
+  Width = 986
   object DsEmpresas: TDataSource
     AutoEdit = False
     DataSet = CdsEmpresas
@@ -1715,8 +1715,8 @@ object Dm: TDm
   object DsConfig: TDataSource
     AutoEdit = False
     DataSet = CdsConfig
-    Left = 552
-    Top = 29
+    Left = 688
+    Top = 77
   end
   object DspConfig: TDataSetProvider
     DataSet = SdsConfig
@@ -1837,8 +1837,8 @@ object Dm: TDm
       'BlobSize=-1'
       'CommitRetain=False'
       
-        'Database=D:\Sistemas\ShoppingCidade\InfoFinanceiro\Dados\ADMIN.F' +
-        'DB'
+        'Database=D:\Sistemas\ShoppingCidade\info_financeiro\dados\ADMIN.' +
+        'FDB'
       'ErrorResourceFile='
       'LocaleCode=0000'
       'Password=masterkey'
@@ -2264,6 +2264,7 @@ object Dm: TDm
     Top = 269
   end
   object cdsBancos: TClientDataSet
+    Active = True
     Aggregates = <>
     Params = <>
     ProviderName = 'dspBancos'
@@ -4174,7 +4175,7 @@ object Dm: TDm
   object dsFuncionarios: TDataSource
     AutoEdit = False
     DataSet = cdsFuncionarios
-    Left = 643
+    Left = 755
     Top = 130
   end
   object dstDebito: TSQLDataSet
@@ -4930,7 +4931,7 @@ object Dm: TDm
         Value = ''
       end>
     SQLConnection = SqlAdmin
-    Left = 632
+    Left = 744
     Top = 37
     object dstClientesChequesCLC_CPFCGC: TStringField
       FieldName = 'CLC_CPFCGC'
@@ -5047,15 +5048,15 @@ object Dm: TDm
     DataSet = dstClientesCheques
     Options = [poAllowCommandText]
     OnGetTableName = dspClientesChequesGetTableName
-    Left = 696
-    Top = 85
+    Left = 824
+    Top = 101
   end
   object cdsClientesCheques: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'dspClientesCheques'
-    Left = 696
-    Top = 133
+    Left = 824
+    Top = 149
     object cdsClientesChequesCLC_CPFCGC: TStringField
       Alignment = taRightJustify
       FieldName = 'CLC_CPFCGC'
@@ -5542,21 +5543,21 @@ object Dm: TDm
       'order by EMP_FANTASIA'
       '    ')
     SQLConnection = SqlAdmin
-    Left = 752
-    Top = 21
+    Left = 896
+    Top = 29
   end
   object dspLoja: TDataSetProvider
     DataSet = qryLoja
     Options = [poAllowCommandText]
-    Left = 752
-    Top = 69
+    Left = 896
+    Top = 77
   end
   object cdsLoja: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'dspLoja'
-    Left = 760
-    Top = 117
+    Left = 904
+    Top = 125
     object cdsLojaEMP_CODIGO: TIntegerField
       FieldName = 'EMP_CODIGO'
       Required = True
@@ -5885,8 +5886,8 @@ object Dm: TDm
     Aggregates = <>
     Params = <>
     ProviderName = 'dspModalidades'
-    Left = 616
-    Top = 91
+    Left = 736
+    Top = 99
     object cdsModalidadeMOD_CODIGO: TIntegerField
       FieldName = 'MOD_CODIGO'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
@@ -6397,7 +6398,7 @@ object Dm: TDm
         Value = ''
       end>
     SQLConnection = SqlAdmin
-    Left = 600
+    Left = 608
     Top = 13
     object dstEstoqueEST_CODIGOLOJA: TIntegerField
       FieldName = 'EST_CODIGOLOJA'
@@ -6473,15 +6474,15 @@ object Dm: TDm
   object dspEstoque: TDataSetProvider
     DataSet = dstEstoque
     Options = [poAllowCommandText]
-    Left = 648
+    Left = 760
     Top = 13
   end
   object cdsEstoque: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'dspEstoque'
-    Left = 696
-    Top = 13
+    Left = 824
+    Top = 29
     object cdsEstoqueEST_CODIGOLOJA: TIntegerField
       FieldName = 'EST_CODIGOLOJA'
     end
@@ -6543,8 +6544,8 @@ object Dm: TDm
   end
   object dsEstoque: TDataSource
     DataSet = cdsEstoque
-    Left = 712
-    Top = 53
+    Left = 840
+    Top = 69
   end
   object dstHistorico: TSQLDataSet
     CommandText = 
@@ -8514,8 +8515,8 @@ object Dm: TDm
     Aggregates = <>
     Params = <>
     ProviderName = 'dspPadrao2'
-    Left = 512
-    Top = 13
+    Left = 536
+    Top = 21
   end
   object dstPadrao2: TSQLDataSet
     CommandText = 'Select * from GRUPOS ORDER BY GRU_DESCRICAO'

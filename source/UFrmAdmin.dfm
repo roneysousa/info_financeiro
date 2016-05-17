@@ -1,8 +1,8 @@
 object FrmAdmin: TFrmAdmin
-  Left = 207
-  Top = 193
-  Width = 587
-  Height = 420
+  Left = 199
+  Top = 121
+  Width = 861
+  Height = 517
   Caption = 'INFOG2 AUTOMA'#199#195'O'
   Color = clGray
   Font.Charset = DEFAULT_CHARSET
@@ -6962,8 +6962,8 @@ object FrmAdmin: TFrmAdmin
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 336
-    Width = 571
+    Top = 433
+    Width = 845
     Height = 25
     Panels = <
       item
@@ -6981,7 +6981,7 @@ object FrmAdmin: TFrmAdmin
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 571
+    Width = 845
     Height = 51
     Align = alTop
     TabOrder = 1
